@@ -18,6 +18,6 @@ public class DemoScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        topo.LablesFollowCam();
     }
 }

@@ -14,29 +14,27 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 public class TopoScript : MonoBehaviour
 {
+    List<GameObject> go_list;
+    List<MeshFilter> innerObject_list;
     RootObject obj;
     List<String> h_names;
     List<String> s_names;
     Dictionary<string, List<String>> s_h_links;
     Dictionary <string, Vector3> positions;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private string LayerToUse;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+    // Constructor of class
+    public TopoScript(){
+        go_list = new List<GameObject>();
+        innerObject_list = new List<MeshFilter>();
     }
 
     public void Display(){
         Debug.Log("I am in Topo :)");
     }
 
-        // Loading Yaml file
+    // Loading Yaml file
     public void YamlLoader(){
         // Load Yaml file
         var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4.yml");
@@ -141,7 +139,7 @@ public class TopoScript : MonoBehaviour
         //     }
         // }
     }
-
+    // Find positions of each node in the topology
     public void GetPosition(){
         Dictionary<int, List<String>> level = new Dictionary<int, List<String>>();
         Dictionary<String, List<String>> successor = new Dictionary<String, List<String>>();
@@ -258,22 +256,25 @@ public class TopoScript : MonoBehaviour
         // }
 
     }
-
+    // Display topology on the screen
     public void DisplayTopology(){
         // Showing hosts
         GameObject h_prefab = Resources.Load("Host") as GameObject;
         foreach (String h in h_names){
             // Instantiate Object and set position
             GameObject go = Instantiate(h_prefab) as GameObject;
+            // go_list.Add(go);
             go.transform.position = positions[h];
+            DisplayLabels(ref go, h, true);
         }
 
         // Showing Switches
         GameObject s_prefab = Resources.Load("Switch") as GameObject;
-
         foreach (String s in s_names){
             GameObject go = Instantiate(s_prefab) as GameObject;
+            go_list.Add(go);
             go.transform.position = positions[s];
+            DisplayLabels(ref go, s, false);
         }
 
         // Showing pipes (links)
@@ -290,6 +291,105 @@ public class TopoScript : MonoBehaviour
                 // Rotation
                 go.transform.rotation = Quaternion.FromToRotation(Vector3.up, positions[link.Key]-positions[node]);
             }
+        }
+    }
+    // Display labels on the nodes
+    void DisplayLabels(ref GameObject go, String label, bool is_host){
+        // 0. make the clone of this and make it a child
+        var innerObject = new GameObject(go.name + "_original", typeof(MeshRenderer)).AddComponent<MeshFilter>();
+        if(is_host==false){
+            innerObject_list.Add(innerObject);
+        }
+        innerObject.transform.SetParent(go.transform);
+        innerObject.transform.position = go.transform.position;
+        innerObject.transform.localScale = new Vector3(1,1,1);
+        // copy over the mesh
+        innerObject.mesh = go.GetComponent<MeshFilter>().mesh;
+        name = go.name + "_textDecal";
+
+        // 1. Create and configure the RenderTexture
+        var renderTexture = new RenderTexture(2048, 2048, 24) { name = go.name + "_RenderTexture" };
+
+        // 2. Create material
+        var textMaterial = new Material(Shader.Find("Standard"));
+
+        // assign the new renderTexture as Albedo
+        textMaterial.SetTexture("_MainTex", renderTexture);
+
+        // set RenderMode to Fade
+        textMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        textMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        textMaterial.SetInt("_ZWrite", 0);
+        textMaterial.DisableKeyword("_ALPHATEST_ON");
+        textMaterial.EnableKeyword("_ALPHABLEND_ON");
+        textMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        textMaterial.renderQueue = 3000;
+
+        // 3. WE CAN'T CREATE A NEW LAYER AT RUNTIME SO CONFIGURE THEM BEFOREHAND AND USE LayerToUse
+
+        // 4. exclude the Layer in the normal camera
+        if (!mainCamera) mainCamera = Camera.main;
+        mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer(LayerToUse));
+
+        // 5. Add new Camera as child of this object
+        var camera = new GameObject("TextCamera").AddComponent<Camera>();
+        camera.transform.SetParent(go.transform, false);
+        camera.backgroundColor = new Color(0, 0, 0, 0);
+        camera.clearFlags = CameraClearFlags.Color;
+        camera.cullingMask = 1 << LayerMask.NameToLayer(LayerToUse);
+        // camera.focalLength = 5;
+        camera.farClipPlane = 5;
+        camera.usePhysicalProperties = true;
+        camera.fieldOfView = 15f;
+
+        // make it render to the renderTexture
+        camera.targetTexture = renderTexture;
+        camera.forceIntoRenderTexture = true;
+
+        // 6. add the UI to your scene as child of the camera
+        var Canvas = new GameObject("Canvas", typeof(RectTransform)).AddComponent<Canvas>();
+        Canvas.transform.SetParent(camera.transform, false);
+        Canvas.gameObject.AddComponent<CanvasScaler>();
+        Canvas.renderMode = RenderMode.WorldSpace;
+        var canvasRectTransform = Canvas.GetComponent<RectTransform>();
+        canvasRectTransform.anchoredPosition3D = new Vector3(0, 0, 1);
+        canvasRectTransform.sizeDelta = Vector2.one;
+
+        var text = new GameObject("Text", typeof(RectTransform)).AddComponent<Text>();
+        text.transform.SetParent(Canvas.transform, false);
+        var textRectTransform = text.GetComponent<RectTransform>();
+        textRectTransform.localScale = Vector3.one * 0.001f;
+        textRectTransform.sizeDelta = new Vector2(2000, 1000);
+
+        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        text.fontStyle = FontStyle.Bold;
+        text.alignment = TextAnchor.MiddleCenter;
+        text.color = Color.white;
+        text.fontSize = 60;
+        if(is_host){
+            text.fontSize = 120;
+        }
+        text.horizontalOverflow = HorizontalWrapMode.Wrap;
+        text.verticalOverflow = VerticalWrapMode.Overflow;
+
+        Canvas.gameObject.layer = LayerMask.NameToLayer(LayerToUse);
+        text.gameObject.layer = LayerMask.NameToLayer(LayerToUse);
+
+        text.text = label + "            ";
+        if(is_host){
+            text.text = label;
+        }
+
+        // 7. finally assign the material to the child object and hope everything works ;)
+        innerObject.GetComponent<MeshRenderer>().material = textMaterial; 
+    }
+
+    // Labels following camera 
+    public void LablesFollowCam(){
+        foreach(var obj in go_list.Zip(innerObject_list, (a, b) => new { parent = a, child = b})){
+            obj.parent.transform.rotation = Quaternion.LookRotation(-Camera.main.transform.forward, Camera.main.transform.up);
+            obj.parent.transform.LookAt(obj.parent.transform.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
+            obj.child.transform.rotation = obj.parent.transform.rotation;
         }
     }
 }
