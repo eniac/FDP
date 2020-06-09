@@ -14,8 +14,9 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 public class TopoScript : MonoBehaviour
 {
-    List<GameObject> go_list;
-    List<MeshFilter> innerObject_list;
+    List<GameObject> goList;
+    List<MeshFilter> innerMeshList;
+    List<GameObject> innerObjectList;
     RootObject obj;
     List<String> h_names;
     List<String> s_names;
@@ -26,8 +27,9 @@ public class TopoScript : MonoBehaviour
 
     // Constructor of class
     public TopoScript(){
-        go_list = new List<GameObject>();
-        innerObject_list = new List<MeshFilter>();
+        goList = new List<GameObject>();
+        innerMeshList = new List<MeshFilter>();
+        innerObjectList = new List<GameObject>();
     }
 
     public void Display(){
@@ -263,7 +265,7 @@ public class TopoScript : MonoBehaviour
         foreach (String h in h_names){
             // Instantiate Object and set position
             GameObject go = Instantiate(h_prefab) as GameObject;
-            // go_list.Add(go);
+            // goList.Add(go);
             go.transform.position = positions[h];
             DisplayLabels(ref go, h, true);
         }
@@ -272,7 +274,7 @@ public class TopoScript : MonoBehaviour
         GameObject s_prefab = Resources.Load("Switch") as GameObject;
         foreach (String s in s_names){
             GameObject go = Instantiate(s_prefab) as GameObject;
-            go_list.Add(go);
+            goList.Add(go);
             go.transform.position = positions[s];
             DisplayLabels(ref go, s, false);
         }
@@ -296,15 +298,17 @@ public class TopoScript : MonoBehaviour
     // Display labels on the nodes
     void DisplayLabels(ref GameObject go, String label, bool is_host){
         // 0. make the clone of this and make it a child
-        var innerObject = new GameObject(go.name + "_original", typeof(MeshRenderer)).AddComponent<MeshFilter>();
+        var innerObject = new GameObject(go.name + "_original", typeof(MeshRenderer));
+        innerObjectList.Add(innerObject);
+        var innerMesh = innerObject.AddComponent<MeshFilter>();
         if(is_host==false){
-            innerObject_list.Add(innerObject);
+            innerMeshList.Add(innerMesh);
         }
-        innerObject.transform.SetParent(go.transform);
-        innerObject.transform.position = go.transform.position;
-        innerObject.transform.localScale = new Vector3(1,1,1);
+        innerMesh.transform.SetParent(go.transform);
+        innerMesh.transform.position = go.transform.position;
+        innerMesh.transform.localScale = new Vector3(1,1,1);
         // copy over the mesh
-        innerObject.mesh = go.GetComponent<MeshFilter>().mesh;
+        innerMesh.mesh = go.GetComponent<MeshFilter>().mesh;
         name = go.name + "_textDecal";
 
         // 1. Create and configure the RenderTexture
@@ -381,16 +385,21 @@ public class TopoScript : MonoBehaviour
         }
 
         // 7. finally assign the material to the child object and hope everything works ;)
-        innerObject.GetComponent<MeshRenderer>().material = textMaterial; 
+        innerMesh.GetComponent<MeshRenderer>().material = textMaterial; 
     }
 
     // Labels following camera 
     public void LablesFollowCam(){
-        foreach(var obj in go_list.Zip(innerObject_list, (a, b) => new { parent = a, child = b})){
+        foreach(var obj in goList.Zip(innerMeshList, (a, b) => new { parent = a, child = b})){
             obj.parent.transform.rotation = Quaternion.LookRotation(-Camera.main.transform.forward, Camera.main.transform.up);
             obj.parent.transform.LookAt(obj.parent.transform.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
             obj.child.transform.rotation = obj.parent.transform.rotation;
         }
+    }
+
+    // Get the inner object (text mesh) list
+    public List<GameObject> GetTextObjects(){
+        return innerObjectList;
     }
 }
 
