@@ -6,9 +6,10 @@ public class DemoScript : MonoBehaviour
 {
     public TopoScript topo;
     // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
         topo.Display();
+        yield return StartCoroutine(topo.GetYaml());
         topo.YamlLoader();
         topo.GetLinks();
         topo.GetPosition();

@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 using YamlDotNet.Serialization;
@@ -14,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 public class TopoScript : MonoBehaviour
 {
+    string yamlString = "";
     List<GameObject> goList;
     List<MeshFilter> innerMeshList;
     List<GameObject> innerObjectList;
@@ -36,11 +38,27 @@ public class TopoScript : MonoBehaviour
         Debug.Log("I am in Topo :)");
     }
 
-    // Loading Yaml file
+    // Get file from file system or server
+    public IEnumerator GetYaml(){
+        var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4.yml");
+        
+
+        if (filePath.Contains ("://") || filePath.Contains (":///")) {
+            WWW www = new WWW(filePath);
+            yield return www;
+            yamlString = www.text;
+        }
+        else{
+            yamlString = File.ReadAllText(filePath);
+        }
+    }
+
+    // Loading Yaml file content to json object
     public void YamlLoader(){
         // Load Yaml file
-        var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4.yml");
-        var r = new StreamReader(filePath);
+        // var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4.yml");
+        // var r = new StreamReader(filePath);
+        var r = new StringReader(yamlString);
 
         var deserializer = new Deserializer();
         var yamlObject = deserializer.Deserialize(r);
@@ -147,7 +165,6 @@ public class TopoScript : MonoBehaviour
         Dictionary<String, List<String>> successor = new Dictionary<String, List<String>>();
         int level_number = 0;
         List<String> ll;
-
         // Adding all the hosts on level 0
         level.Add(level_number, h_names);
 
@@ -186,7 +203,6 @@ public class TopoScript : MonoBehaviour
             }
             level_number++;	
         }
-
         // // Printing levels
         // foreach (KeyValuePair<int, List<String>> l in level){
         //     Debug.Log(l.Key.ToString() + " *************************************************** ");
@@ -247,7 +263,6 @@ public class TopoScript : MonoBehaviour
                 }
             }
         }
-
 
         // // Printing positions
         // foreach (KeyValuePair<int, List<String>> l in level){
