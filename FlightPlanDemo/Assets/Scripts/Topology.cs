@@ -13,158 +13,52 @@ using YamlDotNet.Serialization;
 
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-public class TopoScript : MonoBehaviour
+
+static class Constants
 {
-    string yamlString = "";
+    public const float H_SPACE = 8.0f;
+    public const float V_SPACE = 8.0f;
+}
+
+public class Topology : MonoBehaviour
+{
+
+    [SerializeField] private Camera mainCamera = default;
+    [SerializeField] private string LayerToUse = default;
+    List<string> h_names;
+    List<string> s_names;
+    List<string> sat_names;
+    Dictionary<string, List<string>> s_h_links;
+    Dictionary<string, List<string>> sat_links;
     List<GameObject> goList;
     List<MeshFilter> innerMeshList;
     List<GameObject> innerObjectList;
-    RootObject obj;
-    List<String> h_names;
-    List<String> s_names;
-    Dictionary<string, List<String>> s_h_links;
     Dictionary <string, Vector3> positions;
-    [SerializeField] private Camera mainCamera;
-    [SerializeField] private string LayerToUse;
 
     // Constructor of class
-    public TopoScript(){
+    public Topology(){
+        positions = new Dictionary <string, Vector3>();
         goList = new List<GameObject>();
         innerMeshList = new List<MeshFilter>();
         innerObjectList = new List<GameObject>();
     }
-
+    public void SetParameters(List<string> h_names, List<string> s_names, List<string> sat_names, Dictionary<string, List<string>> s_h_links, Dictionary<string, List<string>> sat_links){
+        this.h_names = h_names;
+        this.s_names = s_names;
+        this.sat_names = sat_names;
+        this.s_h_links = s_h_links;
+        this.sat_links = sat_links;
+    }
     public void Display(){
-        Debug.Log("I am in Topo :)");
+        Debug.Log("I am in Topology :)");
     }
 
-    // Get file from file system or server
-    public IEnumerator GetYaml(){
-        var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4.yml");
-        
-
-        if (filePath.Contains ("://") || filePath.Contains (":///")) {
-            WWW www = new WWW(filePath);
-            yield return www;
-            yamlString = www.text;
-        }
-        else{
-            yamlString = File.ReadAllText(filePath);
-        }
-    }
-
-    // Loading Yaml file content to json object
-    public void YamlLoader(){
-        // Load Yaml file
-        // var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4.yml");
-        // var r = new StreamReader(filePath);
-        var r = new StringReader(yamlString);
-
-        var deserializer = new Deserializer();
-        var yamlObject = deserializer.Deserialize(r);
-        
-        // Convert Yaml file to Json string
-        var serializer = new Newtonsoft.Json.JsonSerializer();
-        var w = new StringWriter();
-        serializer.Serialize(w, yamlObject);
-        Console.WriteLine(w.GetType());
-        string jsonText = w.ToString();
-        Console.WriteLine(jsonText.ToString());
-
-        // Json string root object
-        obj = JsonConvert.DeserializeObject<RootObject>(jsonText);
-    }
-
-    public void GetLinks(){
-        // Supporting data structure
-        positions = new Dictionary <string, Vector3>();
-        h_names = new List<String>();
-        s_names = new List<String>();
-        s_h_links = new Dictionary<string, List<String>>();
-        List<String> ll;
-
-        // Extracting links from hosts
-        foreach (KeyValuePair<string, HostAttribute> h_kvp in obj.Hosts){
-            // Extracting Hosts Names
-            h_names.Add(h_kvp.Key);
-            // Extracting Interface
-            if(h_kvp.Value.Interface != null){
-                foreach(var intr in h_kvp.Value.Interface){
-                    if(intr.Link!=null){ 
-                        // Linking in both the direction
-                        if (s_h_links.ContainsKey(intr.Link)){
-                            if(s_h_links[intr.Link].Contains(h_kvp.Key)==false){
-                                s_h_links[intr.Link].Add(h_kvp.Key);
-                            }
-                        }
-                        else{
-                            ll = new List<String>();
-                            ll.Add(h_kvp.Key);
-                            s_h_links.Add(intr.Link, ll);
-                        }
-                        if (s_h_links.ContainsKey(h_kvp.Key)){
-                            if(s_h_links[h_kvp.Key].Contains(intr.Link)==false){
-                                s_h_links[h_kvp.Key].Add(intr.Link);
-                            }
-                        }
-                        else{
-                            ll = new List<String>();
-                            ll.Add(intr.Link);
-                            s_h_links.Add(h_kvp.Key, ll);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Extracting links from switches
-        foreach (KeyValuePair<string, SwitchAttribute> s_kvp in obj.Switches){
-            // Extracting Switch Names
-            s_names.Add(s_kvp.Key);
-            // Extracting Interface
-            if(s_kvp.Value.Interface != null){
-                foreach(var intr in s_kvp.Value.Interface){
-                   if(intr.Link!=null){ 
-                        // Linking in both direction
-                        if (s_h_links.ContainsKey(s_kvp.Key)){
-                            if(s_h_links[s_kvp.Key].Contains(intr.Link)==false){
-                                s_h_links[s_kvp.Key].Add(intr.Link);
-                            } 
-                        }
-                        else{
-                            ll = new List<String>();
-                            ll.Add(intr.Link);
-                            s_h_links.Add(s_kvp.Key, ll);
-                        }
-                        if (s_h_links.ContainsKey(intr.Link)){
-                            if(s_h_links[intr.Link].Contains(s_kvp.Key)==false){
-                                s_h_links[intr.Link].Add(s_kvp.Key);
-                            }
-                        }
-                        else{
-                            ll = new List<String>();
-                            ll.Add(s_kvp.Key);
-                            s_h_links.Add(intr.Link, ll);
-                        }
-                   }
-                } 
-            }
-        }
-
-        // // Printing all the links
-        // foreach (KeyValuePair<string, List<String>> link in s_h_links){
-        //     Debug.Log(link.Key + " ************************************** ");
-        //     foreach(var v in s_h_links[link.Key]){
-        //         Debug.Log(v);
-        //     }
-        // }
-    }
     // Find positions of each node in the topology
     public void GetPosition(){
-        Dictionary<int, List<String>> level = new Dictionary<int, List<String>>();
-        Dictionary<String, List<String>> successor = new Dictionary<String, List<String>>();
+        Dictionary<int, List<string>> level = new Dictionary<int, List<string>>();
+        Dictionary<string, List<string>> successor = new Dictionary<string, List<string>>();
         int level_number = 0;
-        List<String> ll;
+        List<string> ll;
         // Adding all the hosts on level 0
         level.Add(level_number, h_names);
 
@@ -183,7 +77,7 @@ public class TopoScript : MonoBehaviour
                             }
                         }
                         else{
-                            ll = new List<String>();
+                            ll = new List<string>();
                             ll.Add(linked_node);
                             level.Add(level_number+1, ll);
                         }
@@ -194,7 +88,7 @@ public class TopoScript : MonoBehaviour
                             }
                         }
                         else{
-                            ll = new List<String>();
+                            ll = new List<string>();
                             ll.Add(node);
                             successor.Add(linked_node, ll);
                         }
@@ -204,7 +98,7 @@ public class TopoScript : MonoBehaviour
             level_number++;	
         }
         // // Printing levels
-        // foreach (KeyValuePair<int, List<String>> l in level){
+        // foreach (KeyValuePair<int, List<string>> l in level){
         //     Debug.Log(l.Key.ToString() + " *************************************************** ");
         //     foreach(var v in level[l.Key]){
         //         Debug.Log(v);
@@ -212,7 +106,7 @@ public class TopoScript : MonoBehaviour
         // }
 
         // // Printing successors
-        // foreach (KeyValuePair<String, List<String>> s in successor){
+        // foreach (KeyValuePair<string, List<string>> s in successor){
         //     Debug.Log(s.Key + " *************************************************** ");
         //     foreach(var v in successor[s.Key]){
         //         Debug.Log(v);
@@ -222,14 +116,15 @@ public class TopoScript : MonoBehaviour
         // Finding position of each node
         int n_levels = level_number;
         float x=0, y=1, z=0;
-        float spacing = 6.0f;
+        float vertical_spacing = Constants.V_SPACE;
+        float horizontal_spacing = Constants.H_SPACE;
         int nx=0, nz=0;
         int n = 0;
-        List<String> placed_elements = new List<String>();
+        List<string> placed_elements = new List<string>();
 
         int e = 0;
         int layer_number = 0;
-        foreach (KeyValuePair<int, List<String>> l in level){
+        foreach (KeyValuePair<int, List<string>> l in level){
           n = level[l.Key].Count;
           if(n==1){
             positions.Add(level[l.Key][0], new Vector3(0, y, 0));
@@ -238,25 +133,25 @@ public class TopoScript : MonoBehaviour
           nx = (int)Math.Sqrt(n);
           nz = (int)(n/nx);
           e = 0;
-          x = 0-((nx-1)*spacing)/2.0f;
-          z = 0-((nz-1)*spacing)/2.0f;
+          x = 0-((nx-1)*horizontal_spacing)/2.0f;
+          z = 0-((nz-1)*horizontal_spacing)/2.0f;
           foreach(var v in level[l.Key]){
             positions.Add(v, new Vector3(x, y, z));
             e++;
             if(e%nx==0){
-              z = z + spacing;
-              x = 0-((nx-1)*spacing)/2.0f;
+              z = z + horizontal_spacing;
+              x = 0-((nx-1)*horizontal_spacing)/2.0f;
             }
             else{
-              x = x + spacing;
+              x = x + horizontal_spacing;
             }
           }
-          y = y + spacing;
+          y = y + vertical_spacing;
           layer_number++;
         }
 
         // Removing duplicate pipes from s_h_lnks
-        foreach (KeyValuePair<string, List<String>> link in s_h_links){
+        foreach (KeyValuePair<string, List<string>> link in s_h_links){
             foreach(var node in link.Value){
                 if(s_h_links.ContainsKey(node) && s_h_links[node].Contains(link.Key)){
                     s_h_links[node].Remove(link.Key);
@@ -265,7 +160,7 @@ public class TopoScript : MonoBehaviour
         }
 
         // // Printing positions
-        // foreach (KeyValuePair<int, List<String>> l in level){
+        // foreach (KeyValuePair<int, List<string>> l in level){
         //     Debug.Log("Level : " + l.Key + " ****************************");
         //     foreach(var v in level[l.Key]){
         //         Debug.Log(v + " : " + positions[v].ToString());
@@ -273,11 +168,12 @@ public class TopoScript : MonoBehaviour
         // }
 
     }
+
     // Display topology on the screen
     public void DisplayTopology(){
         // Showing hosts
         GameObject h_prefab = Resources.Load("Host") as GameObject;
-        foreach (String h in h_names){
+        foreach (string h in h_names){
             // Instantiate Object and set position
             GameObject go = Instantiate(h_prefab) as GameObject;
             // goList.Add(go);
@@ -287,16 +183,27 @@ public class TopoScript : MonoBehaviour
 
         // Showing Switches
         GameObject s_prefab = Resources.Load("Switch") as GameObject;
-        foreach (String s in s_names){
+        foreach (string s in s_names){
             GameObject go = Instantiate(s_prefab) as GameObject;
             goList.Add(go);
             go.transform.position = positions[s];
             DisplayLabels(ref go, s, false);
         }
 
+        // // Showing satellites
+        // GameObject sat_prefab = Resources.Load("Satellite") as GameObject;
+        // float radius = 3f;
+        // for (int i = 0; i < 1; i++)
+        // {
+        //     float angle = i * Mathf.PI*2f / 8;
+        //     Vector3 newPos = new Vector3(positions["p0a0"].x+Mathf.Cos(angle)*radius, positions["p0a0"].y, positions["p0a0"].z+Mathf.Sin(angle)*radius);
+        //     GameObject go = Instantiate(sat_prefab) as GameObject;
+        //     go.transform.position = newPos;
+        // }
+
         // Showing pipes (links)
         GameObject link_prefab = Resources.Load("Link") as GameObject;
-        foreach (KeyValuePair<string, List<String>> link in s_h_links){
+        foreach (KeyValuePair<string, List<string>> link in s_h_links){
             foreach(var node in link.Value){
                 GameObject go = Instantiate(link_prefab) as GameObject;
                 // Setting the position
@@ -311,7 +218,7 @@ public class TopoScript : MonoBehaviour
         }
     }
     // Display labels on the nodes
-    void DisplayLabels(ref GameObject go, String label, bool is_host){
+    void DisplayLabels(ref GameObject go, string label, bool is_host){
         // 0. make the clone of this and make it a child
         var innerObject = new GameObject(go.name + "_original", typeof(MeshRenderer));
         innerObjectList.Add(innerObject);
@@ -383,10 +290,11 @@ public class TopoScript : MonoBehaviour
         text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         text.fontStyle = FontStyle.Bold;
         text.alignment = TextAnchor.MiddleCenter;
-        text.color = Color.white;
+        text.color = Color.black;
         text.fontSize = 60;
         if(is_host){
             text.fontSize = 120;
+            text.color = Color.white;
         }
         text.horizontalOverflow = HorizontalWrapMode.Wrap;
         text.verticalOverflow = VerticalWrapMode.Overflow;
@@ -416,55 +324,5 @@ public class TopoScript : MonoBehaviour
     public List<GameObject> GetTextObjects(){
         return innerObjectList;
     }
-}
 
-class RootObject
-{
-    [JsonProperty("hosts")]
-    public Dictionary<string, HostAttribute> Hosts { get; set; }
-    [JsonProperty("switches")]
-    public Dictionary<string, SwitchAttribute> Switches { get; set; }
-    
 }
-class HostAttribute
-{
-    [JsonProperty("interfaces")]
-    public List<Interface> Interface { get; set; }
-    // [JsonProperty("programs")]
-    // public List<string> pm { get; set; }
-    [JsonProperty("programs")]
-    public List<ProgramAttribute> pm { get; set; }
-}
-
-class ProgramAttribute
-{
-    [JsonProperty("cmd")]
-    public string Cmd { get; set; }
-    [JsonProperty("fg")]
-    public string Fg { get; set; }
-}
-class SwitchAttribute
-{
-    [JsonProperty("cfg")]
-    public string Cfg  { get; set; }
-    [JsonProperty("interfaces")]
-    public List<Interface> Interface { get; set; }
-    [JsonProperty("replay")]
-    public Dictionary<string, string> Replay { get; set; }
-    [JsonProperty("cmds")]
-    public List<String> Cmds { get; set; }
-}
-class Interface
-{
-    [JsonProperty("ip")]
-    public string IP { get; set; }
-    [JsonProperty("port")]
-    public string Port { get; set; }
-    [JsonProperty("mac")]
-    public string Mac { get; set; }
-    [JsonProperty("name")]
-    public string Name { get; set; }
-    [JsonProperty("link")]
-    public string Link { get; set; }
-}
-

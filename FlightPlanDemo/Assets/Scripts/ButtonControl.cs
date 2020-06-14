@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ButtonControl : MonoBehaviour
 {
-    public TopoScript topo;
+    public Topology topo;
     bool showLable;
     List<GameObject> textObj;
 
@@ -28,5 +28,5 @@ public class ButtonControl : MonoBehaviour
             }
             showLable = true;
         } 
-    }
+    }  
 }

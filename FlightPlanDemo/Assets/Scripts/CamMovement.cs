@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class CamMovement : MonoBehaviour
 {
-    [SerializeField] private Light light;
-    [SerializeField] private Camera cam;
-    [SerializeField] private Transform target; 
+    [SerializeField] private new Light light = default;
+    [SerializeField] private Camera cam = default;
+    [SerializeField] private Transform target = default; 
     private Vector3 camInitPos;
     private Vector3 previousPosition;
     
@@ -14,7 +14,7 @@ public class CamMovement : MonoBehaviour
     void Start()
     {
         // main camera Init
-        camInitPos = new Vector3(0,5,-40);
+        camInitPos = new Vector3(0,9,-55);
         cam.transform.position = new Vector3(0,0,0);
         cam.transform.Rotate(new Vector3(1,0,0));
         cam.transform.Rotate(new Vector3(0,1,0));
