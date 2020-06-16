@@ -14,10 +14,17 @@ using YamlDotNet.Serialization;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
+using Random=System.Random;
+
 static class Constants
 {
     public const float H_SPACE = 8.0f;
     public const float V_SPACE = 8.0f;
+    public const float SAT_H_space = 3.0f;
+    public const float SAT_V_SPACE = 1.5f;
+    public const float SAT_MAX = 8;
+    public const int L_START = 0;
+    public const int L_END = 1;
 }
 
 public class Topology : MonoBehaviour
@@ -34,15 +41,19 @@ public class Topology : MonoBehaviour
     List<MeshFilter> innerMeshList;
     List<GameObject> innerObjectList;
     Dictionary <string, Vector3> positions;
+    Dictionary <float, List<Vector3>> layerCoordinates;  // height of layer : layer dimention
 
     // Constructor of class
     public Topology(){
-        positions = new Dictionary <string, Vector3>();
         goList = new List<GameObject>();
         innerMeshList = new List<MeshFilter>();
         innerObjectList = new List<GameObject>();
+        positions = new Dictionary <string, Vector3>();
+        layerCoordinates = new Dictionary <float, List<Vector3>>();
     }
-    public void SetParameters(List<string> h_names, List<string> s_names, List<string> sat_names, Dictionary<string, List<string>> s_h_links, Dictionary<string, List<string>> sat_links){
+    public void SetParameters(List<string> h_names, List<string> s_names, 
+                                List<string> sat_names, Dictionary<string, 
+                                List<string>> s_h_links, Dictionary<string, List<string>> sat_links){
         this.h_names = h_names;
         this.s_names = s_names;
         this.sat_names = sat_names;
@@ -120,34 +131,44 @@ public class Topology : MonoBehaviour
         float horizontal_spacing = Constants.H_SPACE;
         int nx=0, nz=0;
         int n = 0;
-        List<string> placed_elements = new List<string>();
-
         int e = 0;
         int layer_number = 0;
+        List <Vector3> vl;
+
         foreach (KeyValuePair<int, List<string>> l in level){
-          n = level[l.Key].Count;
-          if(n==1){
-            positions.Add(level[l.Key][0], new Vector3(0, y, 0));
-            continue;
-          }
-          nx = (int)Math.Sqrt(n);
-          nz = (int)(n/nx);
-          e = 0;
-          x = 0-((nx-1)*horizontal_spacing)/2.0f;
-          z = 0-((nz-1)*horizontal_spacing)/2.0f;
-          foreach(var v in level[l.Key]){
-            positions.Add(v, new Vector3(x, y, z));
-            e++;
-            if(e%nx==0){
-              z = z + horizontal_spacing;
-              x = 0-((nx-1)*horizontal_spacing)/2.0f;
+            // Get the starting coordinates of the layer
+            n = level[l.Key].Count;
+            if(n==1){
+                positions.Add(level[l.Key][0], new Vector3(0, y, 0));
+                continue;
             }
-            else{
-              x = x + horizontal_spacing;
+            nx = (int)Math.Sqrt(n);
+            nz = (int)(n/nx);
+            e = 0;
+            x = 0-((nx-1)*horizontal_spacing)/2.0f;
+            z = 0-((nz-1)*horizontal_spacing)/2.0f;
+            // Debug.Log(l.Key+":"+n+":"+nx+":"+nz+":"+x+":"+z);
+
+            // Get the coordinates of each layer in space
+            vl = new List<Vector3>();
+            vl.Add(new Vector3(x, y, z));
+            vl.Add(new Vector3(x+horizontal_spacing*(nx-1), y, z+horizontal_spacing*(nz-1)));
+            layerCoordinates.Add(y, vl);
+            
+            // Get the coordinates of every node in space
+            foreach(var v in level[l.Key]){
+                positions.Add(v, new Vector3(x, y, z));
+                e++;
+                if(e%nx==0){
+                    z = z + horizontal_spacing;
+                    x = 0-((nx-1)*horizontal_spacing)/2.0f;
+                }
+                else{
+                    x = x + horizontal_spacing;
+                }
             }
-          }
-          y = y + vertical_spacing;
-          layer_number++;
+            y = y + vertical_spacing;
+            layer_number++;
         }
 
         // Removing duplicate pipes from s_h_lnks
@@ -159,6 +180,17 @@ public class Topology : MonoBehaviour
             }
         }
 
+        // Get the satellite coordinates in space
+        GetSatellitePosition();
+
+        // // Printing layer coordinates
+        // foreach (KeyValuePair<float, List<Vector3>> l in layerCoordinates){
+        //     Debug.Log("Layer Height : " + l.Key + " ****************************");
+        //     foreach(var v in layerCoordinates[l.Key]){
+        //         Debug.Log(v.ToString());
+        //     }
+        // }
+
         // // Printing positions
         // foreach (KeyValuePair<int, List<string>> l in level){
         //     Debug.Log("Level : " + l.Key + " ****************************");
@@ -167,6 +199,142 @@ public class Topology : MonoBehaviour
         //     }
         // }
 
+    }
+
+    // Get position of Satellites
+    void GetSatellitePosition(){
+        // Showing satellites
+        float R = Constants.SAT_H_space;    // Distance of sat from center of switch
+        float r = Constants.SAT_V_SPACE;    // Radius of switch 
+        float y_diff = 0;
+        List<Vector3> visible_pos = new List<Vector3>();
+        List<Vector3> aligned_pos = new List<Vector3>();
+        List<Vector3> invisible_pos = new List<Vector3>(); 
+        List<float> sat_y_pos = new List<float>();
+        float radius=0;
+        
+        // Iterate through all those switches which has satellite attached
+        foreach (KeyValuePair<string, List<string>> link in sat_links){
+            visible_pos.Clear();
+            aligned_pos.Clear();
+            invisible_pos.Clear();
+            string switch_name = link.Key;
+            float height = positions[switch_name].y;
+            y_diff = (float)Math.Sqrt(R*R - r*r);
+            sat_y_pos.Clear();
+            sat_y_pos.Add(positions[switch_name].y);
+            sat_y_pos.Add(positions[switch_name].y + r);
+            sat_y_pos.Add(positions[switch_name].y - r);
+
+            // Debug.Log(switch_name + " ------------------ " + height + " = " + positions[switch_name].ToString() );
+            // foreach(var v in layerCoordinates[height]){
+            //     Debug.Log(v.ToString());
+            // }
+
+            // Showing satellites
+            // GameObject green_prefab = Resources.Load("s_green") as GameObject;
+            // GameObject yellow_prefab = Resources.Load("s_yellow") as GameObject;
+            // GameObject red_prefab = Resources.Load("s_red") as GameObject;
+
+            // Iterate through all the possible positions of satellite
+            for(int i=0; i<Constants.SAT_MAX; i++){
+                float angle = i * Mathf.PI*2f / Constants.SAT_MAX;
+                // Iterate throught all the three grid positions (upper, middle, lower)
+                foreach(var y_pos in sat_y_pos){
+                    if(y_pos==positions[switch_name].y){
+                        radius = R;
+                    }
+                    else{
+                        radius = (float)Math.Sqrt(R*R - r*r);
+                    }
+                    Vector3 pos = new Vector3(positions[switch_name].x + Mathf.Cos(angle)*radius, 
+                                            y_pos, 
+                                            positions[switch_name].z + Mathf.Sin(angle)*radius);
+
+                    // Avoiding position which are close to the connecting pipes
+                    bool overlap_flag = false;
+                    void RemoveClosePos(){
+                        foreach (KeyValuePair<string, List<string>> l in s_h_links){
+                            foreach(var node in l.Value){
+                                var lineStart = positions[l.Key];
+                                var lineEnd = positions[node];
+                                var point = pos;
+                                Vector3 rhs = point - lineStart;
+                                Vector3 vector2 = lineEnd - lineStart;
+                                float magnitude = vector2.magnitude;
+                                Vector3 lhs = vector2;
+                                if (magnitude > 1E-06f)
+                                {
+                                    lhs = (Vector3)(lhs / magnitude);
+                                }
+                                float num2 = Mathf.Clamp(Vector3.Dot(lhs, rhs), 0f, magnitude);
+                                var d = Vector3.Magnitude(lineStart + ((Vector3)(lhs * num2)) - point);
+
+                                if(Math.Abs(d) < 1.0f)
+                                {
+                                    overlap_flag = true;
+                                    return;
+                                }    
+                            }
+                        }
+                    };
+                    
+                    RemoveClosePos();
+                    if(overlap_flag==true){
+                        continue;
+                    }
+
+                    // Saparate out visible positions
+                    if(pos.x < layerCoordinates[height][Constants.L_START].x || 
+                        pos.x > layerCoordinates[height][Constants.L_END].x ||
+                        pos.z < layerCoordinates[height][Constants.L_START].z || 
+                        pos.z > layerCoordinates[height][Constants.L_END].z){
+                        visible_pos.Add(pos);
+                        // GameObject go = Instantiate(green_prefab) as GameObject;
+                        // go.transform.position = pos;
+                    }
+                    // Saparate out positions which are aligned to outer edge of layer
+                    else if(pos.x == layerCoordinates[height][Constants.L_START].x || 
+                        pos.x == layerCoordinates[height][Constants.L_END].x ||
+                        pos.z == layerCoordinates[height][Constants.L_START].z || 
+                        pos.z == layerCoordinates[height][Constants.L_END].z){
+                        aligned_pos.Add(pos);
+                        // GameObject go = Instantiate(yellow_prefab) as GameObject;
+                        // go.transform.position = pos;
+                    }
+                    // Saparate out hard to invisible positions 
+                    else{
+                        invisible_pos.Add(pos);
+                        // GameObject go = Instantiate(red_prefab) as GameObject;
+                        // go.transform.position = pos;
+                    }
+                }
+            }
+            // Setting up the positions for every satellite based upon the above analysis
+            int index = 0;
+            Random random = new Random();
+            foreach(var sat in link.Value){
+                if(visible_pos.Count > 0){
+                    index = random. Next(visible_pos.Count);
+                    positions.Add(sat, visible_pos[index]);
+                    visible_pos.RemoveAt(index);
+                }
+                else if(aligned_pos.Count > 0){
+                    index = random. Next(aligned_pos.Count);
+                    positions.Add(sat, aligned_pos[index]);
+                    aligned_pos.RemoveAt(index);
+                }
+                else if(invisible_pos.Count > 0){
+                    index = random. Next(invisible_pos.Count);
+                    positions.Add(sat, invisible_pos[index]);
+                    invisible_pos.RemoveAt(index);
+                }
+                else{
+                    // If no position left to place a satellite then display debug log
+                    Debug.Log("Number of satellites on one switch exceeded it's maximum limit");
+                }
+            }
+        }
     }
 
     // Display topology on the screen
@@ -178,7 +346,7 @@ public class Topology : MonoBehaviour
             GameObject go = Instantiate(h_prefab) as GameObject;
             // goList.Add(go);
             go.transform.position = positions[h];
-            DisplayLabels(ref go, h, true);
+            DisplayLabels(ref go, h, "Host");
         }
 
         // Showing Switches
@@ -187,21 +355,35 @@ public class Topology : MonoBehaviour
             GameObject go = Instantiate(s_prefab) as GameObject;
             goList.Add(go);
             go.transform.position = positions[s];
-            DisplayLabels(ref go, s, false);
+            DisplayLabels(ref go, s, "Switch");
         }
 
-        // // Showing satellites
-        // GameObject sat_prefab = Resources.Load("Satellite") as GameObject;
-        // float radius = 3f;
-        // for (int i = 0; i < 1; i++)
-        // {
-        //     float angle = i * Mathf.PI*2f / 8;
-        //     Vector3 newPos = new Vector3(positions["p0a0"].x+Mathf.Cos(angle)*radius, positions["p0a0"].y, positions["p0a0"].z+Mathf.Sin(angle)*radius);
-        //     GameObject go = Instantiate(sat_prefab) as GameObject;
-        //     go.transform.position = newPos;
-        // }
+        // Showing satellites
+        GameObject sat_prefab = Resources.Load("Satellite") as GameObject;
+        foreach(string sat in sat_names){
+            GameObject go = Instantiate(sat_prefab) as GameObject;
+            goList.Add(go);
+            go.transform.position = positions[sat];
+            DisplayLabels(ref go, sat, "Sat");
+        }
 
-        // Showing pipes (links)
+        // Showing pipes (links between switch an satellites)
+        GameObject sat_link_prefab = Resources.Load("SatLink") as GameObject;
+        foreach (KeyValuePair<string, List<string>> link in sat_links){
+            foreach(var sat in link.Value){
+                GameObject go = Instantiate(sat_link_prefab) as GameObject;
+                // Setting the position
+                go.transform.position = (positions[link.Key]-positions[sat])/2.0f + positions[sat];
+                // Scaling
+                var scale = go.transform.localScale;
+                scale.y = (positions[link.Key]-positions[sat]).magnitude;
+                go.transform.localScale = scale/2.0f;
+                // Rotation
+                go.transform.rotation = Quaternion.FromToRotation(Vector3.up, positions[link.Key]-positions[sat]);
+            }
+        }
+
+        // Showing pipes (links between switches and hosts)
         GameObject link_prefab = Resources.Load("Link") as GameObject;
         foreach (KeyValuePair<string, List<string>> link in s_h_links){
             foreach(var node in link.Value){
@@ -218,12 +400,16 @@ public class Topology : MonoBehaviour
         }
     }
     // Display labels on the nodes
-    void DisplayLabels(ref GameObject go, string label, bool is_host){
+    void DisplayLabels(ref GameObject go, string label, string obj_type){
         // 0. make the clone of this and make it a child
         var innerObject = new GameObject(go.name + "_original", typeof(MeshRenderer));
+        // if(is_host){
+        //     go.transform.rotation = Quaternion.FromToRotation(Vector3.up, go.transform.forward*(90));
+        //     innerObject.transform.rotation = Quaternion.FromToRotation(Vector3.up, innerObject.transform.forward*(90));
+        // }
         innerObjectList.Add(innerObject);
         var innerMesh = innerObject.AddComponent<MeshFilter>();
-        if(is_host==false){
+        if(obj_type=="Switch" || obj_type=="Sat"){
             innerMeshList.Add(innerMesh);
         }
         innerMesh.transform.SetParent(go.transform);
@@ -292,9 +478,12 @@ public class Topology : MonoBehaviour
         text.alignment = TextAnchor.MiddleCenter;
         text.color = Color.black;
         text.fontSize = 60;
-        if(is_host){
+        if(obj_type=="Host"){
             text.fontSize = 120;
             text.color = Color.white;
+        }
+        else if(obj_type=="Sat"){
+            text.fontSize = 40;
         }
         text.horizontalOverflow = HorizontalWrapMode.Wrap;
         text.verticalOverflow = VerticalWrapMode.Overflow;
@@ -303,7 +492,10 @@ public class Topology : MonoBehaviour
         text.gameObject.layer = LayerMask.NameToLayer(LayerToUse);
 
         text.text = label + "            ";
-        if(is_host){
+        if(obj_type=="Sat"){
+            text.text = label + "                   ";
+        }
+        if(obj_type=="Host"){
             text.text = label;
         }
 

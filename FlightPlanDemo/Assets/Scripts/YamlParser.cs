@@ -41,7 +41,7 @@ public class YamlParser : MonoBehaviour
 
     // Get file from file system or server
     public IEnumerator GetYaml(){
-        var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4_ALV_split2.yml");
+        var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4_splits2_ALV_Complete_All.yml");
         
 
         if (filePath.Contains ("://") || filePath.Contains (":///")) {
@@ -162,7 +162,7 @@ public class YamlParser : MonoBehaviour
             }
         }
 
-        // Updating supportive devices
+        // Extracting links between switches and satellites
         foreach (string sat in sat_names){
             // find out satellite name and connected switch
             string sat_name = sat;

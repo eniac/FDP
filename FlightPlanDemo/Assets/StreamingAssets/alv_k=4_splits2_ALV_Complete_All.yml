@@ -17,6 +17,8 @@ hosts:
          programs:
              - cmd: "echo 'Hello from p0h0'"
                fg: True
+             - cmd: "sudo ifconfig p0h0-eth1 mtu 1450 up"
+               fg: True
              # p0e0
              - cmd: "sudo arp -v -i p0h0-eth1 -s 192.0.0.1 02:00:00:42:82:67"
                fg: True
@@ -59,6 +61,8 @@ hosts:
                port: 1
          programs:
              - cmd: "echo 'Hello from p0h1'"
+               fg: True
+             - cmd: "sudo ifconfig p0h1-eth1 mtu 1450 up"
                fg: True
              # p0e0
              - cmd: "sudo arp -v -i p0h1-eth1 -s 192.0.0.1 02:00:00:95:e8:81"
@@ -103,6 +107,8 @@ hosts:
          programs:
              - cmd: "echo 'Hello from p0h2'"
                fg: True
+             - cmd: "sudo ifconfig p0h2-eth1 mtu 1450 up"
+               fg: True
              # p0e1
              - cmd: "sudo arp -v -i p0h2-eth1 -s 192.0.1.1 02:00:00:40:e8:fb"
                fg: True
@@ -145,6 +151,8 @@ hosts:
                port: 1
          programs:
              - cmd: "echo 'Hello from p0h3'"
+               fg: True
+             - cmd: "sudo ifconfig p0h3-eth1 mtu 1450 up"
                fg: True
              # p0e1
              - cmd: "sudo arp -v -i p0h3-eth1 -s 192.0.1.1 02:00:00:ba:e6:af"
@@ -189,6 +197,8 @@ hosts:
          programs:
              - cmd: "echo 'Hello from p1h0'"
                fg: True
+             - cmd: "sudo ifconfig p1h0-eth1 mtu 1450 up"
+               fg: True
              # p1e0
              - cmd: "sudo arp -v -i p1h0-eth1 -s 192.1.0.1 02:00:00:16:c1:e0"
                fg: True
@@ -231,6 +241,8 @@ hosts:
                port: 1
          programs:
              - cmd: "echo 'Hello from p1h1'"
+               fg: True
+             - cmd: "sudo ifconfig p1h1-eth1 mtu 1450 up"
                fg: True
              # p1e0
              - cmd: "sudo arp -v -i p1h1-eth1 -s 192.1.0.1 02:00:00:ec:8a:64"
@@ -275,6 +287,8 @@ hosts:
          programs:
              - cmd: "echo 'Hello from p1h2'"
                fg: True
+             - cmd: "sudo ifconfig p1h2-eth1 mtu 1450 up"
+               fg: True
              # p1e1
              - cmd: "sudo arp -v -i p1h2-eth1 -s 192.1.1.1 02:00:00:d9:e5:96"
                fg: True
@@ -317,6 +331,8 @@ hosts:
                port: 1
          programs:
              - cmd: "echo 'Hello from p1h3'"
+               fg: True
+             - cmd: "sudo ifconfig p1h3-eth1 mtu 1450 up"
                fg: True
              # p1e1
              - cmd: "sudo arp -v -i p1h3-eth1 -s 192.1.1.1 02:00:00:a9:ff:ea"
@@ -361,6 +377,8 @@ hosts:
          programs:
              - cmd: "echo 'Hello from p2h0'"
                fg: True
+             - cmd: "sudo ifconfig p2h0-eth1 mtu 1450 up"
+               fg: True
              # p2e0
              - cmd: "sudo arp -v -i p2h0-eth1 -s 192.2.0.1 02:00:00:d6:eb:2b"
                fg: True
@@ -403,6 +421,8 @@ hosts:
                port: 1
          programs:
              - cmd: "echo 'Hello from p2h1'"
+               fg: True
+             - cmd: "sudo ifconfig p2h1-eth1 mtu 1450 up"
                fg: True
              # p2e0
              - cmd: "sudo arp -v -i p2h1-eth1 -s 192.2.0.1 02:00:00:ad:d8:57"
@@ -447,6 +467,8 @@ hosts:
          programs:
              - cmd: "echo 'Hello from p2h2'"
                fg: True
+             - cmd: "sudo ifconfig p2h2-eth1 mtu 1450 up"
+               fg: True
              # p2e1
              - cmd: "sudo arp -v -i p2h2-eth1 -s 192.2.1.1 02:00:00:2c:78:68"
                fg: True
@@ -489,6 +511,8 @@ hosts:
                port: 1
          programs:
              - cmd: "echo 'Hello from p2h3'"
+               fg: True
+             - cmd: "sudo ifconfig p2h3-eth1 mtu 1450 up"
                fg: True
              # p2e1
              - cmd: "sudo arp -v -i p2h3-eth1 -s 192.2.1.1 02:00:00:5b:d6:40"
@@ -533,6 +557,8 @@ hosts:
          programs:
              - cmd: "echo 'Hello from p3h0'"
                fg: True
+             - cmd: "sudo ifconfig p3h0-eth1 mtu 1450 up"
+               fg: True
              # p3e0
              - cmd: "sudo arp -v -i p3h0-eth1 -s 192.3.0.1 02:00:00:fc:66:ad"
                fg: True
@@ -575,6 +601,8 @@ hosts:
                port: 1
          programs:
              - cmd: "echo 'Hello from p3h1'"
+               fg: True
+             - cmd: "sudo ifconfig p3h1-eth1 mtu 1450 up"
                fg: True
              # p3e0
              - cmd: "sudo arp -v -i p3h1-eth1 -s 192.3.0.1 02:00:00:00:d2:87"
@@ -619,6 +647,8 @@ hosts:
          programs:
              - cmd: "echo 'Hello from p3h2'"
                fg: True
+             - cmd: "sudo ifconfig p3h2-eth1 mtu 1450 up"
+               fg: True
              # p3e1
              - cmd: "sudo arp -v -i p3h2-eth1 -s 192.3.1.1 02:00:00:df:47:fa"
                fg: True
@@ -662,6 +692,8 @@ hosts:
          programs:
              - cmd: "echo 'Hello from p3h3'"
                fg: True
+             - cmd: "sudo ifconfig p3h3-eth1 mtu 1450 up"
+               fg: True
              # p3e1
              - cmd: "sudo arp -v -i p3h3-eth1 -s 192.3.1.1 02:00:00:14:46:73"
                fg: True
@@ -698,14 +730,50 @@ hosts:
              # p3h2
              - cmd: "sudo arp -v -i p3h3-eth1 -s 192.3.1.2 02:00:00:19:1e:a6"
 switches:
+    HL_V2_1 :
+         cfg: ../../build/bmv2/ALV_Complete_split2_hl3new.json
+         interfaces:
+             - link: c0
+               port: 1
+         cmds:
+             # Crosspod
+             - table_add ingress_compression.port_compression ingress_compression.set_port_compression 1 => 1
+             - table_add encoder_params.fec_params encoder_params.set_k_h 0 => 5 1
+             - table_add decoder_params.fec_params decoder_params.set_k_h 0 => 5 1
+    HL_V2_2 :
+         cfg: ../../build/bmv2/ALV_Complete_split2_hl3new.json
+         interfaces:
+             - link: c0
+               port: 1
+         cmds:
+             # Crosspod
+             # table_add egress_compression.port_compression egress_compression.set_port_compression 3 => 1
+             - table_add encoder_params.fec_params encoder_params.set_k_h 0 => 5 1
+             - table_add decoder_params.fec_params decoder_params.set_k_h 0 => 5 1
+             - table_add check_run_FEC_egress run_FEC_egress 192.3.0.2 => 1
+             - table_add check_run_FEC_egress run_FEC_egress 192.1.0.2 => 1
+    dropper2:
+        cfg: ../../build/bmv2/Dropper.json
+        interfaces:
+            - link: c0
+              mac: '02:00:00:7c:a1:d8'
+              port: 0
+            - link: p1a0
+              mac: '02:00:00:cb:15:9c'
+              port: 1
+        cmds:
+            - table_add forward set_egress 0 => 1
+            - table_add forward set_egress 1 => 0
+            - table_add dropper set_drop_rate 1 => 3 5
+            - table_add dropper set_drop_rate 0 => 3 5
     c0 :
-         cfg: ../../build/bmv2/ALV.json
+         cfg: ../../build/bmv2/ALV_Complete_split1_hl3new.json
          interfaces:
              - link: p0a0
                # ip: 192.4.1.1
                mac: '02:00:00:78:19:6f'
                port: 1
-             - link: p1a0
+             - link: dropper2 # connects to p1a0
                # ip: 192.4.1.1
                mac: '02:00:00:cb:15:9c'
                port: 2
@@ -717,6 +785,10 @@ switches:
                # ip: 192.4.1.1
                mac: '02:00:00:ca:dc:22'
                port: 4
+             - link: HL_V2_1
+               port: 5
+             - link: HL_V2_2
+               port: 6
          cmds:
              # Switching
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:9c:e9:f7 => 1
@@ -733,8 +805,48 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0010000&&&0xFFFF0000 => 192.1.2.1 2 0
              - table_add ipv4_forwarding ipv4_forward 0xC0020000&&&0xFFFF0000 => 192.2.2.1 3 0
              - table_add ipv4_forwarding ipv4_forward 0xC0030000&&&0xFFFF0000 => 192.3.2.1 4 0
+             # Crosspod (HL3new)
+             # (No commands to this element in this case)
+    HL_V3_1 :
+         cfg: ../../build/bmv2/ALV_Complete_split2_hl3new_2.json
+         interfaces:
+             - link: c1
+               port: 1
+         cmds:
+             # Crosspod
+             - table_add decoder_params.fec_params decoder_params.set_k_h 0 => 5 1
+    HL_V3_2 :
+         cfg: ../../build/bmv2/ALV_Complete_split2_hl3new_2.json
+         interfaces:
+             - link: c1
+               port: 1
+         cmds:
+             # Crosspod
+             - table_add ingress_compression.port_compression ingress_compression.set_port_compression 1 => 1
+    HL_V3_3 :
+         cfg: ../../build/bmv2/ALV_Complete_split2_hl3new_2.json
+         interfaces:
+             - link: c1
+               port: 1
+         #cmds:
+             # Crosspod
+    HL_V3_4 :
+         cfg: ../../build/bmv2/ALV_Complete_split2_hl3new_2.json
+         interfaces:
+             - link: c1
+               port: 1
+         #cmds:
+             # Crosspod
+    HL_V3_5 :
+         cfg: ../../build/bmv2/ALV_Complete_split2_hl3new_2.json
+         interfaces:
+             - link: c1
+               port: 1
+         cmds:
+             # Crosspod
+             - table_add check_run_FEC_egress run_FEC_egress 192.3.0.2 => 1
     c1 :
-         cfg: ../../build/bmv2/ALV.json
+         cfg: ../../build/bmv2/ALV_Complete_split1_hl3new_2.json
          interfaces:
              - link: p0a0
                # ip: 192.4.1.2
@@ -752,6 +864,16 @@ switches:
                # ip: 192.4.1.2
                mac: '02:00:00:df:47:04'
                port: 4
+             - link: HL_V3_1
+               port: 5
+             - link: HL_V3_2
+               port: 6
+             - link: HL_V3_3
+               port: 7
+             - link: HL_V3_4
+               port: 8
+             - link: HL_V3_5
+               port: 9
          cmds:
              # Switching
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:ce:8c:03 => 1
@@ -768,6 +890,8 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0010000&&&0xFFFF0000 => 192.1.2.1 2 0
              - table_add ipv4_forwarding ipv4_forward 0xC0020000&&&0xFFFF0000 => 192.2.2.1 3 0
              - table_add ipv4_forwarding ipv4_forward 0xC0030000&&&0xFFFF0000 => 192.3.2.1 4 0
+             # Crosspod
+             # (No commands to this element in this case)
     c2 :
          cfg: ../../build/bmv2/ALV.json
          interfaces:
@@ -838,8 +962,30 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0010000&&&0xFFFF0000 => 192.1.3.1 2 0
              - table_add ipv4_forwarding ipv4_forward 0xC0020000&&&0xFFFF0000 => 192.2.3.1 3 0
              - table_add ipv4_forwarding ipv4_forward 0xC0030000&&&0xFFFF0000 => 192.3.3.1 4 0
+    D_V2_1 :
+         cfg: ../../build/bmv2/ALV_Complete_split2.json
+         interfaces:
+             - link: p0a0
+               port: 1
+         cmds:
+             # Crosspod -- ports here refer to those on p0a0
+             # table_add ingress_compression.port_compression ingress_compression.set_port_compression 3 => 1
+             # table_add egress_compression.port_compression egress_compression.set_port_compression 3 => 1
+             - table_add encoder_params.fec_params encoder_params.set_k_h 0 => 5 1
+             - table_add decoder_params.fec_params decoder_params.set_k_h 0 => 5 1
+    D_V2_2 :
+         cfg: ../../build/bmv2/ALV_Complete_split2.json
+         interfaces:
+             - link: p0a0
+               port: 1
+         cmds:
+             # Crosspod -- ports here refer to those on p0a0
+             # table_add ingress_compression.port_compression ingress_compression.set_port_compression 3 => 1
+             # table_add egress_compression.port_compression egress_compression.set_port_compression 3 => 1
+             - table_add encoder_params.fec_params encoder_params.set_k_h 0 => 5 1
+             - table_add decoder_params.fec_params decoder_params.set_k_h 0 => 5 1
     p0a0 :
-         cfg: ../../build/bmv2/ALV.json
+         cfg: ../../build/bmv2/ALV_Complete_split1.json
          interfaces:
              - link: c0
                # ip: 192.0.2.1
@@ -849,7 +995,7 @@ switches:
                # ip: 192.0.2.1
                mac: '02:00:00:ce:8c:03'
                port: 2
-             - link: p0e0
+             - link: dropper # connects to p0e0
                # ip: 192.0.2.1
                mac: '02:00:00:ab:00:7e'
                port: 3
@@ -857,6 +1003,10 @@ switches:
                # ip: 192.0.2.1
                mac: '02:00:00:de:30:91'
                port: 4
+             - link: D_V2_1
+               port: 5
+             - link: D_V2_2
+               port: 6
          cmds:
              # Switching
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:78:19:6f => 1
@@ -873,6 +1023,9 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0000100&&&0xFFFFFF00 => 192.0.1.1 4 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.4.1.1 1 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.4.1.2 2 0
+             # Crosspod
+             - table_add check_run_Complete_ingress run_Complete_ingress 3 =>
+             - table_add check_run_Complete_egress run_Complete_egress 3 =>
     p0a1 :
          cfg: ../../build/bmv2/ALV.json
          interfaces:
@@ -908,40 +1061,22 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0000100&&&0xFFFFFF00 => 192.0.1.1 4 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.4.2.2 2 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.4.2.1 1 0
-    FPoffload :
-         cfg: ../../build/bmv2/ALV_part2.json
-         interfaces:
-             - link: p0e0
-               port: 1
-         cmds:
-             # ARP
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.2 => 02:00:00:d8:c2:6b
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.3 => 02:00:00:c8:4d:7a
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.2.1 => 02:00:00:ab:00:7e
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.3.1 => 02:00:00:9a:96:71
-             # Routing
-             - table_add ipv4_forwarding ipv4_forward 0xC0000002&&&0xFFFFFFFF => 192.0.0.2 1 0
-             - table_add ipv4_forwarding ipv4_forward 0xC0000003&&&0xFFFFFFFF => 192.0.0.3 2 0
-             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.0.2.1 3 0
-             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.0.3.1 4 0
-    FPoffload2 :
-         cfg: ../../build/bmv2/ALV_part2.json
-         interfaces:
-             - link: p0e0
-               port: 1
-         cmds:
-             # ARP
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.2 => 02:00:00:d8:c2:6b
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.3 => 02:00:00:c8:4d:7a
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.2.1 => 02:00:00:ab:00:7e
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.3.1 => 02:00:00:9a:96:71
-             # Routing
-             - table_add ipv4_forwarding ipv4_forward 0xC0000002&&&0xFFFFFFFF => 192.0.0.2 1 0
-             - table_add ipv4_forwarding ipv4_forward 0xC0000003&&&0xFFFFFFFF => 192.0.0.3 2 0
-             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.0.2.1 3 0
-             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.0.3.1 4 0
+    dropper:
+        cfg: ../../build/bmv2/Dropper.json
+        interfaces:
+            - link: p0e0
+              mac: '02:00:00:ab:00:7e'
+              port: 0
+            - link: p0a0
+              mac: '02:00:00:b8:66:d3'
+              port: 1
+        cmds:
+            - table_add forward set_egress 0 => 1
+            - table_add forward set_egress 1 => 0
+            - table_add dropper set_drop_rate 1 => 3 5
+            - table_add dropper set_drop_rate 0 => 3 5
     p0e0 :
-         cfg: ../../build/bmv2/ALV_part1.json
+         cfg: ../../build/bmv2/ALV_Complete.json
          interfaces:
              - link: p0h0
                # ip: 192.0.0.1
@@ -951,7 +1086,7 @@ switches:
                # ip: 192.0.0.1
                mac: '02:00:00:95:e8:81'
                port: 2
-             - link: p0a0
+             - link: dropper # connects to p0a0
                # ip: 192.0.0.1
                mac: '02:00:00:b8:66:d3'
                port: 3
@@ -959,28 +1094,31 @@ switches:
                # ip: 192.0.0.1
                mac: '02:00:00:d0:8a:f6'
                port: 4
-            #  - link: FPoffload
-            #    port: 5
-            #  - link: FPoffload2
-            #    port: 6
          cmds:
              # Switching
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:d8:c2:6b => 1
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:c8:4d:7a => 2
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:ab:00:7e => 3
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:9a:96:71 => 4
-             ## ARP
-             #- table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.2 => 02:00:00:d8:c2:6b
-             #- table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.3 => 02:00:00:c8:4d:7a
-             #- table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.2.1 => 02:00:00:ab:00:7e
-             #- table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.3.1 => 02:00:00:9a:96:71
-             ## Routing
-             #- table_add ipv4_forwarding ipv4_forward 0xC0000002&&&0xFFFFFFFF => 192.0.0.2 1 0
-             #- table_add ipv4_forwarding ipv4_forward 0xC0000003&&&0xFFFFFFFF => 192.0.0.3 2 0
-             #- table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.0.2.1 3 0
-             #- table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.0.3.1 4 0
+             # ARP
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.2 => 02:00:00:d8:c2:6b
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.3 => 02:00:00:c8:4d:7a
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.2.1 => 02:00:00:ab:00:7e
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.3.1 => 02:00:00:9a:96:71
+             # Routing
+             - table_add ipv4_forwarding ipv4_forward 0xC0000002&&&0xFFFFFFFF => 192.0.0.2 1 0
+             - table_add ipv4_forwarding ipv4_forward 0xC0000003&&&0xFFFFFFFF => 192.0.0.3 2 0
+             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.0.2.1 3 0
+             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.0.3.1 4 0
+             # Crosspod
+             - table_add check_run_Complete_ingress run_Complete_ingress 3 =>
+             - table_add check_run_Complete_egress run_Complete_egress 3 =>
+             # table_add ingress_compression.port_compression ingress_compression.set_port_compression 3 => 1
+             # table_add egress_compression.port_compression egress_compression.set_port_compression 3 => 1
+             - table_add encoder_params.fec_params encoder_params.set_k_h 0 => 5 1
+             - table_add decoder_params.fec_params decoder_params.set_k_h 0 => 5 1
     p0e1 :
-         cfg: ../../build/bmv2/ALV.json
+         cfg: ../../build/bmv2/ALV_FW.json
          interfaces:
              - link: p0h2
                # ip: 192.0.1.1
@@ -1014,22 +1152,31 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0000103&&&0xFFFFFFFF => 192.0.1.3 2 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.0.3.1 4 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.0.2.1 3 0
-    Dm3 :
-         cfg: ../../build/bmv2/ALV_S2part2.json
-         interfaces:
-             - link: p2e0
-               port: 1
-         cmds:
-             # ARP
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.2 => 02:00:00:33:5b:bb
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.3 => 02:00:00:ac:f7:0e
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.2.1 => 02:00:00:63:6a:a6
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.3.1 => 02:00:00:e2:7e:4f
+         # for firewall.p4
+         # p0h3 is considered "inside"; other hosts are "outside".
+             - table_add check_ports set_direction 1 1 => 0
+             - table_add check_ports set_direction 1 2 => 1
+             - table_add check_ports set_direction 1 3 => 0
+             - table_add check_ports set_direction 1 4 => 0
 
+             - table_add check_ports set_direction 2 1 => 0
+             - table_add check_ports set_direction 2 2 => 0
+             - table_add check_ports set_direction 2 3 => 0
+             - table_add check_ports set_direction 2 4 => 0
+
+             - table_add check_ports set_direction 3 1 => 0
+             - table_add check_ports set_direction 3 2 => 1
+             - table_add check_ports set_direction 3 3 => 0
+             - table_add check_ports set_direction 3 4 => 0
+
+             - table_add check_ports set_direction 4 1 => 0
+             - table_add check_ports set_direction 4 2 => 1
+             - table_add check_ports set_direction 4 3 => 0
+             - table_add check_ports set_direction 4 4 => 0
     p1a0 :
-         cfg: ../../build/bmv2/ALV.json
+         cfg: ../../build/bmv2/ALV_Complete.json
          interfaces:
-             - link: c0
+             - link: dropper2 # connects to c0
                # ip: 192.1.2.1
                mac: '02:00:00:7c:a1:d8'
                port: 1
@@ -1061,8 +1208,29 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0010100&&&0xFFFFFF00 => 192.1.1.1 4 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.4.1.1 1 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.4.1.2 2 0
+             # Crosspod
+             - table_add check_run_Complete_ingress run_Complete_ingress 3 =>
+             - table_add check_run_Complete_egress run_Complete_egress 3 =>
+             - table_add check_run_Complete_ingress run_Complete_ingress 1 =>
+             - table_add check_run_Complete_egress run_Complete_egress 1 =>
+             - table_add ingress_compression.port_compression ingress_compression.set_port_compression 1 => 1
+             # table_add ingress_compression.port_compression ingress_compression.set_port_compression 3 => 1
+             # table_add egress_compression.port_compression egress_compression.set_port_compression 3 => 1
+             - table_add encoder_params.fec_params encoder_params.set_k_h 0 => 5 1
+             - table_add decoder_params.fec_params decoder_params.set_k_h 0 => 5 1
+    FPolS2 :
+         cfg: ../../build/bmv2/ALV_S2part2.json
+         interfaces:
+             - link: p1a1
+               port: 1
+         cmds:
+             # ARP
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.4.2.1 => 02:00:00:93:64:5e
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.4.2.2 => 02:00:00:f6:2f:1f
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.0.1 => 02:00:00:05:6c:19
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.1.1 => 02:00:00:59:2e:80
     p1a1 :
-         cfg: ../../build/bmv2/ALV.json
+         cfg: ../../build/bmv2/ALV_S2part1.json
          interfaces:
              - link: c2
                # ip: 192.1.3.1
@@ -1080,6 +1248,8 @@ switches:
                # ip: 192.1.3.1
                mac: '02:00:00:0a:19:fc'
                port: 4
+             - link: FPolS2
+               port: 5
          cmds:
              # Switching
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:93:64:5e => 1
@@ -1087,17 +1257,58 @@ switches:
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:05:6c:19 => 3
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:59:2e:80 => 4
              # ARP
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.4.2.1 => 02:00:00:93:64:5e
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.4.2.2 => 02:00:00:f6:2f:1f
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.0.1 => 02:00:00:05:6c:19
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.1.1 => 02:00:00:59:2e:80
+             # table_add next_hop_arp_lookup arp_lookup_set_addresses 192.4.2.1 => 02:00:00:93:64:5e
+             # table_add next_hop_arp_lookup arp_lookup_set_addresses 192.4.2.2 => 02:00:00:f6:2f:1f
+             # table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.0.1 => 02:00:00:05:6c:19
+             # table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.1.1 => 02:00:00:59:2e:80
              # Routing
              - table_add ipv4_forwarding ipv4_forward 0xC0010000&&&0xFFFFFF00 => 192.1.0.1 3 0
              - table_add ipv4_forwarding ipv4_forward 0xC0010100&&&0xFFFFFF00 => 192.1.1.1 4 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.4.2.2 2 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.4.2.1 1 0
+    D_V3_1 :
+         cfg: ../../build/bmv2/ALV_Complete_2_split2.json
+         interfaces:
+             - link: p1e0
+               port: 1
+         cmds:
+             # Crosspod -- ports here refer to those on p1e0
+             - table_add encoder_params.fec_params encoder_params.set_k_h 0 => 5 1
+    D_V3_2 :
+         cfg: ../../build/bmv2/ALV_Complete_2_split3.json
+         interfaces:
+             - link: p1e0
+               port: 1
+         cmds:
+             # Crosspod -- ports here refer to those on p1e0
+             - table_add decoder_params.fec_params decoder_params.set_k_h 0 => 5 1
+    D_V3_3 :
+         cfg: ../../build/bmv2/ALV_Complete_2_split4.json
+         interfaces:
+             - link: p1e0
+               port: 1
+        #cmds:
+        #    # Crosspod -- ports here refer to those on p1e0
+        #    - table_add ingress_compression.port_compression ingress_compression.set_port_compression 3 => 1
+        #    - table_add egress_compression.port_compression egress_compression.set_port_compression 3 => 1
+    D_V3_4 :
+         cfg: ../../build/bmv2/ALV_Complete_2_split5.json
+         interfaces:
+             - link: p1e0
+               port: 1
+        #cmds:
+        #    # Crosspod -- ports here refer to those on p1e0
+    D_V3_5 :
+         cfg: ../../build/bmv2/ALV_Complete_2_split6.json
+         interfaces:
+             - link: p1e0
+               port: 1
+        #cmds:
+        #    # Crosspod -- ports here refer to those on p1e0
+        #    - table_add ingress_compression.port_compression ingress_compression.set_port_compression 3 => 1
+        #    - table_add egress_compression.port_compression egress_compression.set_port_compression 3 => 1
     p1e0 :
-         cfg: ../../build/bmv2/ALV.json
+         cfg: ../../build/bmv2/ALV_Complete_2_split1.json
          interfaces:
              - link: p1h0
                # ip: 192.1.0.1
@@ -1115,6 +1326,16 @@ switches:
                # ip: 192.1.0.1
                mac: '02:00:00:05:6c:19'
                port: 4
+             - link: D_V3_1
+               port: 5
+             - link: D_V3_2
+               port: 6
+             - link: D_V3_3
+               port: 7
+             - link: D_V3_4
+               port: 8
+             - link: D_V3_5
+               port: 9
          cmds:
              # Switching
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:9c:a8:79 => 1
@@ -1131,8 +1352,38 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0010003&&&0xFFFFFFFF => 192.1.0.3 2 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.1.2.1 3 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.1.3.1 4 0
+             # Crosspod
+             - table_add check_run_Complete_ingress run_Complete_ingress 3 =>
+             - table_add check_run_Complete_egress run_Complete_egress 3 =>
+    D_FW_1 :
+         cfg: ../../build/bmv2/ALV_FW_split2.json
+         interfaces:
+             - link: p1e1
+               port: 1
+         cmds:
+         # firewall.p4 -- ports here refer to those on p1e1
+         # p1h3 is considered "inside"; other hosts are "outside".
+             - table_add check_ports set_direction 1 1 => 0
+             - table_add check_ports set_direction 1 2 => 1
+             - table_add check_ports set_direction 1 3 => 0
+             - table_add check_ports set_direction 1 4 => 0
+
+             - table_add check_ports set_direction 2 1 => 0
+             - table_add check_ports set_direction 2 2 => 0
+             - table_add check_ports set_direction 2 3 => 0
+             - table_add check_ports set_direction 2 4 => 0
+
+             - table_add check_ports set_direction 3 1 => 0
+             - table_add check_ports set_direction 3 2 => 1
+             - table_add check_ports set_direction 3 3 => 0
+             - table_add check_ports set_direction 3 4 => 0
+
+             - table_add check_ports set_direction 4 1 => 0
+             - table_add check_ports set_direction 4 2 => 1
+             - table_add check_ports set_direction 4 3 => 0
+             - table_add check_ports set_direction 4 4 => 0
     p1e1 :
-         cfg: ../../build/bmv2/ALV.json
+         cfg: ../../build/bmv2/ALV_FW_split1.json
          interfaces:
              - link: p1h2
                # ip: 192.1.1.1
@@ -1150,6 +1401,8 @@ switches:
                # ip: 192.1.1.1
                mac: '02:00:00:59:2e:80'
                port: 4
+             - link: D_FW_1
+               port: 5
          cmds:
              # Switching
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:b4:46:cf => 1
@@ -1236,19 +1489,8 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0020100&&&0xFFFFFF00 => 192.2.1.1 4 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.4.2.2 2 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.4.2.1 1 0
-    FPolS2 :
-         cfg: ../../build/bmv2/ALV_S2part2.json
-         interfaces:
-             - link: p2e0
-               port: 1
-         cmds:
-             # ARP
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.2 => 02:00:00:33:5b:bb
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.3 => 02:00:00:ac:f7:0e
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.2.1 => 02:00:00:63:6a:a6
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.3.1 => 02:00:00:e2:7e:4f
     p2e0 :
-         cfg: ../../build/bmv2/ALV_S2part1.json
+         cfg: ../../build/bmv2/ALV.json
          interfaces:
              - link: p2h0
                # ip: 192.2.0.1
@@ -1266,37 +1508,22 @@ switches:
                # ip: 192.2.0.1
                mac: '02:00:00:7c:8f:c1'
                port: 4
-             - link: FPolS2
-               port: 5
          cmds:
              # Switching
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:33:5b:bb => 1
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:ac:f7:0e => 2
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:63:6a:a6 => 3
              - table_add mac_forwarding mac_forward_set_egress 02:00:00:e2:7e:4f => 4
-             ## ARP
-             #- table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.2 => 02:00:00:33:5b:bb
-             #- table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.3 => 02:00:00:ac:f7:0e
-             #- table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.2.1 => 02:00:00:63:6a:a6
-             #- table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.3.1 => 02:00:00:e2:7e:4f
-             # Routing
-             - table_add ipv4_forwarding ipv4_forward 0xC0020002&&&0xFFFFFFFF => 192.2.0.2 1 0
-             - table_add ipv4_forwarding ipv4_forward 0xC0020003&&&0xFFFFFFFF => 192.2.0.3 2 0
-             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.2.2.1 3 0
-             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.2.3.1 4 0
-
-    Dm1 :
-         cfg: ../../build/bmv2/ALV_S2part2.json
-         interfaces:
-             - link: p2e1
-               port: 1
-         cmds:
              # ARP
              - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.2 => 02:00:00:33:5b:bb
              - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.3 => 02:00:00:ac:f7:0e
              - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.2.1 => 02:00:00:63:6a:a6
              - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.3.1 => 02:00:00:e2:7e:4f
-
+             # Routing
+             - table_add ipv4_forwarding ipv4_forward 0xC0020002&&&0xFFFFFFFF => 192.2.0.2 1 0
+             - table_add ipv4_forwarding ipv4_forward 0xC0020003&&&0xFFFFFFFF => 192.2.0.3 2 0
+             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.2.2.1 3 0
+             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.2.3.1 4 0
     p2e1 :
          cfg: ../../build/bmv2/ALV.json
          interfaces:
@@ -1332,18 +1559,6 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0020103&&&0xFFFFFFFF => 192.2.1.3 2 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.2.3.1 4 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.2.2.1 3 0
-    Dm2 :
-         cfg: ../../build/bmv2/ALV_S2part2.json
-         interfaces:
-             - link: p3a0
-               port: 1
-         cmds:
-             # ARP
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.2 => 02:00:00:33:5b:bb
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.3 => 02:00:00:ac:f7:0e
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.2.1 => 02:00:00:63:6a:a6
-             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.3.1 => 02:00:00:e2:7e:4f
-
     p3a0 :
          cfg: ../../build/bmv2/ALV.json
          interfaces:
@@ -1379,31 +1594,6 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0030100&&&0xFFFFFF00 => 192.3.1.1 4 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.4.1.1 1 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.4.1.2 2 0
-
-    Dm4 :
-            cfg: ../../build/bmv2/ALV_S2part2.json
-            interfaces:
-                - link: p3a1
-                  port: 1
-            cmds:
-                # ARP
-                - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.2 => 02:00:00:33:5b:bb
-                - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.3 => 02:00:00:ac:f7:0e
-                - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.2.1 => 02:00:00:63:6a:a6
-                - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.3.1 => 02:00:00:e2:7e:4f
-
-    Dm8 :
-            cfg: ../../build/bmv2/ALV_S2part2.json
-            interfaces:
-                - link: c1
-                  port: 1
-            cmds:
-                # ARP
-                - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.2 => 02:00:00:33:5b:bb
-                - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.0.3 => 02:00:00:ac:f7:0e
-                - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.2.1 => 02:00:00:63:6a:a6
-                - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.3.1 => 02:00:00:e2:7e:4f
-
     p3a1 :
          cfg: ../../build/bmv2/ALV.json
          interfaces:
@@ -1509,260 +1699,3 @@ switches:
              - table_add ipv4_forwarding ipv4_forward 0xC0030103&&&0xFFFFFFFF => 192.3.1.3 2 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.3.3.1 4 0
              - table_add ipv4_forwarding ipv4_forward 0xFFFFFF03&&&0x000000FF => 192.3.2.1 3 0
-# All-to-all ping test parameters:
-#   --fg-host-prog "p0h0: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p0h0: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p0h0: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p0h0: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p0h0: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p0h0: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p0h0: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p0h0: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p0h0: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p0h0: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p0h0: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p0h0: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p0h0: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p0h0: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p0h0: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p0h0: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p0h1: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p0h1: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p0h1: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p0h1: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p0h1: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p0h1: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p0h1: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p0h1: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p0h1: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p0h1: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p0h1: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p0h1: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p0h1: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p0h1: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p0h1: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p0h1: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p0h2: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p0h2: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p0h2: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p0h2: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p0h2: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p0h2: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p0h2: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p0h2: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p0h2: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p0h2: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p0h2: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p0h2: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p0h2: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p0h2: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p0h2: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p0h2: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p0h3: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p0h3: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p0h3: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p0h3: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p0h3: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p0h3: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p0h3: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p0h3: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p0h3: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p0h3: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p0h3: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p0h3: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p0h3: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p0h3: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p0h3: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p0h3: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p1h0: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p1h0: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p1h0: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p1h0: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p1h0: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p1h0: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p1h0: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p1h0: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p1h0: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p1h0: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p1h0: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p1h0: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p1h0: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p1h0: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p1h0: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p1h0: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p1h1: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p1h1: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p1h1: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p1h1: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p1h1: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p1h1: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p1h1: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p1h1: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p1h1: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p1h1: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p1h1: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p1h1: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p1h1: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p1h1: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p1h1: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p1h1: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p1h2: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p1h2: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p1h2: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p1h2: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p1h2: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p1h2: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p1h2: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p1h2: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p1h2: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p1h2: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p1h2: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p1h2: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p1h2: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p1h2: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p1h2: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p1h2: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p1h3: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p1h3: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p1h3: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p1h3: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p1h3: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p1h3: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p1h3: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p1h3: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p1h3: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p1h3: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p1h3: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p1h3: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p1h3: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p1h3: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p1h3: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p1h3: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p2h0: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p2h0: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p2h0: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p2h0: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p2h0: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p2h0: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p2h0: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p2h0: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p2h0: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p2h0: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p2h0: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p2h0: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p2h0: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p2h0: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p2h0: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p2h0: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p2h1: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p2h1: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p2h1: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p2h1: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p2h1: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p2h1: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p2h1: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p2h1: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p2h1: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p2h1: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p2h1: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p2h1: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p2h1: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p2h1: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p2h1: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p2h1: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p2h2: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p2h2: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p2h2: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p2h2: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p2h2: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p2h2: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p2h2: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p2h2: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p2h2: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p2h2: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p2h2: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p2h2: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p2h2: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p2h2: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p2h2: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p2h2: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p2h3: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p2h3: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p2h3: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p2h3: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p2h3: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p2h3: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p2h3: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p2h3: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p2h3: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p2h3: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p2h3: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p2h3: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p2h3: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p2h3: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p2h3: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p2h3: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p3h0: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p3h0: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p3h0: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p3h0: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p3h0: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p3h0: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p3h0: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p3h0: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p3h0: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p3h0: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p3h0: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p3h0: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p3h0: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p3h0: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p3h0: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p3h0: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p3h1: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p3h1: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p3h1: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p3h1: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p3h1: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p3h1: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p3h1: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p3h1: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p3h1: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p3h1: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p3h1: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p3h1: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p3h1: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p3h1: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p3h1: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p3h1: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p3h2: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p3h2: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p3h2: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p3h2: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p3h2: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p3h2: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p3h2: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p3h2: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p3h2: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p3h2: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p3h2: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p3h2: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p3h2: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p3h2: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p3h2: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p3h2: ping -c 1 192.3.1.3" \
-#   --fg-host-prog "p3h3: ping -c 1 192.0.0.2" \
-#   --fg-host-prog "p3h3: ping -c 1 192.0.0.3" \
-#   --fg-host-prog "p3h3: ping -c 1 192.0.1.2" \
-#   --fg-host-prog "p3h3: ping -c 1 192.0.1.3" \
-#   --fg-host-prog "p3h3: ping -c 1 192.1.0.2" \
-#   --fg-host-prog "p3h3: ping -c 1 192.1.0.3" \
-#   --fg-host-prog "p3h3: ping -c 1 192.1.1.2" \
-#   --fg-host-prog "p3h3: ping -c 1 192.1.1.3" \
-#   --fg-host-prog "p3h3: ping -c 1 192.2.0.2" \
-#   --fg-host-prog "p3h3: ping -c 1 192.2.0.3" \
-#   --fg-host-prog "p3h3: ping -c 1 192.2.1.2" \
-#   --fg-host-prog "p3h3: ping -c 1 192.2.1.3" \
-#   --fg-host-prog "p3h3: ping -c 1 192.3.0.2" \
-#   --fg-host-prog "p3h3: ping -c 1 192.3.0.3" \
-#   --fg-host-prog "p3h3: ping -c 1 192.3.1.2" \
-#   --fg-host-prog "p3h3: ping -c 1 192.3.1.3" \

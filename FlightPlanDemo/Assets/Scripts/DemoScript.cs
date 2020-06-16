@@ -17,7 +17,9 @@ public class DemoScript : MonoBehaviour
         yamlParser.SetLinks();
 
         // topo = new Topology();
-        topo.SetParameters(yamlParser.GetHostNames(), yamlParser.GetSwitchNames(), yamlParser.GetSatelliteNames(), yamlParser.GetSwitchHostLinks(), yamlParser.GetSatelliteLinks());
+        topo.SetParameters(yamlParser.GetHostNames(), yamlParser.GetSwitchNames(), 
+                            yamlParser.GetSatelliteNames(), yamlParser.GetSwitchHostLinks(), 
+                            yamlParser.GetSatelliteLinks());
         topo.Display();
         topo.GetPosition();
         topo.DisplayTopology();
