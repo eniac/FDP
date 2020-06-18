@@ -38,6 +38,9 @@ public class Topology : MonoBehaviour
     Dictionary<string, List<string>> s_h_links;
     Dictionary<string, List<string>> sat_links;
     List<GameObject> goList;
+    List<GameObject> switchObjectList;
+    List<GameObject> satObjectList;
+    List<GameObject> linkObjectList;
     List<MeshFilter> innerMeshList;
     List<GameObject> innerObjectList;
     Dictionary <string, Vector3> positions;
@@ -46,6 +49,9 @@ public class Topology : MonoBehaviour
     // Constructor of class
     public Topology(){
         goList = new List<GameObject>();
+        switchObjectList = new List<GameObject>();
+        satObjectList = new List<GameObject>();
+        linkObjectList = new List<GameObject>();
         innerMeshList = new List<MeshFilter>();
         innerObjectList = new List<GameObject>();
         positions = new Dictionary <string, Vector3>();
@@ -341,20 +347,37 @@ public class Topology : MonoBehaviour
     public void DisplayTopology(){
         // Showing hosts
         GameObject h_prefab = Resources.Load("Host") as GameObject;
+
         foreach (string h in h_names){
             // Instantiate Object and set position
+            // GameObject go = Instantiate(h_prefab) as GameObject;
+            // go.transform.eulerAngles = new Vector3(
+            //             go.transform.eulerAngles.x,
+            //             go.transform.eulerAngles.y,
+            //             go.transform.eulerAngles.z
+            //         );
+
+            // // goList.Add(go);
+            // go.transform.position = positions[h];
+            // DisplayLabels(ref go, h, "Host");
             GameObject go = Instantiate(h_prefab) as GameObject;
-            // goList.Add(go);
             go.transform.position = positions[h];
-            DisplayLabels(ref go, h, "Host");
+            
+            go.transform.Find("CanvasFront/Text").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasLeft/Text").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasRight/Text").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasBack/Text").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasTop/Text").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasBottom/Text").gameObject.GetComponent<Text>().text = h.ToString();
         }
 
         // Showing Switches
         GameObject s_prefab = Resources.Load("Switch") as GameObject;
         foreach (string s in s_names){
             GameObject go = Instantiate(s_prefab) as GameObject;
-            goList.Add(go);
             go.transform.position = positions[s];
+            goList.Add(go);
+            switchObjectList.Add(go);
             DisplayLabels(ref go, s, "Switch");
         }
 
@@ -362,8 +385,9 @@ public class Topology : MonoBehaviour
         GameObject sat_prefab = Resources.Load("Satellite") as GameObject;
         foreach(string sat in sat_names){
             GameObject go = Instantiate(sat_prefab) as GameObject;
-            goList.Add(go);
             go.transform.position = positions[sat];
+            goList.Add(go);
+            satObjectList.Add(go);
             DisplayLabels(ref go, sat, "Sat");
         }
 
@@ -380,6 +404,8 @@ public class Topology : MonoBehaviour
                 go.transform.localScale = scale/2.0f;
                 // Rotation
                 go.transform.rotation = Quaternion.FromToRotation(Vector3.up, positions[link.Key]-positions[sat]);
+                // Adding object in a list to change its properties in future
+                linkObjectList.Add(go);
             }
         }
 
@@ -396,6 +422,8 @@ public class Topology : MonoBehaviour
                 go.transform.localScale = scale/2.0f;
                 // Rotation
                 go.transform.rotation = Quaternion.FromToRotation(Vector3.up, positions[link.Key]-positions[node]);
+                // Adding object in a list to change its properties in future
+                linkObjectList.Add(go);
             }
         }
     }
@@ -414,6 +442,7 @@ public class Topology : MonoBehaviour
         }
         innerMesh.transform.SetParent(go.transform);
         innerMesh.transform.position = go.transform.position;
+        innerMesh.transform.rotation = go.transform.rotation;
         innerMesh.transform.localScale = new Vector3(1,1,1);
         // copy over the mesh
         innerMesh.mesh = go.GetComponent<MeshFilter>().mesh;
@@ -446,6 +475,11 @@ public class Topology : MonoBehaviour
         // 5. Add new Camera as child of this object
         var camera = new GameObject("TextCamera").AddComponent<Camera>();
         camera.transform.SetParent(go.transform, false);
+        camera.transform.eulerAngles = new Vector3(
+                        camera.transform.eulerAngles.x,
+                        camera.transform.eulerAngles.y,
+                        camera.transform.eulerAngles.z
+                    );
         camera.backgroundColor = new Color(0, 0, 0, 0);
         camera.clearFlags = CameraClearFlags.Color;
         camera.cullingMask = 1 << LayerMask.NameToLayer(LayerToUse);
@@ -476,13 +510,16 @@ public class Topology : MonoBehaviour
         text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
         text.fontStyle = FontStyle.Bold;
         text.alignment = TextAnchor.MiddleCenter;
-        text.color = Color.black;
-        text.fontSize = 60;
+        if(obj_type=="Switch"){
+            text.color = Color.white;
+            text.fontSize = 60;
+        }
         if(obj_type=="Host"){
             text.fontSize = 120;
             text.color = Color.white;
         }
         else if(obj_type=="Sat"){
+            text.color = Color.black;
             text.fontSize = 40;
         }
         text.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -515,6 +552,18 @@ public class Topology : MonoBehaviour
     // Get the inner object (text mesh) list
     public List<GameObject> GetTextObjects(){
         return innerObjectList;
+    }
+
+    // Get the link object (connecting pipes) list
+    public List<GameObject> GetLinkObjects(){
+        return linkObjectList;
+    }
+
+    public List<GameObject> GetSwitchObjects(){
+        return switchObjectList;
+    }
+    public List<GameObject> GetSatObjects(){
+        return satObjectList;
     }
 
 }
