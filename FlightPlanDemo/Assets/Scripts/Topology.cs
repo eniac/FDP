@@ -38,6 +38,7 @@ public class Topology : MonoBehaviour
     Dictionary<string, List<string>> s_h_links;
     Dictionary<string, List<string>> sat_links;
     List<GameObject> goList;
+    List<GameObject> hostCanvasObjectList;
     List<GameObject> switchObjectList;
     List<GameObject> satObjectList;
     List<GameObject> linkObjectList;
@@ -49,6 +50,7 @@ public class Topology : MonoBehaviour
     // Constructor of class
     public Topology(){
         goList = new List<GameObject>();
+        hostCanvasObjectList = new List<GameObject>();
         switchObjectList = new List<GameObject>();
         satObjectList = new List<GameObject>();
         linkObjectList = new List<GameObject>();
@@ -369,6 +371,13 @@ public class Topology : MonoBehaviour
             go.transform.Find("CanvasBack/Text").gameObject.GetComponent<Text>().text = h.ToString();
             go.transform.Find("CanvasTop/Text").gameObject.GetComponent<Text>().text = h.ToString();
             go.transform.Find("CanvasBottom/Text").gameObject.GetComponent<Text>().text = h.ToString();
+
+            hostCanvasObjectList.Add(go.transform.Find("CanvasFront").gameObject);
+            hostCanvasObjectList.Add(go.transform.Find("CanvasLeft").gameObject);
+            hostCanvasObjectList.Add(go.transform.Find("CanvasRight").gameObject);
+            hostCanvasObjectList.Add(go.transform.Find("CanvasBack").gameObject);
+            hostCanvasObjectList.Add(go.transform.Find("CanvasTop").gameObject);
+            hostCanvasObjectList.Add(go.transform.Find("CanvasBottom").gameObject);
         }
 
         // Showing Switches
@@ -475,11 +484,6 @@ public class Topology : MonoBehaviour
         // 5. Add new Camera as child of this object
         var camera = new GameObject("TextCamera").AddComponent<Camera>();
         camera.transform.SetParent(go.transform, false);
-        camera.transform.eulerAngles = new Vector3(
-                        camera.transform.eulerAngles.x,
-                        camera.transform.eulerAngles.y,
-                        camera.transform.eulerAngles.z
-                    );
         camera.backgroundColor = new Color(0, 0, 0, 0);
         camera.clearFlags = CameraClearFlags.Color;
         camera.cullingMask = 1 << LayerMask.NameToLayer(LayerToUse);
@@ -547,6 +551,11 @@ public class Topology : MonoBehaviour
             obj.parent.transform.LookAt(obj.parent.transform.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
             obj.child.transform.rotation = obj.parent.transform.rotation;
         }
+    }
+
+    // Get canvas objects of hosts
+    public List<GameObject> GetHostTextObjects(){
+        return hostCanvasObjectList;
     }
 
     // Get the inner object (text mesh) list

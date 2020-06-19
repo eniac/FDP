@@ -6,6 +6,7 @@ public class ButtonControl : MonoBehaviour
 {
     public Topology topo;
     bool showLable;
+    List<GameObject> hostTextObject;
     List<GameObject> textObj;
     bool showOpaque;
     List<GameObject> linkObject;
@@ -17,6 +18,7 @@ public class ButtonControl : MonoBehaviour
     {
         showLable = true;
         showOpaque = true;
+        hostTextObject = topo.GetHostTextObjects();
         textObj = topo.GetTextObjects();
         linkObject = topo.GetLinkObjects();
         switchObject = topo.GetSwitchObjects();
@@ -28,10 +30,16 @@ public class ButtonControl : MonoBehaviour
             foreach(var obj in textObj){
                 obj.SetActive(false);
             }
+            foreach(var obj in hostTextObject){
+                obj.SetActive(false);
+            }
             showLable = false;
         }
         else{
             foreach(var obj in textObj){
+                obj.SetActive(true);
+            }
+            foreach(var obj in hostTextObject){
                 obj.SetActive(true);
             }
             showLable = true;
