@@ -18,6 +18,12 @@ using Random=System.Random;
 
 static class Constants
 {
+    public const string HOST_STRING = "Host";
+    public const string SWITCH_STRING = "Switch";
+    public const string SAT_STRING = "Satellite";
+    public const float STRUCTURE_X = 0.0f;
+    public const float STRUCTURE_Y = 0.0f;
+    public const float STRUCTURE_Z = 0.0f;
     public const float H_SPACE = 8.0f;
     public const float V_SPACE = 8.0f;
     public const float SAT_H_space = 3.0f;
@@ -29,7 +35,7 @@ static class Constants
 
 public class Topology : MonoBehaviour
 {
-
+    [SerializeField] private CamMovement camControl = default; 
     [SerializeField] private Camera mainCamera = default;
     [SerializeField] private string LayerToUse = default;
     List<string> h_names;
@@ -39,25 +45,33 @@ public class Topology : MonoBehaviour
     Dictionary<string, List<string>> sat_links;
     List<GameObject> goList;
     List<GameObject> hostCanvasObjectList;
-    List<GameObject> switchObjectList;
-    List<GameObject> satObjectList;
     List<GameObject> linkObjectList;
     List<MeshFilter> innerMeshList;
     List<GameObject> innerObjectList;
     Dictionary <string, Vector3> positions;
     Dictionary <float, List<Vector3>> layerCoordinates;  // height of layer : layer dimention
+    Dictionary<string, GameObject> switchObjectDict;
+    Dictionary<string, GameObject> satObjectDict;
+    Dictionary<string, GameObject> hostObjectDict;
+    bool highlightedNodesStatus;
+    List<string> highlightedNodes;
+    Dictionary<string, Color> colorDict;
 
     // Constructor of class
     public Topology(){
         goList = new List<GameObject>();
         hostCanvasObjectList = new List<GameObject>();
-        switchObjectList = new List<GameObject>();
-        satObjectList = new List<GameObject>();
         linkObjectList = new List<GameObject>();
         innerMeshList = new List<MeshFilter>();
         innerObjectList = new List<GameObject>();
         positions = new Dictionary <string, Vector3>();
         layerCoordinates = new Dictionary <float, List<Vector3>>();
+        switchObjectDict = new Dictionary<string, GameObject>(StringComparer.OrdinalIgnoreCase);
+        satObjectDict = new Dictionary<string, GameObject>(StringComparer.OrdinalIgnoreCase);
+        hostObjectDict = new Dictionary<string, GameObject>(StringComparer.OrdinalIgnoreCase);
+        highlightedNodesStatus = false;
+        highlightedNodes = new List<string>();
+        colorDict = new Dictionary<string, Color>();
     }
     public void SetParameters(List<string> h_names, List<string> s_names, 
                                 List<string> sat_names, Dictionary<string, 
@@ -134,7 +148,7 @@ public class Topology : MonoBehaviour
 
         // Finding position of each node
         int n_levels = level_number;
-        float x=0, y=1, z=0;
+        float x=0, y=Constants.STRUCTURE_Y, z=0;
         float vertical_spacing = Constants.V_SPACE;
         float horizontal_spacing = Constants.H_SPACE;
         int nx=0, nz=0;
@@ -153,8 +167,8 @@ public class Topology : MonoBehaviour
             nx = (int)Math.Sqrt(n);
             nz = (int)(n/nx);
             e = 0;
-            x = 0-((nx-1)*horizontal_spacing)/2.0f;
-            z = 0-((nz-1)*horizontal_spacing)/2.0f;
+            x = Constants.STRUCTURE_X-((nx-1)*horizontal_spacing)/2.0f;
+            z = Constants.STRUCTURE_Z-((nz-1)*horizontal_spacing)/2.0f;
             // Debug.Log(l.Key+":"+n+":"+nx+":"+nz+":"+x+":"+z);
 
             // Get the coordinates of each layer in space
@@ -169,7 +183,7 @@ public class Topology : MonoBehaviour
                 e++;
                 if(e%nx==0){
                     z = z + horizontal_spacing;
-                    x = 0-((nx-1)*horizontal_spacing)/2.0f;
+                    x = Constants.STRUCTURE_X-((nx-1)*horizontal_spacing)/2.0f;
                 }
                 else{
                     x = x + horizontal_spacing;
@@ -352,18 +366,10 @@ public class Topology : MonoBehaviour
 
         foreach (string h in h_names){
             // Instantiate Object and set position
-            // GameObject go = Instantiate(h_prefab) as GameObject;
-            // go.transform.eulerAngles = new Vector3(
-            //             go.transform.eulerAngles.x,
-            //             go.transform.eulerAngles.y,
-            //             go.transform.eulerAngles.z
-            //         );
-
-            // // goList.Add(go);
-            // go.transform.position = positions[h];
-            // DisplayLabels(ref go, h, "Host");
             GameObject go = Instantiate(h_prefab) as GameObject;
             go.transform.position = positions[h];
+
+            hostObjectDict.Add(h, go);
             
             go.transform.Find("CanvasFront/Text").gameObject.GetComponent<Text>().text = h.ToString();
             go.transform.Find("CanvasLeft/Text").gameObject.GetComponent<Text>().text = h.ToString();
@@ -378,6 +384,10 @@ public class Topology : MonoBehaviour
             hostCanvasObjectList.Add(go.transform.Find("CanvasBack").gameObject);
             hostCanvasObjectList.Add(go.transform.Find("CanvasTop").gameObject);
             hostCanvasObjectList.Add(go.transform.Find("CanvasBottom").gameObject);
+
+            if(colorDict.ContainsKey(Constants.HOST_STRING)==false){
+                colorDict.Add(Constants.HOST_STRING, go.GetComponent<MeshRenderer>().material.color);
+            }
         }
 
         // Showing Switches
@@ -386,8 +396,11 @@ public class Topology : MonoBehaviour
             GameObject go = Instantiate(s_prefab) as GameObject;
             go.transform.position = positions[s];
             goList.Add(go);
-            switchObjectList.Add(go);
+            switchObjectDict.Add(s, go);
             DisplayLabels(ref go, s, "Switch");
+            if(colorDict.ContainsKey(Constants.SWITCH_STRING)==false){
+                colorDict.Add(Constants.SWITCH_STRING, go.GetComponent<MeshRenderer>().material.color);
+            }
         }
 
         // Showing satellites
@@ -396,8 +409,11 @@ public class Topology : MonoBehaviour
             GameObject go = Instantiate(sat_prefab) as GameObject;
             go.transform.position = positions[sat];
             goList.Add(go);
-            satObjectList.Add(go);
+            satObjectDict.Add(sat, go);
             DisplayLabels(ref go, sat, "Sat");
+            if(colorDict.ContainsKey(Constants.SAT_STRING)==false){
+                colorDict.Add(Constants.SAT_STRING, go.GetComponent<MeshRenderer>().material.color);
+            }
         }
 
         // Showing pipes (links between switch an satellites)
@@ -553,6 +569,71 @@ public class Topology : MonoBehaviour
         }
     }
 
+    // Test that input string entered by search field is valid or not
+    public string ProcessSearchRequest(string nodeString){
+        string[] nodes = nodeString.Split(' ');
+        string invalidNames = "";
+        foreach(var node in nodes){
+            if(node.Length>0){
+                Debug.Log("node = "+node);
+                if(h_names.Contains(node, StringComparer.OrdinalIgnoreCase)==false && 
+                    s_names.Contains(node, StringComparer.OrdinalIgnoreCase)==false &&
+                    sat_names.Contains(node, StringComparer.OrdinalIgnoreCase)==false){
+                    invalidNames += node + " ";
+                }
+                else{
+                    highlightedNodes.Add(node);
+                }
+            }
+        }
+        if(invalidNames.Length>0){
+            return invalidNames;
+        }
+        // Do highlighting
+        if(highlightedNodes.Count == 0){
+            // No name entered or only spaces are entered
+            return null;
+        }
+        highlightedNodesStatus = true;
+        List<GameObject> highlitedObjects = new List<GameObject>();
+        foreach(var node in highlightedNodes){
+            if(switchObjectDict.ContainsKey(node)){
+                highlitedObjects.Add(switchObjectDict[node]);
+                switchObjectDict[node].GetComponent<MeshRenderer>().material.color = Color.yellow;
+            }
+            else if(satObjectDict.ContainsKey(node)){
+                highlitedObjects.Add(satObjectDict[node]);
+                satObjectDict[node].GetComponent<MeshRenderer>().material.color = Color.yellow;
+            }
+            else if(hostObjectDict.ContainsKey(node)){
+                highlitedObjects.Add(hostObjectDict[node]);
+                hostObjectDict[node].GetComponent<MeshRenderer>().material.color = Color.yellow;
+            }
+        }
+        camControl.MoveCamToNodes(highlitedObjects);
+        return null;
+    }
+
+    public bool ProcessClearRequest(){
+        if(highlightedNodesStatus == true){
+            foreach(var node in highlightedNodes){
+                if(switchObjectDict.ContainsKey(node)){
+                    switchObjectDict[node].GetComponent<MeshRenderer>().material.color = colorDict[Constants.SWITCH_STRING];
+                }
+                else if(satObjectDict.ContainsKey(node)){
+                    satObjectDict[node].GetComponent<MeshRenderer>().material.color = colorDict[Constants.SAT_STRING];
+                }
+                else if(hostObjectDict.ContainsKey(node)){
+                    hostObjectDict[node].GetComponent<MeshRenderer>().material.color = colorDict[Constants.HOST_STRING];
+                }
+            }
+            highlightedNodes.Clear();
+            highlightedNodesStatus = false;
+            return true;
+        }
+        return false;
+    }
+
     // Get canvas objects of hosts
     public List<GameObject> GetHostTextObjects(){
         return hostCanvasObjectList;
@@ -566,13 +647,6 @@ public class Topology : MonoBehaviour
     // Get the link object (connecting pipes) list
     public List<GameObject> GetLinkObjects(){
         return linkObjectList;
-    }
-
-    public List<GameObject> GetSwitchObjects(){
-        return switchObjectList;
-    }
-    public List<GameObject> GetSatObjects(){
-        return satObjectList;
     }
 
 }

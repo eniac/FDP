@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ButtonControl : MonoBehaviour
 {
-    public Topology topo;
+    [SerializeField] private Topology topo = default;
     bool showLable;
     List<GameObject> hostTextObject;
     List<GameObject> textObj;
@@ -12,6 +13,8 @@ public class ButtonControl : MonoBehaviour
     List<GameObject> linkObject;
     List<GameObject> switchObject;
     List<GameObject> satObject;
+    [SerializeField] private InputField searchField = default;
+    [SerializeField] private PopUpControl popup = default;
 
     // Start is called before the first frame update
     void Start()
@@ -21,8 +24,6 @@ public class ButtonControl : MonoBehaviour
         hostTextObject = topo.GetHostTextObjects();
         textObj = topo.GetTextObjects();
         linkObject = topo.GetLinkObjects();
-        switchObject = topo.GetSwitchObjects();
-        satObject = topo.GetSatObjects();
     }
 
     public void ToggleLables(){
@@ -54,16 +55,6 @@ public class ButtonControl : MonoBehaviour
                 color.a = 0.1f;
                 obj.GetComponent<MeshRenderer>().material.color = color;
             }
-            // foreach(var obj in switchObject){
-            //     Color color = obj.GetComponent<MeshRenderer>().material.color;
-            //     color.a = 0.2f;
-            //     obj.GetComponent<MeshRenderer>().material.color = color;
-            // }
-            // foreach(var obj in satObject){
-            //     Color color = obj.GetComponent<MeshRenderer>().material.color;
-            //     color.a = 0.2f;
-            //     obj.GetComponent<MeshRenderer>().material.color = color;
-            // }
             showOpaque = false;
         }
         else{
@@ -72,17 +63,27 @@ public class ButtonControl : MonoBehaviour
                 color.a = 1.0f;
                 obj.GetComponent<MeshRenderer>().material.color = color;
             }
-            // foreach(var obj in switchObject){
-            //     Color color = obj.GetComponent<MeshRenderer>().material.color;
-            //     color.a = 1.0f;
-            //     obj.GetComponent<MeshRenderer>().material.color = color;
-            // }
-            // foreach(var obj in satObject){
-            //     Color color = obj.GetComponent<MeshRenderer>().material.color;
-            //     color.a = 1.0f;
-            //     obj.GetComponent<MeshRenderer>().material.color = color;
-            // }
             showOpaque = true;
+        }
+    }
+
+    public void GetNodeString(){
+        // Get the string from UI input field
+        string nodeString = searchField.text;
+        // Debug.Log("Node string = " + nodeString);
+        // Clear the UI input field
+        searchField.text = "";
+        // Process request
+        string invalidString = topo.ProcessSearchRequest(nodeString);
+        // Debug.Log("invalid Nodes = "+invalidString);
+        if(invalidString!=null){
+            popup.ShowErrorMessage("{ " + invalidString + "} are invalid nodes !!!", 8, Color.red);
+        }
+    }
+
+    public void ClearHighlightedNodes(){
+        if(topo.ProcessClearRequest()==true){
+            popup.ShowErrorMessage("Cleared Previous Highlights", 8, Color.green);
         }
     }
 }
