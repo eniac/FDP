@@ -613,7 +613,7 @@ public class Topology : MonoBehaviour
         camControl.MoveCamToNodes(highlitedObjects);
         return null;
     }
-
+    // Remove highlighted nodes
     public bool ProcessClearRequest(){
         if(highlightedNodesStatus == true){
             foreach(var node in highlightedNodes){
@@ -634,6 +634,24 @@ public class Topology : MonoBehaviour
         return false;
     }
 
+    // Make links transparent
+    public void MakeLinksTransparent(){
+        // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
+        foreach(var obj in linkObjectList){
+            Color color = obj.GetComponent<MeshRenderer>().material.color;
+            color.a = 0.1f;
+            obj.GetComponent<MeshRenderer>().material.color = color;
+        }
+    }
+    // Make links opaque
+    public void MakeLinksOpaque(){
+        foreach(var obj in linkObjectList){
+            Color color = obj.GetComponent<MeshRenderer>().material.color;
+            color.a = 1.0f;
+            obj.GetComponent<MeshRenderer>().material.color = color;
+        }
+    }
+
     // Get canvas objects of hosts
     public List<GameObject> GetHostTextObjects(){
         return hostCanvasObjectList;
@@ -647,6 +665,11 @@ public class Topology : MonoBehaviour
     // Get the link object (connecting pipes) list
     public List<GameObject> GetLinkObjects(){
         return linkObjectList;
+    }
+
+    // Get the node position by name
+    public Vector3 GetNodePosition(string name){
+        return positions[name];
     }
 
 }

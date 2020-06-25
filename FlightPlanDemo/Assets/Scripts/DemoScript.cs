@@ -7,6 +7,7 @@ public class DemoScript : MonoBehaviour
     // public TopoScript topo;
     public YamlParser yamlParser;
     public Topology topo;
+    public AnimationControl anim;
     // Start is called before the first frame update
     IEnumerator Start()
     {
@@ -23,6 +24,9 @@ public class DemoScript : MonoBehaviour
         topo.Display();
         topo.GetPosition();
         topo.DisplayTopology();
+
+        yield return StartCoroutine(anim.GetElapsedTimeFile());
+        anim.AnimationInit();
     }
 
     // Update is called once per frame

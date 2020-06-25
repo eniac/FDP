@@ -15,6 +15,7 @@ public class ButtonControl : MonoBehaviour
     List<GameObject> satObject;
     [SerializeField] private InputField searchField = default;
     [SerializeField] private PopUpControl popup = default;
+    [SerializeField] private AnimationControl anim = default;
 
     // Start is called before the first frame update
     void Start()
@@ -50,19 +51,11 @@ public class ButtonControl : MonoBehaviour
     public void ToggleTransparency(){
         if(showOpaque == true){
             // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
-            foreach(var obj in linkObject){
-                Color color = obj.GetComponent<MeshRenderer>().material.color;
-                color.a = 0.1f;
-                obj.GetComponent<MeshRenderer>().material.color = color;
-            }
+            topo.MakeLinksTransparent();
             showOpaque = false;
         }
         else{
-            foreach(var obj in linkObject){
-                Color color = obj.GetComponent<MeshRenderer>().material.color;
-                color.a = 1.0f;
-                obj.GetComponent<MeshRenderer>().material.color = color;
-            }
+            topo.MakeLinksOpaque();
             showOpaque = true;
         }
     }
@@ -85,5 +78,9 @@ public class ButtonControl : MonoBehaviour
         if(topo.ProcessClearRequest()==true){
             popup.ShowErrorMessage("Cleared Previous Highlights", 8, Color.green);
         }
+    }
+
+    public void StartAnimation(){
+        anim.StartAnimation();
     }
 }

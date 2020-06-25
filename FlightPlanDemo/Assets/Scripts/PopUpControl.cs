@@ -8,7 +8,7 @@ public class PopUpControl : MonoBehaviour
     [SerializeField] private Text errorMessageText = default;
     private IEnumerator coroutine;
 
-    void Awake(){
+    void Start(){
         // Initialize parameters
         ShowDefaultMessage();
         coroutine = null;
