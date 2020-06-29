@@ -10,12 +10,16 @@ using UnityEngine.Networking;
 public class AnimationControl : MonoBehaviour
 {
     float MAP_TIME;
+    const float MERGE_WINDOW = 0.5f;   
+    const float U_SEC = 1000000f;
+    const float speed = 10.0f;
+    int counter;
+    int window_counter;
     [SerializeField] Topology topo = default;
     string elapsedTimeString;
     StringReader packetTimeString;
     float animStartTime;
     float nextPacketTime;
-    [SerializeField] float speed = 10.0f;
     GameObject packet_prefab;
     List<GameObject> runningObject;
     List<GameObject> expiredObjects;
@@ -23,13 +27,15 @@ public class AnimationControl : MonoBehaviour
     Vector3 sourcePos;
     Vector3 targetPos;
     Vector3 dirNormalized;
-    bool initComplete = false;
+    // bool initComplete = false;
     bool firstUpdate = true;
     
+    public void Start(){
+        enabled = false;        // Stop calling update, it will only be called after StartAnimation
+    }
+
     // Get file from file system or server
     public IEnumerator GetElapsedTimeFile(){
-        initComplete = false;
-
         var filePath = Path.Combine(Application.streamingAssetsPath, "interval.txt");
         
         if (filePath.Contains ("://") || filePath.Contains (":///")) {
@@ -43,44 +49,53 @@ public class AnimationControl : MonoBehaviour
             elapsedTimeString = File.ReadAllText(filePath);
         }
     }
+    public void StartAnimation(){
+        Debug.Log("Restarting Animation");
+        counter = 1;
+        window_counter = 1;
 
-    public void AnimationInit(){
-
+        // Objects initialization
         packetTimeString = new StringReader(elapsedTimeString);
 
-        expiredObjects = new List<GameObject>();
-        runningObject = new List<GameObject>();
-        direction = new Dictionary<GameObject, Vector3>();
+        if(expiredObjects==null && runningObject==null && direction==null){
+            expiredObjects = new List<GameObject>();
+            runningObject = new List<GameObject>();
+            direction = new Dictionary<GameObject, Vector3>();
+        }
 
-        sourcePos = topo.GetNodePosition("p0h2");
-        targetPos = topo.GetNodePosition("p0e1");
+        // Removal of objects if any remained while restarting the animation
+        expiredObjects.Clear();
+        foreach(GameObject go in runningObject){
+            Debug.Log("Removal of Objects");
+            direction.Remove(go);
+            Destroy(go);
+        }
+        runningObject.Clear();
+
+        sourcePos = topo.GetNodePosition("p0h0");
+        targetPos = topo.GetNodePosition("p0e0");
         packet_prefab = Resources.Load("Packet") as GameObject;
 
         animStartTime = Time.time;
-        nextPacketTime = Convert.ToInt32(packetTimeString.ReadLine());
 
-        float median = 54425421f;
-        MAP_TIME = (Vector3.Distance(targetPos, sourcePos)/speed)/median;
-        Debug.Log("time to reach packets to it's destination = " + MAP_TIME);
+        // TODO : Empty file check
+        nextPacketTime = (float)Convert.ToInt32(packetTimeString.ReadLine());
+        counter++;
+
+        topo.MakeLinksTransparent();
+        topo.MakeNodesTransparent();
 
         firstUpdate = true;
-    }
-    public void StartAnimation(){
-        topo.MakeLinksTransparent();
-        initComplete = true;
+        enabled = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(initComplete==false){
-            return;
-        }
-
         // Removal of expired objects
         expiredObjects.Clear();
         foreach(GameObject go in runningObject){
-            if(Vector3.Distance(targetPos, go.transform.position) <= 2f){
+            if(Vector3.Distance(targetPos, go.transform.position) <= 1f){
                 // Debug.Log("Object Expired");
                 go.transform.position = targetPos;
                 expiredObjects.Add(go);
@@ -92,41 +107,46 @@ public class AnimationControl : MonoBehaviour
             Destroy(go);
         }
 
-        // Instantiate new ready object
-        if(firstUpdate==true || (float)nextPacketTime*MAP_TIME <= Time.time - animStartTime){
-            if(firstUpdate==true){
-                firstUpdate = false;
-                animStartTime = Time.time;
-            }
-            float et = Time.time - animStartTime;
-            Debug.Log("nextPacketTime = " + nextPacketTime*MAP_TIME + "  , Time = " + et);
-            GameObject go = Instantiate(packet_prefab) as GameObject;
-            go.transform.position = sourcePos;
-            Vector3 dirNormalized = (targetPos - go.transform.position).normalized;
-            runningObject.Add(go);
-            direction.Add(go, dirNormalized);
-            string timeStr = packetTimeString.ReadLine();
-            if(timeStr != null){
-                if(timeStr.Length>0){
-                    nextPacketTime = Convert.ToInt32(timeStr);
+        if(firstUpdate == true){
+            animStartTime = Time.time;
+            firstUpdate = false;
+        }
+        float currentTime = Time.time;  
+        if(nextPacketTime/U_SEC <= currentTime - animStartTime){
+            string timeStr;
+            InstantiatePacket();
+            do{
+                timeStr = packetTimeString.ReadLine();
+                if(timeStr != null || (timeStr!= null && timeStr.Length > 0)){
+                    nextPacketTime = (float)Convert.ToInt32(timeStr);
+                    float et = currentTime - animStartTime;
+                    // Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/U_SEC + " :: " + et);
+                    counter++;
                 }
                 else{
                     topo.MakeLinksOpaque();
+                    topo.MakeNodesOpaque();
                     enabled = false;
                     Debug.Log("Update Ends"); 
+                    break;
                 }
-            }
-            else{
-                topo.MakeLinksOpaque();
-                enabled = false;
-                Debug.Log("Update Ends"); 
-            }
+            }while(nextPacketTime/U_SEC <= currentTime - animStartTime + MERGE_WINDOW);
+            window_counter++;
         }
 
         // Move running Object further 
         foreach(GameObject go in runningObject){
             go.transform.position = go.transform.position + direction[go] * speed * Time.deltaTime;
         }
+    }
+
+    // Instantiate a packet
+    void InstantiatePacket(){
+        GameObject go = Instantiate(packet_prefab) as GameObject;
+        go.transform.position = sourcePos;
+        Vector3 dirNormalized = (targetPos - go.transform.position).normalized;
+        runningObject.Add(go);
+        direction.Add(go, dirNormalized);
     }
 
 }

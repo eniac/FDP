@@ -57,6 +57,14 @@ public class Topology : MonoBehaviour
     List<string> highlightedNodes;
     Dictionary<string, Color> colorDict;
 
+    public enum BlendMode
+    {
+        Opaque,
+        Cutout,
+        Fade,
+        Transparent
+    }
+
     // Constructor of class
     public Topology(){
         goList = new List<GameObject>();
@@ -401,6 +409,7 @@ public class Topology : MonoBehaviour
             if(colorDict.ContainsKey(Constants.SWITCH_STRING)==false){
                 colorDict.Add(Constants.SWITCH_STRING, go.GetComponent<MeshRenderer>().material.color);
             }
+            ChangeRenderMode(go.GetComponent<MeshRenderer>().material, BlendMode.Opaque);
         }
 
         // Showing satellites
@@ -425,7 +434,7 @@ public class Topology : MonoBehaviour
                 go.transform.position = (positions[link.Key]-positions[sat])/2.0f + positions[sat];
                 // Scaling
                 var scale = go.transform.localScale;
-                scale.y = (positions[link.Key]-positions[sat]).magnitude;
+                scale.y = (positions[link.Key]-positions[sat]).magnitude - satObjectDict[sat].transform.localScale.y;
                 go.transform.localScale = scale/2.0f;
                 // Rotation
                 go.transform.rotation = Quaternion.FromToRotation(Vector3.up, positions[link.Key]-positions[sat]);
@@ -443,7 +452,7 @@ public class Topology : MonoBehaviour
                 go.transform.position = (positions[link.Key]-positions[node])/2.0f + positions[node];
                 // Scaling
                 var scale = go.transform.localScale;
-                scale.y = (positions[link.Key]-positions[node]).magnitude;
+                scale.y = (positions[link.Key]-positions[node]).magnitude - switchObjectDict[link.Key].transform.localScale.y;
                 go.transform.localScale = scale/2.0f;
                 // Rotation
                 go.transform.rotation = Quaternion.FromToRotation(Vector3.up, positions[link.Key]-positions[node]);
@@ -483,13 +492,14 @@ public class Topology : MonoBehaviour
         textMaterial.SetTexture("_MainTex", renderTexture);
 
         // set RenderMode to Fade
-        textMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        textMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        textMaterial.SetInt("_ZWrite", 0);
-        textMaterial.DisableKeyword("_ALPHATEST_ON");
-        textMaterial.EnableKeyword("_ALPHABLEND_ON");
-        textMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-        textMaterial.renderQueue = 3000;
+        ChangeRenderMode(textMaterial, BlendMode.Fade);
+        // textMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        // textMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        // textMaterial.SetInt("_ZWrite", 0);
+        // textMaterial.DisableKeyword("_ALPHATEST_ON");
+        // textMaterial.EnableKeyword("_ALPHABLEND_ON");
+        // textMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        // textMaterial.renderQueue = 3000;
 
         // 3. WE CAN'T CREATE A NEW LAYER AT RUNTIME SO CONFIGURE THEM BEFOREHAND AND USE LayerToUse
 
@@ -569,6 +579,50 @@ public class Topology : MonoBehaviour
         }
     }
 
+    public static void ChangeRenderMode(Material standardShaderMaterial, BlendMode blendMode)
+    {
+        switch (blendMode)
+        {
+            case BlendMode.Opaque:
+                standardShaderMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                standardShaderMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                standardShaderMaterial.SetInt("_ZWrite", 1);
+                standardShaderMaterial.DisableKeyword("_ALPHATEST_ON");
+                standardShaderMaterial.DisableKeyword("_ALPHABLEND_ON");
+                standardShaderMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                standardShaderMaterial.renderQueue = -1;
+                break;
+            case BlendMode.Cutout:
+                standardShaderMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                standardShaderMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                standardShaderMaterial.SetInt("_ZWrite", 1);
+                standardShaderMaterial.EnableKeyword("_ALPHATEST_ON");
+                standardShaderMaterial.DisableKeyword("_ALPHABLEND_ON");
+                standardShaderMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                standardShaderMaterial.renderQueue = 2450;
+                break;
+            case BlendMode.Fade:
+                standardShaderMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                standardShaderMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                standardShaderMaterial.SetInt("_ZWrite", 0);
+                standardShaderMaterial.DisableKeyword("_ALPHATEST_ON");
+                standardShaderMaterial.EnableKeyword("_ALPHABLEND_ON");
+                standardShaderMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                standardShaderMaterial.renderQueue = 3000;
+                break;
+            case BlendMode.Transparent:
+                standardShaderMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                standardShaderMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                standardShaderMaterial.SetInt("_ZWrite", 0);
+                standardShaderMaterial.DisableKeyword("_ALPHATEST_ON");
+                standardShaderMaterial.DisableKeyword("_ALPHABLEND_ON");
+                standardShaderMaterial.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                standardShaderMaterial.renderQueue = 3000;
+                break;
+        }
+
+    }
+
     // Test that input string entered by search field is valid or not
     public string ProcessSearchRequest(string nodeString){
         string[] nodes = nodeString.Split(' ');
@@ -613,6 +667,7 @@ public class Topology : MonoBehaviour
         camControl.MoveCamToNodes(highlitedObjects);
         return null;
     }
+    
     // Remove highlighted nodes
     public bool ProcessClearRequest(){
         if(highlightedNodesStatus == true){
@@ -649,6 +704,25 @@ public class Topology : MonoBehaviour
             Color color = obj.GetComponent<MeshRenderer>().material.color;
             color.a = 1.0f;
             obj.GetComponent<MeshRenderer>().material.color = color;
+        }
+    }
+
+    // Make Nodes transparent
+    public void MakeNodesTransparent(){
+        // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
+        foreach(var obj in switchObjectDict.Values){
+            ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Transparent);
+            Color color = obj.GetComponent<MeshRenderer>().material.color;
+            color.a = 0.4f;
+            obj.GetComponent<MeshRenderer>().material.color = color;
+        }
+    }
+
+    // Make Nodes Opaque
+    public void MakeNodesOpaque(){
+        foreach(var obj in switchObjectDict.Values){
+            // Change the blend mode itself to opaque
+            ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Opaque);
         }
     }
 

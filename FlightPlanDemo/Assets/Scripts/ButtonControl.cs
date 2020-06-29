@@ -52,10 +52,12 @@ public class ButtonControl : MonoBehaviour
         if(showOpaque == true){
             // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
             topo.MakeLinksTransparent();
+            topo.MakeNodesTransparent();
             showOpaque = false;
         }
         else{
             topo.MakeLinksOpaque();
+            topo.MakeNodesOpaque();
             showOpaque = true;
         }
     }

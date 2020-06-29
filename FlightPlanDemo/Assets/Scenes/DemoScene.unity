@@ -548,7 +548,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topo: {fileID: 2137916003}
-  speed: 10
 --- !u!1 &335789564
 GameObject:
   m_ObjectHideFlags: 0
