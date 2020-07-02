@@ -8,41 +8,40 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 struct ObjectInfo{
+    public GameObject Object;
     public float packetTime;
     public Vector3 direction;
     public Vector3 sourcePos;
     public Vector3 targetPos;
+    public string packetID;
 };
 public class AnimationControl : MonoBehaviour
 {
-
-    float MAP_TIME;
+    [SerializeField] Topology topo = default;
     const float MERGE_WINDOW = 0.5f;   
     const float U_SEC = 1000000f;
     const float speed = 5.0f;
     int counter;
     int window_counter;
-    [SerializeField] Topology topo = default;
     string elapsedTimeString;
     StringReader packetTimeString;
     float animStartTime;
     float nextPacketTime;
     GameObject packet_prefab;
-    // List<GameObject> runningObject;
     Dictionary<GameObject, ObjectInfo> runningObject;
     List<GameObject> expiredObjects;
+    List<string> runningPacketID;
+    Dictionary<string, Queue<ObjectInfo>> packetHoldBackQueue;
     string[] nextPacketInfo;
-    // Dictionary<GameObject, Vector3> direction;
-    // Vector3 sourcePos;
-    // Vector3 targetPos;
-    Vector3 dirNormalized;
-    // bool initComplete = false;
     bool firstUpdate = true;
+    bool parseRemain = true;
+    bool holdbackRemain = true;
 
     public enum PacketInfoIdx{
         Time=0,
         Source=1,
-        Target=2
+        Target=2,
+        Pid=3
     }
     
     public void Start(){
@@ -73,9 +72,11 @@ public class AnimationControl : MonoBehaviour
         // Objects initialization
         packetTimeString = new StringReader(elapsedTimeString);
 
-        if(expiredObjects==null && runningObject==null){
+        if(expiredObjects==null && runningObject==null && packetHoldBackQueue==null){
             expiredObjects = new List<GameObject>();
             runningObject = new Dictionary<GameObject, ObjectInfo>();
+            runningPacketID = new List<string>();
+            packetHoldBackQueue = new Dictionary<string, Queue<ObjectInfo>>();
         }
 
         // Removal of objects if any remained while restarting the animation
@@ -83,10 +84,10 @@ public class AnimationControl : MonoBehaviour
         foreach(GameObject go in runningObject.Keys){
             Destroy(go);
         }
+        runningPacketID.Clear();
         runningObject.Clear();
+        packetHoldBackQueue.Clear();
 
-        // sourcePos = topo.GetNodePosition("p0h0");
-        // targetPos = topo.GetNodePosition("p0e0");
         packet_prefab = Resources.Load("Packet") as GameObject;
 
         animStartTime = Time.time;
@@ -100,15 +101,19 @@ public class AnimationControl : MonoBehaviour
         topo.MakeLinksTransparent();
         topo.MakeNodesTransparent();
 
+        parseRemain = true;
+        holdbackRemain = true;
         firstUpdate = true;
         enabled = true;
-        // InvokeRepeating("CheckExpiredObjects", 0f, 0.01f);
     }
 
-    void CheckExpiredObjects(){
+    void Update(){
         // Find expired objects
         expiredObjects.Clear();
         foreach(GameObject go in runningObject.Keys){
+            // if(Time.time - runningObject[go].packetTime >= 
+            //     Vector3.Distance(runningObject[go].sourcePos, runningObject[go].targetPos)/ speed ||
+            //     Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
             if(Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
                 // Debug.Log("Object Expired");
                 go.transform.position = runningObject[go].targetPos;
@@ -117,56 +122,48 @@ public class AnimationControl : MonoBehaviour
         }
         // Remove expired objects
         foreach(GameObject go in expiredObjects){
+            runningPacketID.Remove(runningObject[go].packetID);
             runningObject.Remove(go);
             Destroy(go);
         }
-    }
 
-    void Update(){
-        // Find expired objects
-        expiredObjects.Clear();
-        foreach(GameObject go in runningObject.Keys){
-            if(Time.time - runningObject[go].packetTime >= 
-                Vector3.Distance(runningObject[go].sourcePos, runningObject[go].targetPos)/ speed ||
-                Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
-                // Debug.Log("Object Expired");
-                go.transform.position = runningObject[go].targetPos;
-                expiredObjects.Add(go);
-            }
-        }
-        // Remove expired objects
-        foreach(GameObject go in expiredObjects){
-            runningObject.Remove(go);
-            Destroy(go);
+        if(parseRemain==false && holdbackRemain==false && runningObject.Count==0){
+            topo.MakeLinksOpaque();
+            topo.MakeNodesOpaque();
+            Debug.Log("Update Ends"); 
+            enabled = false;
         }
 
         if(firstUpdate == true){
             animStartTime = Time.time;
             firstUpdate = false;
         }
+        // if any packet in hold back queue is elligible to run, then run it
+        InstantiateHoldBackPackets();
+
+        // If the last parsed packet time meets the current time of animation the instantiate it
         float currentTime = Time.time;  
-        if(nextPacketTime/U_SEC <= currentTime - animStartTime){
+        if(parseRemain && nextPacketTime/U_SEC <= currentTime - animStartTime){
             string timeStr;
             do{
                 InstantiatePacket();
+                // Parse next packet from file
                 timeStr = packetTimeString.ReadLine();
                 if(timeStr != null ){
                     nextPacketInfo = timeStr.Split(' ');
                     nextPacketTime = (float)Convert.ToInt32(nextPacketInfo[(int)PacketInfoIdx.Time]);
                     float et = currentTime - animStartTime;
-                    Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/U_SEC + " :: " + et + " :: " + nextPacketInfo[(int)PacketInfoIdx.Time] + " : " + nextPacketInfo[(int)PacketInfoIdx.Source] + " : " + nextPacketInfo[(int)PacketInfoIdx.Target]);
+                    // Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/U_SEC + " :: " + et + " :: " + nextPacketInfo[(int)PacketInfoIdx.Time] + " : " + nextPacketInfo[(int)PacketInfoIdx.Source] + " : " + nextPacketInfo[(int)PacketInfoIdx.Target]);
                     // Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/U_SEC + " :: " + et);
                     counter++;
                 }
                 else{
-                    Debug.Log("timeStr = " + timeStr + " nextPacketInfo = " + nextPacketInfo);
-                    topo.MakeLinksOpaque();
-                    topo.MakeNodesOpaque();
-                    enabled = false;
-                    Debug.Log("Update Ends"); 
+                    // enabled = false;
+                    parseRemain = false;
                     break;
                 }
-                break;
+                // parseRemain = false;
+                // break;
             }while(nextPacketTime/U_SEC <= currentTime - animStartTime);
             window_counter++;
         }
@@ -184,13 +181,54 @@ public class AnimationControl : MonoBehaviour
         oInfo.sourcePos = topo.GetNodePosition(nextPacketInfo[(int)PacketInfoIdx.Source]);
         oInfo.targetPos = topo.GetNodePosition(nextPacketInfo[(int)PacketInfoIdx.Target]);
         oInfo.packetTime = nextPacketTime;
+        oInfo.packetID = nextPacketInfo[(int)PacketInfoIdx.Pid];
 
+        // If packet is already running on link store the info in holdback queue for future reference (in time order) 
+        if(runningPacketID.Contains(oInfo.packetID)){
+            Debug.Log("Enque = " + oInfo.packetTime + " " + oInfo.packetID);
+            if(packetHoldBackQueue.ContainsKey(oInfo.packetID)){
+                packetHoldBackQueue[oInfo.packetID].Enqueue(oInfo);
+            }
+            else{
+                Queue<ObjectInfo> queue = new Queue<ObjectInfo>();
+                queue.Enqueue(oInfo);
+                packetHoldBackQueue.Add(oInfo.packetID, queue); 
+            }
+            return;
+        }
+        // If this is new packet, instantiate an object 
         GameObject go = Instantiate(packet_prefab) as GameObject;
+        Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
         go.transform.position = oInfo.sourcePos;
+        oInfo.Object = go;
         oInfo.direction = (oInfo.targetPos - go.transform.position).normalized;
 
+        // Store the running object info to track it later
         runningObject.Add(go, oInfo);
+        runningPacketID.Add(oInfo.packetID);
     }
 
+    void InstantiateHoldBackPackets(){
+        bool isRemain = false;
+        foreach(var pid in packetHoldBackQueue.Keys){
+            // If the packet is not running on the link then instantiate this packet
+            if(packetHoldBackQueue[pid].Count > 0){
+                if(runningPacketID.Contains(pid)==false){
+                    ObjectInfo oInfo = packetHoldBackQueue[pid].Dequeue();
+                    Debug.Log("Deque = " + oInfo.packetTime + " " + oInfo.packetID);
+                    GameObject go = Instantiate(packet_prefab) as GameObject;
+                    Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
+                    go.transform.position = oInfo.sourcePos;
+                    oInfo.Object = go;
+                    oInfo.direction = (oInfo.targetPos - go.transform.position).normalized;
 
+                    // Store the running object info to track it later
+                    runningObject.Add(go, oInfo);
+                    runningPacketID.Add(oInfo.packetID);
+                }
+                isRemain = true;
+            }
+        }
+        holdbackRemain = isRemain;
+    }
 }

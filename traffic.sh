@@ -57,18 +57,15 @@ for pcap_file in "${PCAP_DIR}"/*; do
   tcpdump -x -r ${pcap_file} > ${TEMP}
   # Store the formated output to the temp file
   # fourth column is a unique identifier of the packet 
-  # containing the 13th-33rd byte of the packet, but excluding the 21st, 23rd and 24th bytes
+  # containing the 22th-33rd byte of the packet, but excluding the 23rd and 24th bytes
   # Formate of each row in temp file is as follows:
   # time_stamp source target packet_identifier
   awk -v SUFFIX="${src_dest}" '{ 
     if(substr($1,1,2)!="0x") { 
       printf "%s %s ", $1, SUFFIX 
     }
-    if(substr($1,1,7)=="0x0000:"){
-      printf "%s%s", $8, $9
-    }
     if(substr($1,1,7)=="0x0010:"){
-      printf "%s%s00%s0000%s%s%s%s", $2, $3, substr($4,3,2), $6, $7, $8, $9
+      printf "%s0000%s%s%s%s", substr($4,3,2), $6, $7, $8, $9
     }
     if(substr($1,1,7)=="0x0020:"){
       printf "%s\n", substr($2,1,2)
@@ -83,30 +80,20 @@ done
 cat ${TIME_STREAM} > ${TIME_DUMP}
 > ${TIME_STREAM}
 
-# Convert time stamps into elapsed time, final output will be saved into time_stream.txt
-echo "Calculating elapsed time, and hash of packet identifier..."
-# Take the first packet time stamp, parse it and set it's elapsed time to zero
+# First packet time is a reference time to calculate the elapsed time of all the packets
 time=$(head -n 1 ${TIME_DUMP})
 readarray -d " " -t time_stream <<< ${time}
-time_stream[0]=${time_stream[0]//./:}
-time_stream[3]=${time_stream[3]//$'\n'/}
-readarray -d : -t time_array1 <<< ${time_stream[0]}
-elapsed_time=0
-hash=$(echo -n ${time_stream[3]} | md5sum | cut -d' ' -f1)
-echo "$elapsed_time ${time_stream[1]} ${time_stream[2]} ${hash}" >> ${TIME_STREAM}
 
-# Iterate thrugh all the packets and find out elapsed time and hash of packet identifier 
-while read time; do
-  readarray -d " " -t time_stream <<< ${time}
-  time_stream[0]=${time_stream[0]//./:}
-  time_stream[3]=${time_stream[3]//$'\n'/}
-  readarray -d : -t time_array2 <<< ${time_stream[0]}
-  interval=$(( (10#${time_array2[0]} - 10#${time_array1[0]})*60*60*1000*1000 + (10#${time_array2[1]} - 10#${time_array1[1]})*60*1000*1000 + (10#${time_array2[2]} - 10#${time_array1[2]})*1000*1000 + 10#${time_array2[3]} - 10#${time_array1[3]} ))
-  elapsed_time=$((${elapsed_time} + ${interval}))
-  hash=$(echo -n ${time_stream[3]} | md5sum | cut -d' ' -f1)
-  echo "$elapsed_time ${time_stream[1]} ${time_stream[2]} ${hash}" >> ${TIME_STREAM}
-  time_array1=("${time_array2[@]}") 
-done <<<$(tail -n +2 ${TIME_DUMP})
+# FInding out elapsed time and hash of each packet
+echo "Finding hash and elapsed time of each packet..."
+awk -v BASE="${time_stream[0]}" '{ 
+  cmd="echo -n " $4 " | md5sum|cut -d\" \" -f1"; cmd|getline hash;
+  close(cmd)
+  split(BASE, base_time_array, /[:.]/)
+  split($1, time_array, /[:.]/) 
+  elapsed_time=(time_array[1] - base_time_array[1])*60*60*1000*1000 + (time_array[2] - base_time_array[2])*60*1000*1000 + (time_array[3] - base_time_array[3])*1000*1000 + time_array[4] - base_time_array[4]
+  print elapsed_time " " $2 " " $3 " " hash
+}' ${TIME_DUMP} > ${TIME_STREAM}
 
 rm -r ${TEMP}
 
