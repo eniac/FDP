@@ -6,7 +6,7 @@ ShaderVariantCollection:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: NewShaderVariants
+  m_Name: NewShaderVariants_1
   m_Shaders:
   - first: {fileID: 64, guid: 0000000000000000f000000000000000, type: 0}
     second:
@@ -60,8 +60,6 @@ ShaderVariantCollection:
         passType: 4
       - keywords: DIRECTIONAL LIGHTPROBE_SH _EMISSION _NORMALMAP
         passType: 4
-      - keywords: DIRECTIONAL LIGHTPROBE_SH _ALPHATEST_ON
-        passType: 4
       - keywords: DIRECTIONAL LIGHTPROBE_SH _ALPHABLEND_ON
         passType: 4
       - keywords: DIRECTIONAL LIGHTPROBE_SH _ALPHAPREMULTIPLY_ON
@@ -81,8 +79,6 @@ ShaderVariantCollection:
       - keywords: DIRECTIONAL _ALPHAPREMULTIPLY_ON
         passType: 5
       - keywords: SHADOWS_DEPTH
-        passType: 8
-      - keywords: SHADOWS_DEPTH _ALPHATEST_ON
         passType: 8
       - keywords: SHADOWS_DEPTH _ALPHABLEND_ON
         passType: 8

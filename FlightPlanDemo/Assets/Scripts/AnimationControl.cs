@@ -20,7 +20,7 @@ public class AnimationControl : MonoBehaviour
     [SerializeField] Topology topo = default;
     const float MERGE_WINDOW = 0.5f;   
     const float U_SEC = 1000000f;
-    const float speed = 5.0f;
+    const float speed = 10.0f;
     int counter;
     int window_counter;
     string elapsedTimeString;
@@ -185,7 +185,7 @@ public class AnimationControl : MonoBehaviour
 
         // If packet is already running on link store the info in holdback queue for future reference (in time order) 
         if(runningPacketID.Contains(oInfo.packetID)){
-            Debug.Log("Enque = " + oInfo.packetTime + " " + oInfo.packetID);
+            // Debug.Log("Enque = " + oInfo.packetTime + " " + oInfo.packetID);
             if(packetHoldBackQueue.ContainsKey(oInfo.packetID)){
                 packetHoldBackQueue[oInfo.packetID].Enqueue(oInfo);
             }
@@ -198,7 +198,7 @@ public class AnimationControl : MonoBehaviour
         }
         // If this is new packet, instantiate an object 
         GameObject go = Instantiate(packet_prefab) as GameObject;
-        Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
+        // Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
         go.transform.position = oInfo.sourcePos;
         oInfo.Object = go;
         oInfo.direction = (oInfo.targetPos - go.transform.position).normalized;
@@ -215,9 +215,9 @@ public class AnimationControl : MonoBehaviour
             if(packetHoldBackQueue[pid].Count > 0){
                 if(runningPacketID.Contains(pid)==false){
                     ObjectInfo oInfo = packetHoldBackQueue[pid].Dequeue();
-                    Debug.Log("Deque = " + oInfo.packetTime + " " + oInfo.packetID);
+                    // Debug.Log("Deque = " + oInfo.packetTime + " " + oInfo.packetID);
                     GameObject go = Instantiate(packet_prefab) as GameObject;
-                    Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
+                    // Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
                     go.transform.position = oInfo.sourcePos;
                     oInfo.Object = go;
                     oInfo.direction = (oInfo.targetPos - go.transform.position).normalized;

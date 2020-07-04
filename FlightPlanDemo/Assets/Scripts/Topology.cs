@@ -716,11 +716,21 @@ public class Topology : MonoBehaviour
             color.a = 0.4f;
             obj.GetComponent<MeshRenderer>().material.color = color;
         }
+        foreach(var obj in satObjectDict.Values){
+            ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Transparent);
+            Color color = obj.GetComponent<MeshRenderer>().material.color;
+            color.a = 0.4f;
+            obj.GetComponent<MeshRenderer>().material.color = color;
+        }
     }
 
     // Make Nodes Opaque
     public void MakeNodesOpaque(){
         foreach(var obj in switchObjectDict.Values){
+            // Change the blend mode itself to opaque
+            ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Opaque);
+        }
+        foreach(var obj in satObjectDict.Values){
             // Change the blend mode itself to opaque
             ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Opaque);
         }
