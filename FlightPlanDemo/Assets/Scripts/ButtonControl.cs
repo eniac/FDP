@@ -85,4 +85,16 @@ public class ButtonControl : MonoBehaviour
     public void StartAnimation(){
         anim.StartAnimation();
     }
+
+    public void PauseAnimation(){
+        anim.Pause();
+    }
+
+    public void ForwardAnimation(){
+        anim.Forward();
+    }
+
+    public void RewindAnimation(){
+        anim.Rewind();
+    }
 }

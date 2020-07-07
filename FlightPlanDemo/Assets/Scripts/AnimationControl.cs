@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 struct ObjectInfo{
     public GameObject Object;
     public float packetTime;
+    public float expirationTime;
     public Vector3 direction;
     public Vector3 sourcePos;
     public Vector3 targetPos;
@@ -26,22 +27,35 @@ public class AnimationControl : MonoBehaviour
     string elapsedTimeString;
     StringReader packetTimeString;
     float animStartTime;
+    float pauseStartTime;
+    float rewindStartTime;
+    float rewindPauseTime;
+    float forwardPauseTime;
+    string[] nextPacketInfo;
     float nextPacketTime;
     GameObject packet_prefab;
     Dictionary<GameObject, ObjectInfo> runningObject;
     List<GameObject> expiredObjects;
     List<string> runningPacketID;
     Dictionary<string, Queue<ObjectInfo>> packetHoldBackQueue;
-    string[] nextPacketInfo;
+    List<ObjectInfo> rewindList;
+    int rewindListPointer;
     bool firstUpdate = true;
     bool parseRemain = true;
     bool holdbackRemain = true;
+    AnimStatus animationStatus;
 
     public enum PacketInfoIdx{
         Time=0,
-        Source=1,
-        Target=2,
-        Pid=3
+        Source,
+        Target,
+        Pid
+    }
+
+    public enum AnimStatus{
+        Pause=0,
+        Forward,
+        Rewind
     }
     
     public void Start(){
@@ -77,20 +91,16 @@ public class AnimationControl : MonoBehaviour
             runningObject = new Dictionary<GameObject, ObjectInfo>();
             runningPacketID = new List<string>();
             packetHoldBackQueue = new Dictionary<string, Queue<ObjectInfo>>();
+            rewindList = new List<ObjectInfo>();
         }
 
         // Removal of objects if any remained while restarting the animation
-        expiredObjects.Clear();
-        foreach(GameObject go in runningObject.Keys){
-            Destroy(go);
-        }
-        runningPacketID.Clear();
-        runningObject.Clear();
-        packetHoldBackQueue.Clear();
+        PacketCleanUp();
 
         packet_prefab = Resources.Load("Packet") as GameObject;
 
-        animStartTime = Time.time;
+        animStartTime = 0f;
+        rewindStartTime = 0f;
 
         // TODO : Empty file check
         nextPacketInfo = packetTimeString.ReadLine().Split(' ');
@@ -101,23 +111,106 @@ public class AnimationControl : MonoBehaviour
         topo.MakeLinksTransparent();
         topo.MakeNodesTransparent();
 
+        rewindStartTime = 0f;
+        pauseStartTime = 0f;
+        rewindPauseTime = 0f;
+        forwardPauseTime = 0f;
         parseRemain = true;
         holdbackRemain = true;
         firstUpdate = true;
+        SetAnimationStatus(AnimStatus.Forward);
         enabled = true;
     }
 
     void Update(){
+        if(GetAnimationStatus() == AnimStatus.Forward){
+            ForwardAnimation();
+        }
+        else if(GetAnimationStatus() == AnimStatus.Rewind){
+            RewindAnimation();
+        }
+    }
+
+    void PacketCleanUp(){
+        topo.MakeLinksOpaque();
+        topo.MakeNodesOpaque();
+        // Removal of objects if any remained while restarting the animation
+        expiredObjects.Clear();
+        foreach(GameObject go in runningObject.Keys){
+            Destroy(go);
+        }
+        runningPacketID.Clear();
+        runningObject.Clear();
+        packetHoldBackQueue.Clear();
+        rewindList.Clear();
+    }
+
+    void SetAnimationStatus(AnimStatus status){
+        animationStatus = status;
+    }
+    AnimStatus GetAnimationStatus(){
+        return animationStatus;
+    }
+    public void Pause(){
+        if(GetAnimationStatus() == AnimStatus.Pause){
+            return;
+        }
+        pauseStartTime = Time.time;
+        SetAnimationStatus(AnimStatus.Pause);
+        Debug.Log("PAUSE");
+        enabled = false;
+    }
+    public void Forward(){
+        if(GetAnimationStatus() == AnimStatus.Forward){
+            return;
+        }
+        SetAnimationStatus(AnimStatus.Forward);
+        enabled = true;
+    }
+    public void Rewind(){
+        if(GetAnimationStatus() == AnimStatus.Rewind){
+            return;
+        }
+
+        if(pauseStartTime > 0f){
+            Debug.Log("Rewind after PAUSE");
+            float delta = Time.time - pauseStartTime;
+            
+            rewindPauseTime += delta;
+            pauseStartTime = 0f;
+            if(rewindStartTime > 0){
+                rewindStartTime += delta;
+            }
+            else{
+                rewindStartTime = Time.time;
+            }  
+        }
+        else{
+            rewindStartTime = Time.time;
+        }
+
+        SetAnimationStatus(AnimStatus.Rewind);
+        enabled = true;
+    }
+
+
+    void ForwardAnimation(){
+        if(pauseStartTime > 0f){
+            forwardPauseTime += Time.time - pauseStartTime;
+        }
         // Find expired objects
         expiredObjects.Clear();
         foreach(GameObject go in runningObject.Keys){
-            // if(Time.time - runningObject[go].packetTime >= 
-            //     Vector3.Distance(runningObject[go].sourcePos, runningObject[go].targetPos)/ speed ||
-            //     Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
             if(Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
                 // Debug.Log("Object Expired");
                 go.transform.position = runningObject[go].targetPos;
                 expiredObjects.Add(go);
+                // Update rewind list
+                ObjectInfo oInfo = runningObject[go];
+                oInfo.expirationTime = Time.time - forwardPauseTime;
+                Debug.Log(Time.time + " : " + oInfo.expirationTime);
+                rewindList.Add(oInfo);
+                rewindListPointer = rewindList.Count-1;
             }
         }
         // Remove expired objects
@@ -128,14 +221,18 @@ public class AnimationControl : MonoBehaviour
         }
 
         if(parseRemain==false && holdbackRemain==false && runningObject.Count==0){
-            topo.MakeLinksOpaque();
-            topo.MakeNodesOpaque();
+            PacketCleanUp();
             Debug.Log("Update Ends"); 
             enabled = false;
+            return;
         }
 
-        if(firstUpdate == true){
-            animStartTime = Time.time;
+        // Kept it here, Since above code takes time to execute and 
+        // curent time changes so the animStartTime will be stale, 
+        // which will generate multiple packets simultaneously in the begining
+        if(firstUpdate == true || pauseStartTime > 0f){
+            animStartTime += Time.time - pauseStartTime;
+            pauseStartTime = 0f;
             firstUpdate = false;
         }
         // if any packet in hold back queue is elligible to run, then run it
@@ -171,6 +268,66 @@ public class AnimationControl : MonoBehaviour
         // Move running Object further 
         foreach(GameObject go in runningObject.Keys){
             go.transform.position = go.transform.position + runningObject[go].direction * speed * Time.deltaTime;
+        }
+    }
+
+    void RewindAnimation(){
+        ReadRewindListBackward();
+    }
+
+    void ReadRewindListForward(){
+
+    }
+
+    void ReadRewindListBackward(){
+        // Find expired objects
+        expiredObjects.Clear();
+        foreach(GameObject go in runningObject.Keys){
+            if(Vector3.Distance(runningObject[go].sourcePos, go.transform.position) <= 1f){
+                // Debug.Log("Object Expired");
+                go.transform.position = runningObject[go].sourcePos;
+                expiredObjects.Add(go);
+            }
+        }
+        // Remove expired objects
+        foreach(GameObject go in expiredObjects){
+            runningPacketID.Remove(runningObject[go].packetID);
+            runningObject.Remove(go);
+            Destroy(go);
+        }
+
+        if(rewindListPointer < 0 && runningObject.Count == 0){
+            PacketCleanUp();
+            Debug.Log("Rewind Ends.");
+            enabled = false;
+            return;
+        }
+        // Read the rewind list by index
+        ObjectInfo oInfo;
+        if(rewindListPointer >= 0){
+            oInfo = rewindList[rewindListPointer];
+            Debug.Log("OUT = " + Time.time + " : " + rewindStartTime + " : " + oInfo.expirationTime + " : " + rewindPauseTime);
+            while(Time.time - rewindStartTime >=  rewindStartTime - (oInfo.expirationTime+rewindPauseTime+forwardPauseTime)){
+                Debug.Log("IN = " + Time.time + " : " + rewindStartTime + " : " + oInfo.expirationTime + " : " + rewindPauseTime + " : " + forwardPauseTime);
+                // instantiate an object at target position
+                GameObject go = Instantiate(packet_prefab) as GameObject;
+                // Source and target pos will be reversed
+                go.transform.position = oInfo.targetPos;
+                oInfo.Object = go;
+                // Store the running object info to track it later
+                runningObject.Add(go, oInfo);
+                runningPacketID.Add(oInfo.packetID);
+                rewindListPointer--;
+                if(rewindListPointer < 0){
+                    break;
+                }
+                oInfo = rewindList[rewindListPointer];
+            }
+        }
+
+        // Move running Object further 
+        foreach(GameObject go in runningObject.Keys){
+            go.transform.position = go.transform.position + (runningObject[go].sourcePos - go.transform.position).normalized * speed * Time.deltaTime;
         }
     }
 
