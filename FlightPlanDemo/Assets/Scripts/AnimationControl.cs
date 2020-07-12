@@ -20,9 +20,12 @@ struct ObjectInfo{
 public class AnimationControl : MonoBehaviour
 {
     [SerializeField] Topology topo = default;
+    [SerializeField] SliderControl sliderControl = default;
+    [SerializeField] float SPEED_FACTOR = 1;
+    [SerializeField] float JUMP_SPEED_FACTOR = 10;
     const float MERGE_WINDOW = 0.5f;   
-    const float U_SEC = 1000000f;
-    const float speed = 10.0f;
+    const float BASE_SPEED = 10.0f;
+    float speed;
     int counter;
     int window_counter;
     string elapsedTimeString;
@@ -42,8 +45,10 @@ public class AnimationControl : MonoBehaviour
     bool firstUpdate = true;
     bool parseRemain = true;
     bool holdbackRemain = true;
-    AnimStatus animationStatus;
+    Global.AnimStatus animationStatus;
     float referenceCounter;
+    float referenceCounterThreshold=0;
+    Global.AnimStatus lastAnimStatus;
     bool startCounter;
     bool forwardFlag;
     bool rewindFlag;
@@ -53,13 +58,6 @@ public class AnimationControl : MonoBehaviour
         Source=1,
         Target=2,
         Pid=3
-    }
-
-    public enum AnimStatus{
-        Pause=0,
-        Forward,
-        Rewind,
-        Disk
     }
     
     public void Start(){
@@ -82,10 +80,15 @@ public class AnimationControl : MonoBehaviour
         }
     }
 
+    public void AdjustSpeed(float speed_factor){
+        SPEED_FACTOR = speed_factor;
+    }
+
     public void StartAnimation(){
         Debug.Log("Restarting Animation");
         counter = 1;
         window_counter = 1;
+        speed = BASE_SPEED * SPEED_FACTOR;
 
         // Objects initialization
         packetTimeString = new StringReader(elapsedTimeString);
@@ -121,7 +124,8 @@ public class AnimationControl : MonoBehaviour
 
         topo.MakeLinksTransparent();
         topo.MakeNodesTransparent();
-        SetAnimationStatus(AnimStatus.Disk);
+        SetAnimationStatus(Global.AnimStatus.Disk);
+        sliderControl.SetSliderMode(Global.SliderMode.Normal);
 
         forwardFlag = false;
         rewindFlag = false;
@@ -135,57 +139,153 @@ public class AnimationControl : MonoBehaviour
         enabled = true;
     }
 
-    void SetAnimationStatus(AnimStatus status){
+    void SetAnimationStatus(Global.AnimStatus status){
         animationStatus = status;
     }
-    AnimStatus GetAnimationStatus(){
+    public Global.AnimStatus GetAnimationStatus(){
         return animationStatus;
     }
     public void Pause(){
-        if(GetAnimationStatus() == AnimStatus.Pause){
+        if(GetAnimationStatus() == Global.AnimStatus.Pause){
             return;
         }
         Debug.Log("PAUSE");
-        SetAnimationStatus(AnimStatus.Pause);
+        SetAnimationStatus(Global.AnimStatus.Pause);
     }
     public void Forward(){
-        if(GetAnimationStatus() == AnimStatus.Disk || GetAnimationStatus() == AnimStatus.Forward){
+        if(GetAnimationStatus() == Global.AnimStatus.Disk || GetAnimationStatus() == Global.AnimStatus.Forward){
             return;
         }
         forwardFlag = true;
-        SetAnimationStatus(AnimStatus.Forward);
+        SetAnimationStatus(Global.AnimStatus.Forward);
     }
     public void Rewind(){
-        if(GetAnimationStatus() == AnimStatus.Rewind){
+        if(GetAnimationStatus() == Global.AnimStatus.Rewind){
             return;
         }
         rewindFlag = true;
-        SetAnimationStatus(AnimStatus.Rewind);
+        SetAnimationStatus(Global.AnimStatus.Rewind);
     }
-    void ReferenceCounterUpdate(AnimStatus status){
-        if(status==AnimStatus.Disk || status == AnimStatus.Forward){
-            referenceCounter += Time.deltaTime;
+    void ReferenceCounterUpdate(Global.AnimStatus status){
+        if(status==Global.AnimStatus.Disk || status == Global.AnimStatus.Forward){
+            referenceCounter += (Time.deltaTime * SPEED_FACTOR);
+            sliderControl.SetTimeSlider(referenceCounter);
         }
-        else if(status == AnimStatus.Rewind){
-            if(referenceCounter - Time.deltaTime >= 0){
-                referenceCounter -= Time.deltaTime;
+        else if(status == Global.AnimStatus.Rewind){
+            if(referenceCounter - (Time.deltaTime * SPEED_FACTOR) >= 0){
+                referenceCounter -= (Time.deltaTime * SPEED_FACTOR);
+            }
+            else{
+                referenceCounter = 0f;
+            }
+            sliderControl.SetTimeSlider(referenceCounter);
+        }
+    }
+    void ReferenceCounterJump(Global.AnimStatus status){
+        bool thresholdReached = false;
+        speed = BASE_SPEED * JUMP_SPEED_FACTOR;
+        // Debug.Log("COUNTER = " + referenceCounter);
+        if(status==Global.AnimStatus.Disk || status == Global.AnimStatus.Forward){
+            if(referenceCounter + (Time.deltaTime * JUMP_SPEED_FACTOR) < GetReferenceCounterThreshold() ){
+                referenceCounter += (Time.deltaTime * JUMP_SPEED_FACTOR);
+            }
+            else{
+                referenceCounter = GetReferenceCounterThreshold();
+                thresholdReached = true;
+            }
+        }
+        else if(status == Global.AnimStatus.Rewind){
+            if(referenceCounter - (Time.deltaTime * JUMP_SPEED_FACTOR) > GetReferenceCounterThreshold()){
+                referenceCounter -= (Time.deltaTime * JUMP_SPEED_FACTOR);
+            }
+            else{
+                referenceCounter = GetReferenceCounterThreshold();
+                thresholdReached = true;
+            }
+        }
+
+        if(thresholdReached == true){
+            // Set slider mode to normal
+            sliderControl.SetSliderMode(Global.SliderMode.Normal);
+            // Restore the last animation status
+            Debug.Log("Status = " + GetAnimationStatus() + " : " + GetLastAnimStatus());
+            if(GetAnimationStatus() == Global.AnimStatus.Rewind && GetLastAnimStatus() == Global.AnimStatus.Disk){
+                // Special case handling
+                Debug.Log("NORMAL F FLAG true");
+                forwardFlag = true;
+                SetAnimationStatus(Global.AnimStatus.Forward);
+            }
+            else if(GetAnimationStatus() != Global.AnimStatus.Forward && GetLastAnimStatus() == Global.AnimStatus.Forward){
+                Debug.Log("NORMAL F FLAG true");
+                forwardFlag = true;
+                SetAnimationStatus(GetLastAnimStatus());
+            }
+            else if(GetAnimationStatus() != Global.AnimStatus.Rewind && GetLastAnimStatus() == Global.AnimStatus.Rewind){
+                Debug.Log("NORMAL R FLAG true");
+                rewindFlag = true;
+                SetAnimationStatus(GetLastAnimStatus());
+            }
+            else{
+                SetAnimationStatus(GetLastAnimStatus());
             }
         }
     }
+    public void SetLastAnimStatus(){
+        lastAnimStatus = GetAnimationStatus();
+    }
+    public Global.AnimStatus GetLastAnimStatus(){
+        return lastAnimStatus;
+    }
+    public void SetReferenceCounterThreshold(float timeDiff){
+        if(timeDiff == 0){
+            // No change in slider Restore the last animation status
+            // Since it is changed to Pause when mouse button down event is detected on slider
+            SetAnimationStatus(GetLastAnimStatus());
+            return;
+        }
+        else if(timeDiff < 0){
+            // If time deifference is negative means need to rewind the game fast
+            if(GetLastAnimStatus() != Global.AnimStatus.Rewind){
+                Debug.Log("Jump R FLAG true");
+                rewindFlag = true;
+            }
+            SetAnimationStatus(Global.AnimStatus.Rewind);
+        }
+        else{
+            // If time deifference is negative means need to forward the game fast
+            if(GetLastAnimStatus() != Global.AnimStatus.Forward){
+                Debug.Log("Jump F FLAG true");
+                forwardFlag = true;
+            }
+            SetAnimationStatus(Global.AnimStatus.Forward);
+        }
+        referenceCounterThreshold = referenceCounter + timeDiff;
+        // Set slider mode to jump
+        sliderControl.SetSliderMode(Global.SliderMode.Jump);
+    }
+    float GetReferenceCounterThreshold(){
+        return referenceCounterThreshold;
+    }
 
     void Update(){
-        AnimStatus status = GetAnimationStatus();
+        speed = BASE_SPEED * SPEED_FACTOR;
+        Global.AnimStatus status = GetAnimationStatus();
         if(startCounter == true){
-            ReferenceCounterUpdate(status);
+            if(sliderControl.GetSliderMode() == Global.SliderMode.Normal){
+                ReferenceCounterUpdate(status);
+            }
+            else{
+                ReferenceCounterJump(status);
+            }
         }
 
-        if(status == AnimStatus.Disk){
+        if(status == Global.AnimStatus.Disk){
                 ReadDisk();
         }
-        else if(status == AnimStatus.Forward){
+        else if(status == Global.AnimStatus.Forward){
             ReadForward();
         }
-        else if(status == AnimStatus.Rewind){
+        else if(status == Global.AnimStatus.Rewind){
             ReadRewind();
         }
     }
@@ -234,14 +334,14 @@ public class AnimationControl : MonoBehaviour
 
         if(forwardList[forwardList.Count-1].instantiationTime <= referenceCounter){
             // Disk mode is to be run
-            SetAnimationStatus(AnimStatus.Disk);
+            SetAnimationStatus(Global.AnimStatus.Disk);
             return;
         }
 
         if(forwardFlag==true){
             SetForwardListPointer(0);
             while(GetForwardListPointer() < forwardList.Count && forwardList[GetForwardListPointer()].instantiationTime < referenceCounter){
-                Debug.Log("POLL FWD = " + forwardList[GetForwardListPointer()].instantiationTime + " : " + referenceCounter);
+                // Debug.Log("POLL FWD = " + forwardList[GetForwardListPointer()].instantiationTime + " : " + referenceCounter);
                 ForwardListPointerInc();
             }
             forwardFlag = false;
@@ -249,12 +349,12 @@ public class AnimationControl : MonoBehaviour
 
         int ptr = GetForwardListPointer();
         if(ptr < forwardList.Count ){
-            Debug.Log("FWD = " + ptr + " : " + forwardList[ptr].instantiationTime + " : " + referenceCounter);
+            // Debug.Log("FWD = " + ptr + " : " + forwardList[ptr].instantiationTime + " : " + referenceCounter);
         }
         
 
         while(ptr < forwardList.Count && forwardList[ptr].instantiationTime <= referenceCounter){
-            Debug.Log("FWD IN = " + ptr + " : " + forwardList[ptr].instantiationTime + " : " + referenceCounter);
+            // Debug.Log("FWD IN = " + ptr + " : " + forwardList[ptr].instantiationTime + " : " + referenceCounter);
             ObjectInfo oInfo = forwardList[ptr];
             GameObject go = Instantiate(packet_prefab) as GameObject;
             // Instantiate on source position in forward
@@ -267,16 +367,16 @@ public class AnimationControl : MonoBehaviour
             // If we reached at the end of the list, get out of this loop, 
             // later we will start reading from disk file
             if(ptr >= forwardList.Count - 1){
-                SetAnimationStatus(AnimStatus.Disk);
+                SetAnimationStatus(Global.AnimStatus.Disk);
                 break;
             }
             // Increment forward list pointer
             ForwardListPointerInc();
             ptr = GetForwardListPointer(); 
-            Debug.Log("FWD = " + ptr);
+            // Debug.Log("FWD = " + ptr);
         }
         if(ptr >= forwardList.Count - 1){
-            SetAnimationStatus(AnimStatus.Disk);
+            SetAnimationStatus(Global.AnimStatus.Disk);
         }
 
         // Move running Object further 
@@ -304,7 +404,7 @@ public class AnimationControl : MonoBehaviour
         if(rewindFlag==true){
             SetRewindListPointer(rewindList.Count - 1);
             while(GetRewindListPointer() >= 0 && rewindList[GetRewindListPointer()].expirationTime > referenceCounter){
-                Debug.Log("POLL RWD = " + rewindList[GetRewindListPointer()].expirationTime + " : " + referenceCounter);
+                // Debug.Log("POLL RWD = " + rewindList[GetRewindListPointer()].expirationTime + " : " + referenceCounter);
                 RewindListPointerDec();
             }
             rewindFlag = false;
@@ -312,7 +412,7 @@ public class AnimationControl : MonoBehaviour
         int ptr = GetRewindListPointer();
         // int ptr = GetRewindListPointer();
         if(ptr >= 0){
-            Debug.Log("REV = " + ptr + " : " + rewindList[ptr].expirationTime + " : " + referenceCounter);
+            // Debug.Log("REV = " + ptr + " : " + rewindList[ptr].expirationTime + " : " + referenceCounter);
         }
         
         // Debug.Log("START = " + rewindList.Count + " : " + ptr + " : " + runningObject.Count);
@@ -337,7 +437,7 @@ public class AnimationControl : MonoBehaviour
             // Decrement rewind list pointer
             RewindListPointerDec();
             ptr = GetRewindListPointer();
-            Debug.Log("REV = " + ptr);
+            // Debug.Log("REV = " + ptr);
         }
         // Debug.Log("END   = " + rewindList.Count + " : " + ptr + " : " + runningObject.Count);
         // Move running Object further 
@@ -367,6 +467,7 @@ public class AnimationControl : MonoBehaviour
             Destroy(go);
         }
 
+        Debug.Log("DISK = " + parseRemain + " : " + holdbackRemain + " : " + runningObject.Count);
         if(parseRemain==false && holdbackRemain==false && runningObject.Count==0){
             topo.MakeLinksOpaque();
             topo.MakeNodesOpaque();
@@ -387,7 +488,7 @@ public class AnimationControl : MonoBehaviour
         InstantiateHoldBackPackets();
 
         // If the last parsed packet time meets the current time of animation the instantiate it
-        if(parseRemain && nextPacketTime/U_SEC <= referenceCounter){
+        if(parseRemain && nextPacketTime/Global.U_SEC <= referenceCounter){
             string timeStr;
             do{
                 InstantiatePacket();
@@ -397,8 +498,8 @@ public class AnimationControl : MonoBehaviour
                     nextPacketInfo = timeStr.Split(' ');
                     nextPacketTime = (float)Convert.ToInt32(nextPacketInfo[(int)PacketInfoIdx.Time]);
                     // float et = currentTime - animStartTime;
-                    // Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/U_SEC + " :: " + et + " :: " + nextPacketInfo[(int)PacketInfoIdx.Time] + " : " + nextPacketInfo[(int)PacketInfoIdx.Source] + " : " + nextPacketInfo[(int)PacketInfoIdx.Target]);
-                    // Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/U_SEC + " :: " + et);
+                    // Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/Global.U_SEC + " :: " + et + " :: " + nextPacketInfo[(int)PacketInfoIdx.Time] + " : " + nextPacketInfo[(int)PacketInfoIdx.Source] + " : " + nextPacketInfo[(int)PacketInfoIdx.Target]);
+                    // Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/Global.U_SEC + " :: " + et);
                     counter++;
                 }
                 else{
@@ -408,7 +509,7 @@ public class AnimationControl : MonoBehaviour
                 }
                 // parseRemain = false;
                 // break;
-            }while(nextPacketTime/U_SEC <= referenceCounter);
+            }while(nextPacketTime/Global.U_SEC <= referenceCounter);
             window_counter++;
         }
 

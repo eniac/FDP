@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8218986401500900900}
   m_Layer: 5
   m_Name: CanvasTop
-  m_TagString: Untagged
+  m_TagString: HostCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 8218986401623121763}
   - component: {fileID: 8218986401623121762}
   m_Layer: 5
-  m_Name: Text
+  m_Name: HostText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 8218986401641369998}
   m_Layer: 5
   m_Name: CanvasBottom
-  m_TagString: Untagged
+  m_TagString: HostCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 8218986401879164181}
   - component: {fileID: 8218986401879164180}
   m_Layer: 5
-  m_Name: Text
+  m_Name: HostText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -465,7 +465,7 @@ GameObject:
   - component: {fileID: 8218986401939806564}
   - component: {fileID: 8218986401939806619}
   m_Layer: 5
-  m_Name: Text
+  m_Name: HostText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -545,7 +545,7 @@ GameObject:
   - component: {fileID: 8218986401955116834}
   m_Layer: 5
   m_Name: CanvasLeft
-  m_TagString: Untagged
+  m_TagString: HostCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -642,7 +642,7 @@ GameObject:
   - component: {fileID: 8218986402027569807}
   - component: {fileID: 8218986402027569806}
   m_Layer: 5
-  m_Name: Text
+  m_Name: HostText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -720,7 +720,7 @@ GameObject:
   - component: {fileID: 8218986402141260750}
   - component: {fileID: 8218986402141260749}
   m_Layer: 5
-  m_Name: Text
+  m_Name: HostText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -798,7 +798,7 @@ GameObject:
   - component: {fileID: 8218986402293738025}
   - component: {fileID: 8218986402293738024}
   m_Layer: 5
-  m_Name: Text
+  m_Name: HostText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -878,7 +878,7 @@ GameObject:
   - component: {fileID: 8218986402349877076}
   m_Layer: 5
   m_Name: CanvasBack
-  m_TagString: Untagged
+  m_TagString: HostCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -977,7 +977,7 @@ GameObject:
   - component: {fileID: 8218986402965156404}
   m_Layer: 5
   m_Name: CanvasFront
-  m_TagString: Untagged
+  m_TagString: HostCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1076,7 +1076,7 @@ GameObject:
   - component: {fileID: 8218986403095971941}
   m_Layer: 5
   m_Name: CanvasRight
-  m_TagString: Untagged
+  m_TagString: HostCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

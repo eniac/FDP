@@ -379,12 +379,12 @@ public class Topology : MonoBehaviour
 
             hostObjectDict.Add(h, go);
             
-            go.transform.Find("CanvasFront/Text").gameObject.GetComponent<Text>().text = h.ToString();
-            go.transform.Find("CanvasLeft/Text").gameObject.GetComponent<Text>().text = h.ToString();
-            go.transform.Find("CanvasRight/Text").gameObject.GetComponent<Text>().text = h.ToString();
-            go.transform.Find("CanvasBack/Text").gameObject.GetComponent<Text>().text = h.ToString();
-            go.transform.Find("CanvasTop/Text").gameObject.GetComponent<Text>().text = h.ToString();
-            go.transform.Find("CanvasBottom/Text").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasFront/HostText").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasLeft/HostText").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasRight/HostText").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasBack/HostText").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasTop/HostText").gameObject.GetComponent<Text>().text = h.ToString();
+            go.transform.Find("CanvasBottom/HostText").gameObject.GetComponent<Text>().text = h.ToString();
 
             hostCanvasObjectList.Add(go.transform.Find("CanvasFront").gameObject);
             hostCanvasObjectList.Add(go.transform.Find("CanvasLeft").gameObject);

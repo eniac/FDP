@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CamMovement : MonoBehaviour
 {
@@ -39,10 +40,16 @@ public class CamMovement : MonoBehaviour
         // GetMouseButtonDown returns true when user press the mouse button 
         // This time record the previous position
         if(Input.GetMouseButtonDown(0)){
+            if(DisableMouseEventOverUI() == true){
+                return;
+            }
             previousPosition = cam.ScreenToViewportPoint(Input.mousePosition);
         }
         // If mouse button is held down change the direction of camera accordingly
         if(Input.GetMouseButton(0)){
+            if(DisableMouseEventOverUI() == true){
+                return;
+            }
             Vector3 direction = previousPosition - cam.ScreenToViewportPoint(Input.mousePosition);
             // Change camera position
             cam.transform.position = targetPos;     //new Vector3(0,0,0);
@@ -82,6 +89,34 @@ public class CamMovement : MonoBehaviour
                 cam.fieldOfView++;
             }
         }
+    }
+
+    bool DisableMouseEventOverUI(){
+        // METHOD 1: This method will disable mouse event over every UI element
+        // if(EventSystem.current.IsPointerOverGameObject()){
+        //         return;
+        // }
+
+        // METHOD 2: This method will disable mouse event on selective UI elements
+        PointerEventData pointerData = new PointerEventData (EventSystem.current)
+        {
+            pointerId = -1,
+        };
+
+        pointerData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+        
+        foreach(var ui in results){
+            // If UI element represents host then don't disable mouse event
+            if(ui.gameObject.name == "HostText"){
+                return false;
+            }
+        }
+        if(results.Count != 0){
+            return true;
+        }
+        return false;
     }
     public void MoveCamToNodes(List<GameObject> highlitedObjects){
         move(highlitedObjects);
