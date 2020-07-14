@@ -12,19 +12,22 @@ struct ObjectInfo{
     public float packetTime;
     public float expirationTime;
     public float instantiationTime;
-    public Vector3 direction;
     public Vector3 sourcePos;
     public Vector3 targetPos;
+    public string origin;
+    public string destination;
     public string packetID;
 };
 public class AnimationControl : MonoBehaviour
 {
     [SerializeField] Topology topo = default;
     [SerializeField] SliderControl sliderControl = default;
+    [SerializeField] ColorControl colorControl = default;
     [SerializeField] float SPEED_FACTOR = 1;
-    [SerializeField] float JUMP_SPEED_FACTOR = 10;
+    float JUMP_SPEED_FACTOR = 10;
     const float MERGE_WINDOW = 0.5f;   
     const float BASE_SPEED = 10.0f;
+    Vector3 packetSize = new Vector3(0.7f, 0.7f, 0.7f);
     float speed;
     int counter;
     int window_counter;
@@ -55,9 +58,11 @@ public class AnimationControl : MonoBehaviour
 
     public enum PacketInfoIdx{
         Time=0,
-        Source=1,
-        Target=2,
-        Pid=3
+        Source,
+        Target,
+        Origin,
+        Destination,
+        Pid
     }
     
     public void Start(){
@@ -86,6 +91,8 @@ public class AnimationControl : MonoBehaviour
 
     public void StartAnimation(){
         Debug.Log("Restarting Animation");
+
+
         counter = 1;
         window_counter = 1;
         speed = BASE_SPEED * SPEED_FACTOR;
@@ -182,7 +189,13 @@ public class AnimationControl : MonoBehaviour
         }
     }
     void ReferenceCounterJump(Global.AnimStatus status){
+        // Make packets invisible
+        foreach(var go in runningObject.Keys){
+            go.transform.localScale = new Vector3(0,0,0);
+        }
+
         bool thresholdReached = false;
+        // Overridding base speed value
         speed = BASE_SPEED * JUMP_SPEED_FACTOR;
         // Debug.Log("COUNTER = " + referenceCounter);
         if(status==Global.AnimStatus.Disk || status == Global.AnimStatus.Forward){
@@ -208,61 +221,57 @@ public class AnimationControl : MonoBehaviour
             // Set slider mode to normal
             sliderControl.SetSliderMode(Global.SliderMode.Normal);
             // Restore the last animation status
-            Debug.Log("Status = " + GetAnimationStatus() + " : " + GetLastAnimStatus());
-            if(GetAnimationStatus() == Global.AnimStatus.Rewind && GetLastAnimStatus() == Global.AnimStatus.Disk){
-                // Special case handling
-                Debug.Log("NORMAL F FLAG true");
-                forwardFlag = true;
-                SetAnimationStatus(Global.AnimStatus.Forward);
-            }
-            else if(GetAnimationStatus() != Global.AnimStatus.Forward && GetLastAnimStatus() == Global.AnimStatus.Forward){
-                Debug.Log("NORMAL F FLAG true");
-                forwardFlag = true;
-                SetAnimationStatus(GetLastAnimStatus());
-            }
-            else if(GetAnimationStatus() != Global.AnimStatus.Rewind && GetLastAnimStatus() == Global.AnimStatus.Rewind){
-                Debug.Log("NORMAL R FLAG true");
-                rewindFlag = true;
-                SetAnimationStatus(GetLastAnimStatus());
-            }
-            else{
-                SetAnimationStatus(GetLastAnimStatus());
+            StartAnimationAction(GetLastAnimStatus());
+
+            // Make packets visible
+            foreach(var go in runningObject.Keys){
+                go.transform.localScale = packetSize;
             }
         }
     }
     public void SetLastAnimStatus(){
+        if(GetAnimationStatus() == Global.AnimStatus.Disk){
+            lastAnimStatus = Global.AnimStatus.Forward;
+            return;
+        }
         lastAnimStatus = GetAnimationStatus();
     }
     public Global.AnimStatus GetLastAnimStatus(){
         return lastAnimStatus;
     }
-    public void SetReferenceCounterThreshold(float timeDiff){
+
+    public void DoJump(float timeDiff){
         if(timeDiff == 0){
             // No change in slider Restore the last animation status
             // Since it is changed to Pause when mouse button down event is detected on slider
-            SetAnimationStatus(GetLastAnimStatus());
+            StartAnimationAction(GetLastAnimStatus());
             return;
         }
         else if(timeDiff < 0){
             // If time deifference is negative means need to rewind the game fast
-            if(GetLastAnimStatus() != Global.AnimStatus.Rewind){
-                Debug.Log("Jump R FLAG true");
-                rewindFlag = true;
-            }
-            SetAnimationStatus(Global.AnimStatus.Rewind);
+            StartAnimationAction(Global.AnimStatus.Rewind);
         }
         else{
             // If time deifference is negative means need to forward the game fast
-            if(GetLastAnimStatus() != Global.AnimStatus.Forward){
-                Debug.Log("Jump F FLAG true");
-                forwardFlag = true;
-            }
-            SetAnimationStatus(Global.AnimStatus.Forward);
+            StartAnimationAction(Global.AnimStatus.Forward);
         }
         referenceCounterThreshold = referenceCounter + timeDiff;
         // Set slider mode to jump
         sliderControl.SetSliderMode(Global.SliderMode.Jump);
     }
+
+    void StartAnimationAction(Global.AnimStatus status){
+        if(status == Global.AnimStatus.Pause){
+            Pause();
+        }
+        if(status == Global.AnimStatus.Forward || status == Global.AnimStatus.Disk){
+            Forward();
+        }
+        if(status == Global.AnimStatus.Rewind){
+            Rewind();
+        }
+    }
+
     float GetReferenceCounterThreshold(){
         return referenceCounterThreshold;
     }
@@ -320,7 +329,8 @@ public class AnimationControl : MonoBehaviour
         // Find expired objects
         expiredObjects.Clear();
         foreach(GameObject go in runningObject.Keys){
-            if(Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
+            if( Vector3.Normalize(runningObject[go].targetPos - runningObject[go].sourcePos) != Vector3.Normalize(runningObject[go].targetPos - go.transform.position) || 
+                Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
                 go.transform.position = runningObject[go].targetPos;
                 expiredObjects.Add(go);
             }
@@ -357,8 +367,14 @@ public class AnimationControl : MonoBehaviour
             // Debug.Log("FWD IN = " + ptr + " : " + forwardList[ptr].instantiationTime + " : " + referenceCounter);
             ObjectInfo oInfo = forwardList[ptr];
             GameObject go = Instantiate(packet_prefab) as GameObject;
+            go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID);
             // Instantiate on source position in forward
             go.transform.position = oInfo.sourcePos;
+            if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
+                // Make packets invisible
+                // go.transform.localScale = new Vector3(0,0,0);
+            }
+    
             oInfo.Object = go;
             forwardList[ptr] = oInfo;
             // Store the running object info to track it later
@@ -381,7 +397,7 @@ public class AnimationControl : MonoBehaviour
 
         // Move running Object further 
         foreach(GameObject go in runningObject.Keys){
-            go.transform.position = go.transform.position + runningObject[go].direction * speed * Time.deltaTime;
+            go.transform.position = go.transform.position + (runningObject[go].targetPos - go.transform.position).normalized * speed * Time.deltaTime;
         }
     }
 
@@ -389,7 +405,8 @@ public class AnimationControl : MonoBehaviour
         // Find expired objects
         expiredObjects.Clear();
         foreach(GameObject go in runningObject.Keys){
-            if(Vector3.Distance(runningObject[go].sourcePos, go.transform.position) <= 1f){
+            if( Vector3.Normalize(runningObject[go].sourcePos - runningObject[go].targetPos) != Vector3.Normalize(runningObject[go].sourcePos - go.transform.position) ||
+                Vector3.Distance(runningObject[go].sourcePos, go.transform.position) <= 1f){
                 go.transform.position = runningObject[go].sourcePos;
                 expiredObjects.Add(go);
             }
@@ -427,8 +444,13 @@ public class AnimationControl : MonoBehaviour
         while(ptr >= 0 && rewindList[ptr].expirationTime >= referenceCounter){
             ObjectInfo oInfo = rewindList[ptr];
             GameObject go = Instantiate(packet_prefab) as GameObject;
+            go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID);
             // Instantiate on target position in rewind
             go.transform.position = oInfo.targetPos;
+            if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
+                // Make packets invisible
+                // go.transform.localScale = new Vector3(0,0,0);
+            }
             oInfo.Object = go;
             rewindList[ptr] = oInfo;
             // Store the running object info to track it later
@@ -450,7 +472,8 @@ public class AnimationControl : MonoBehaviour
         // Find expired objects
         expiredObjects.Clear();
         foreach(GameObject go in runningObject.Keys){
-            if(Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
+            if( Vector3.Normalize(runningObject[go].targetPos - runningObject[go].sourcePos) != Vector3.Normalize(runningObject[go].targetPos - go.transform.position) ||
+                Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
                 // Debug.Log("Object Expired");
                 go.transform.position = runningObject[go].targetPos;
                 expiredObjects.Add(go);
@@ -467,7 +490,7 @@ public class AnimationControl : MonoBehaviour
             Destroy(go);
         }
 
-        Debug.Log("DISK = " + parseRemain + " : " + holdbackRemain + " : " + runningObject.Count);
+        // Debug.Log("DISK = " + parseRemain + " : " + holdbackRemain + " : " + runningObject.Count);
         if(parseRemain==false && holdbackRemain==false && runningObject.Count==0){
             topo.MakeLinksOpaque();
             topo.MakeNodesOpaque();
@@ -515,7 +538,7 @@ public class AnimationControl : MonoBehaviour
 
         // Move running Object further 
         foreach(GameObject go in runningObject.Keys){
-            go.transform.position = go.transform.position + runningObject[go].direction * speed * Time.deltaTime;
+            go.transform.position = go.transform.position + (runningObject[go].targetPos - go.transform.position).normalized * speed * Time.deltaTime;
         }
     }
 
@@ -526,6 +549,8 @@ public class AnimationControl : MonoBehaviour
         oInfo.sourcePos = topo.GetNodePosition(nextPacketInfo[(int)PacketInfoIdx.Source]);
         oInfo.targetPos = topo.GetNodePosition(nextPacketInfo[(int)PacketInfoIdx.Target]);
         oInfo.packetTime = nextPacketTime;
+        oInfo.origin = nextPacketInfo[(int)PacketInfoIdx.Origin];
+        oInfo.destination = nextPacketInfo[(int)PacketInfoIdx.Destination];
         oInfo.packetID = nextPacketInfo[(int)PacketInfoIdx.Pid];
 
         // If packet is already running on link store the info in holdback queue for future reference (in time order) 
@@ -543,10 +568,14 @@ public class AnimationControl : MonoBehaviour
         }
         // If this is new packet, instantiate an object 
         GameObject go = Instantiate(packet_prefab) as GameObject;
+        go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID);
         // Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
         go.transform.position = oInfo.sourcePos;
+        if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
+            // Make packets invisible
+            // go.transform.localScale = new Vector3(0,0,0);
+        }
         oInfo.Object = go;
-        oInfo.direction = (oInfo.targetPos - go.transform.position).normalized;
 
         // Store the running object info to track it later
         SetForwardListPointer(forwardList.Count);
@@ -565,10 +594,14 @@ public class AnimationControl : MonoBehaviour
                     ObjectInfo oInfo = packetHoldBackQueue[pid].Dequeue();
                     // Debug.Log("Deque = " + oInfo.packetTime + " " + oInfo.packetID);
                     GameObject go = Instantiate(packet_prefab) as GameObject;
+                    go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID);
                     // Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
                     go.transform.position = oInfo.sourcePos;
+                    if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
+                        // Make packets invisible
+                        // go.transform.localScale = new Vector3(0,0,0);
+                    }
                     oInfo.Object = go;
-                    oInfo.direction = (oInfo.targetPos - go.transform.position).normalized;
 
                     // Store the running object info to track it later
                     SetForwardListPointer(forwardList.Count);
@@ -583,3 +616,4 @@ public class AnimationControl : MonoBehaviour
         holdbackRemain = isRemain;
     }
 }
+

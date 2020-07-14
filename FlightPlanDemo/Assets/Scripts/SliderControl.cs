@@ -18,7 +18,8 @@ public class SliderControl : MonoBehaviour
 
     void Start(){
         timeSlider.minValue = lastTimeSliderPos;
-        timeSlider.maxValue = 27891602f/Global.U_SEC;
+        // timeSlider.maxValue = 27891602f/Global.U_SEC;
+        timeSlider.maxValue = 3350946/Global.U_SEC + 15f - 0.374f;
         timeSlider.value = lastTimeSliderPos;
         Debug.Log("GVar = " + Global.gVar);
         RectTransform rect= timeSlider.GetComponent<RectTransform>();
@@ -76,7 +77,7 @@ public class SliderControl : MonoBehaviour
     public void TimeSliderPointerUp(){
         // Debug.Log("UP SLIDER POS = " + timeSlider.value); 
         Debug.Log("FINAL diff = " + (timeSliderDifference + timeSlider.value - lastPointerDownPos).ToString() );   
-        anim.SetReferenceCounterThreshold(timeSliderDifference + timeSlider.value - lastPointerDownPos);
+        anim.DoJump(timeSliderDifference + timeSlider.value - lastPointerDownPos);
     }
 
 }

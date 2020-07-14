@@ -127,7 +127,11 @@ for pcap_file in "${PCAP_DIR}"/*; do
       printf "%s %s ", $1, args[1]
     }
     if(args[2]=="0"){
+      if(substr($1,1,7)=="0x0000:"){
+        printf "%s%s", $8, $9
+      }
       if(substr($1,1,7)=="0x0010:"){
+        printf " %s%s ", $2, $3
         printf "%s0000%s%s%s%s", substr($4,3,2), $6, $7, $8, $9
       }
       if(substr($1,1,7)=="0x0020:"){
@@ -136,6 +140,7 @@ for pcap_file in "${PCAP_DIR}"/*; do
     }
     if(args[2]=="1"){
       if(substr($1,1,7)=="0x0030:"){
+        printf "%s%s %s%s ", $2, $3, $4, $5
         printf "%s0000%s%s", substr($6,3,2), $8, $9
       }
       if(substr($1,1,7)=="0x0040:"){
@@ -162,12 +167,12 @@ readarray -d " " -t time_stream <<< ${time}
 # FInding out elapsed time and hash of each packet
 echo "Finding hash and elapsed time of each packet..."
 awk -v BASE="${time_stream[0]}" '{ 
-  cmd="echo -n " $4 " | md5sum|cut -d\" \" -f1"; cmd|getline hash;
+  cmd="echo -n " $6 " | md5sum|cut -d\" \" -f1"; cmd|getline hash;
   close(cmd)
   split(BASE, base_time_array, /[:.]/)
   split($1, time_array, /[:.]/) 
   elapsed_time=(time_array[1] - base_time_array[1])*60*60*1000*1000 + (time_array[2] - base_time_array[2])*60*1000*1000 + (time_array[3] - base_time_array[3])*1000*1000 + time_array[4] - base_time_array[4]
-  print elapsed_time " " $2 " " $3 " " hash
+  print elapsed_time " " $2 " " $3 " " $4 " " $5 " " hash
 }' ${TIME_DUMP} > ${TIME_STREAM}
 
 rm -r ${TEMP}

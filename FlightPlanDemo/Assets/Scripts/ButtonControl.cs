@@ -9,22 +9,28 @@ public class ButtonControl : MonoBehaviour
     bool showLable;
     List<GameObject> hostTextObject;
     List<GameObject> textObj;
-    bool showOpaque;
+    bool showLinkOpaque;
+    bool showNodeOpaque;
     List<GameObject> linkObject;
     List<GameObject> switchObject;
     List<GameObject> satObject;
+    List<string> colorPatterns = new List<string>(){"Color Pattern 1", "Color Pattern 2", "Color Pattern 3"};
+    [SerializeField] private Dropdown colorPatternDropdown = default;
     [SerializeField] private InputField searchField = default;
     [SerializeField] private PopUpControl popup = default;
     [SerializeField] private AnimationControl anim = default;
+    [SerializeField] private ColorControl colorControl = default;
 
     // Start is called before the first frame update
     void Start()
     {
         showLable = true;
-        showOpaque = true;
+        showLinkOpaque = true;
+        showNodeOpaque = true;
         hostTextObject = topo.GetHostTextObjects();
         textObj = topo.GetTextObjects();
         linkObject = topo.GetLinkObjects();
+        PopulateColorPatternDropdown();
     }
 
     public void ToggleLables(){
@@ -48,17 +54,27 @@ public class ButtonControl : MonoBehaviour
         } 
     }  
 
-    public void ToggleTransparency(){
-        if(showOpaque == true){
+    public void ToggleLinkTransparency(){
+        if(showLinkOpaque == true){
             // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
             topo.MakeLinksTransparent();
-            topo.MakeNodesTransparent();
-            showOpaque = false;
+            showLinkOpaque = false;
         }
         else{
             topo.MakeLinksOpaque();
+            showLinkOpaque = true;
+        }
+    }
+
+    public void ToggleNodeTransparency(){
+        if(showNodeOpaque == true){
+            // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
+            topo.MakeNodesTransparent();
+            showNodeOpaque = false;
+        }
+        else{
             topo.MakeNodesOpaque();
-            showOpaque = true;
+            showNodeOpaque = true;
         }
     }
 
@@ -80,6 +96,14 @@ public class ButtonControl : MonoBehaviour
         if(topo.ProcessClearRequest()==true){
             popup.ShowErrorMessage("Cleared Previous Highlights", 8, Color.green);
         }
+    }
+
+    void PopulateColorPatternDropdown(){
+        colorPatternDropdown.AddOptions(colorPatterns);
+    }
+    public void ColorPatternDropdownIndexChanged(int index){
+        Debug.Log("I am in " + colorPatterns[index]);
+        colorControl.SetColorPattern(index);
     }
 
     public void StartAnimation(){
