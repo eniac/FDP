@@ -18,10 +18,9 @@ public class SliderControl : MonoBehaviour
 
     void Start(){
         timeSlider.minValue = lastTimeSliderPos;
-        // timeSlider.maxValue = 27891602f/Global.U_SEC;
-        timeSlider.maxValue = 3350946/Global.U_SEC + 15f - 0.374f;
+        timeSlider.maxValue = 27891602f/Global.U_SEC;
+        // timeSlider.maxValue = 3350946/Global.U_SEC + 15f - 0.374f;
         timeSlider.value = lastTimeSliderPos;
-        Debug.Log("GVar = " + Global.gVar);
         RectTransform rect= timeSlider.GetComponent<RectTransform>();
         // Debug.Log("Slider size = " + rect.sizeDelta.ToString() + rect.rect.width + " - " + rect.rect.height + " : " + rect.offsetMax + " - " + rect.offsetMin);
         float xOffset = rect.offsetMin.x;
@@ -76,7 +75,7 @@ public class SliderControl : MonoBehaviour
 
     public void TimeSliderPointerUp(){
         // Debug.Log("UP SLIDER POS = " + timeSlider.value); 
-        Debug.Log("FINAL diff = " + (timeSliderDifference + timeSlider.value - lastPointerDownPos).ToString() );   
+        // Debug.Log("FINAL diff = " + (timeSliderDifference + timeSlider.value - lastPointerDownPos).ToString() );   
         anim.DoJump(timeSliderDifference + timeSlider.value - lastPointerDownPos);
     }
 

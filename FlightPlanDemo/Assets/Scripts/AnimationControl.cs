@@ -51,6 +51,7 @@ public class AnimationControl : MonoBehaviour
     Global.AnimStatus animationStatus;
     float referenceCounter;
     float referenceCounterThreshold=0;
+    bool thresholdReached = false;
     Global.AnimStatus lastAnimStatus;
     bool startCounter;
     bool forwardFlag;
@@ -89,8 +90,12 @@ public class AnimationControl : MonoBehaviour
         SPEED_FACTOR = speed_factor;
     }
 
+    public void ResetAnimation(){
+        PacketCleanup();
+        sliderControl.SetTimeSlider(0);
+    }
     public void StartAnimation(){
-        Debug.Log("Restarting Animation");
+        // Debug.Log("Restarting Animation");
 
 
         counter = 1;
@@ -108,17 +113,7 @@ public class AnimationControl : MonoBehaviour
             rewindList = new List<ObjectInfo>();
             forwardList = new List<ObjectInfo>();
         }
-
-        // Removal of objects if any remained while restarting the animation
-        expiredObjects.Clear();
-        foreach(GameObject go in runningObject.Keys){
-            Destroy(go);
-        }
-        runningPacketID.Clear();
-        runningObject.Clear();
-        packetHoldBackQueue.Clear();
-        rewindList.Clear();
-
+        PacketCleanup();
         packet_prefab = Resources.Load("Packet") as GameObject;
 
         animStartTime = Time.time;
@@ -133,7 +128,10 @@ public class AnimationControl : MonoBehaviour
         topo.MakeNodesTransparent();
         SetAnimationStatus(Global.AnimStatus.Disk);
         sliderControl.SetSliderMode(Global.SliderMode.Normal);
+        colorControl.ResetColorControl();
 
+        Time.timeScale = 1;
+        thresholdReached = false;
         forwardFlag = false;
         rewindFlag = false;
         rewindListPointer = rewindList.Count - 1;
@@ -146,17 +144,47 @@ public class AnimationControl : MonoBehaviour
         enabled = true;
     }
 
+    void PacketCleanup(){
+        // Removal of objects if any remained while restarting/resetting the animation
+        expiredObjects.Clear();
+        foreach(GameObject go in runningObject.Keys){
+            Destroy(go);
+        }
+        runningPacketID.Clear();
+        runningObject.Clear();
+        packetHoldBackQueue.Clear();
+        rewindList.Clear();
+        forwardList.Clear();
+
+        topo.MakeLinksOpaque();
+        topo.MakeNodesOpaque();
+        enabled = false;
+    }
+
     void SetAnimationStatus(Global.AnimStatus status){
         animationStatus = status;
     }
     public Global.AnimStatus GetAnimationStatus(){
         return animationStatus;
     }
+
+    public Global.AnimStatus PauseResume(){
+        if(GetAnimationStatus() == Global.AnimStatus.Pause){
+            StartAnimationAction(GetLastAnimStatus());
+            return GetAnimationStatus();
+        }
+        else{
+            StartAnimationAction(Global.AnimStatus.Pause);
+            return Global.AnimStatus.Pause;
+        }
+    }
     public void Pause(){
         if(GetAnimationStatus() == Global.AnimStatus.Pause){
             return;
         }
-        Debug.Log("PAUSE");
+        SetLastAnimStatus();
+        CleanupExpiredObjects();
+        // Debug.Log("PAUSE");
         SetAnimationStatus(Global.AnimStatus.Pause);
     }
     public void Forward(){
@@ -176,7 +204,9 @@ public class AnimationControl : MonoBehaviour
     void ReferenceCounterUpdate(Global.AnimStatus status){
         if(status==Global.AnimStatus.Disk || status == Global.AnimStatus.Forward){
             referenceCounter += (Time.deltaTime * SPEED_FACTOR);
-            sliderControl.SetTimeSlider(referenceCounter);
+            if(sliderControl.GetSliderMode() == Global.SliderMode.Normal){
+                sliderControl.SetTimeSlider(referenceCounter);
+            }
         }
         else if(status == Global.AnimStatus.Rewind){
             if(referenceCounter - (Time.deltaTime * SPEED_FACTOR) >= 0){
@@ -185,47 +215,8 @@ public class AnimationControl : MonoBehaviour
             else{
                 referenceCounter = 0f;
             }
-            sliderControl.SetTimeSlider(referenceCounter);
-        }
-    }
-    void ReferenceCounterJump(Global.AnimStatus status){
-        // Make packets invisible
-        foreach(var go in runningObject.Keys){
-            go.transform.localScale = new Vector3(0,0,0);
-        }
-
-        bool thresholdReached = false;
-        // Overridding base speed value
-        speed = BASE_SPEED * JUMP_SPEED_FACTOR;
-        // Debug.Log("COUNTER = " + referenceCounter);
-        if(status==Global.AnimStatus.Disk || status == Global.AnimStatus.Forward){
-            if(referenceCounter + (Time.deltaTime * JUMP_SPEED_FACTOR) < GetReferenceCounterThreshold() ){
-                referenceCounter += (Time.deltaTime * JUMP_SPEED_FACTOR);
-            }
-            else{
-                referenceCounter = GetReferenceCounterThreshold();
-                thresholdReached = true;
-            }
-        }
-        else if(status == Global.AnimStatus.Rewind){
-            if(referenceCounter - (Time.deltaTime * JUMP_SPEED_FACTOR) > GetReferenceCounterThreshold()){
-                referenceCounter -= (Time.deltaTime * JUMP_SPEED_FACTOR);
-            }
-            else{
-                referenceCounter = GetReferenceCounterThreshold();
-                thresholdReached = true;
-            }
-        }
-
-        if(thresholdReached == true){
-            // Set slider mode to normal
-            sliderControl.SetSliderMode(Global.SliderMode.Normal);
-            // Restore the last animation status
-            StartAnimationAction(GetLastAnimStatus());
-
-            // Make packets visible
-            foreach(var go in runningObject.Keys){
-                go.transform.localScale = packetSize;
+            if(sliderControl.GetSliderMode() == Global.SliderMode.Normal){
+                sliderControl.SetTimeSlider(referenceCounter);
             }
         }
     }
@@ -258,6 +249,8 @@ public class AnimationControl : MonoBehaviour
         referenceCounterThreshold = referenceCounter + timeDiff;
         // Set slider mode to jump
         sliderControl.SetSliderMode(Global.SliderMode.Jump);
+        // Do fast forward
+        Time.timeScale = 10;
     }
 
     void StartAnimationAction(Global.AnimStatus status){
@@ -277,15 +270,26 @@ public class AnimationControl : MonoBehaviour
     }
 
     void Update(){
+        CleanupExpiredObjects();
         speed = BASE_SPEED * SPEED_FACTOR;
+        if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
+            if((GetAnimationStatus() == Global.AnimStatus.Rewind 
+                && referenceCounter <= GetReferenceCounterThreshold())
+                || ((GetAnimationStatus() == Global.AnimStatus.Forward 
+                || GetAnimationStatus() == Global.AnimStatus.Disk )
+                && referenceCounter >= GetReferenceCounterThreshold())){
+
+                sliderControl.SetSliderMode(Global.SliderMode.Normal);
+                StartAnimationAction(GetLastAnimStatus());
+                // Normal speed
+                Time.timeScale = 1;
+            } 
+        }
+
         Global.AnimStatus status = GetAnimationStatus();
         if(startCounter == true){
-            if(sliderControl.GetSliderMode() == Global.SliderMode.Normal){
-                ReferenceCounterUpdate(status);
-            }
-            else{
-                ReferenceCounterJump(status);
-            }
+            thresholdReached = false;
+            ReferenceCounterUpdate(status);
         }
 
         if(status == Global.AnimStatus.Disk){
@@ -325,14 +329,33 @@ public class AnimationControl : MonoBehaviour
         return ForwardListPointer;
     }
 
-    void ReadForward(){
+    void CleanupExpiredObjects(){
+        Global.AnimStatus status = GetAnimationStatus();
+        if(status == Global.AnimStatus.Pause){
+            return;
+        }
+        Vector3 startPos = new Vector3(0,0,0), endPos = new Vector3(0,0,0);
+
         // Find expired objects
         expiredObjects.Clear();
         foreach(GameObject go in runningObject.Keys){
-            if( Vector3.Normalize(runningObject[go].targetPos - runningObject[go].sourcePos) != Vector3.Normalize(runningObject[go].targetPos - go.transform.position) || 
-                Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
-                go.transform.position = runningObject[go].targetPos;
+            if(status == Global.AnimStatus.Forward || status == Global.AnimStatus.Disk){
+                startPos = runningObject[go].sourcePos;
+                endPos = runningObject[go].targetPos;
+            }
+            else if(status == Global.AnimStatus.Rewind){
+                startPos = runningObject[go].targetPos;
+                endPos = runningObject[go].sourcePos;
+            }
+            if( Vector3.Normalize(endPos - startPos) != Vector3.Normalize(endPos - go.transform.position) || 
+                Vector3.Distance(endPos, go.transform.position) <= 1f){
+                go.transform.position = endPos;
                 expiredObjects.Add(go);
+                if(status == Global.AnimStatus.Disk){
+                    ObjectInfo oInfo = runningObject[go];
+                    oInfo.expirationTime = referenceCounter;
+                    rewindList.Add(oInfo);
+                }
             }
         }
         // Remove expired objects
@@ -341,7 +364,9 @@ public class AnimationControl : MonoBehaviour
             runningObject.Remove(go);
             Destroy(go);
         }
+    }
 
+    void ReadForward(){
         if(forwardList[forwardList.Count-1].instantiationTime <= referenceCounter){
             // Disk mode is to be run
             SetAnimationStatus(Global.AnimStatus.Disk);
@@ -402,22 +427,6 @@ public class AnimationControl : MonoBehaviour
     }
 
     void ReadRewind(){
-        // Find expired objects
-        expiredObjects.Clear();
-        foreach(GameObject go in runningObject.Keys){
-            if( Vector3.Normalize(runningObject[go].sourcePos - runningObject[go].targetPos) != Vector3.Normalize(runningObject[go].sourcePos - go.transform.position) ||
-                Vector3.Distance(runningObject[go].sourcePos, go.transform.position) <= 1f){
-                go.transform.position = runningObject[go].sourcePos;
-                expiredObjects.Add(go);
-            }
-        }
-        // Remove expired objects
-        foreach(GameObject go in expiredObjects){
-            runningPacketID.Remove(runningObject[go].packetID);
-            runningObject.Remove(go);
-            Destroy(go);
-        }
-
         if(rewindFlag==true){
             SetRewindListPointer(rewindList.Count - 1);
             while(GetRewindListPointer() >= 0 && rewindList[GetRewindListPointer()].expirationTime > referenceCounter){
@@ -434,10 +443,8 @@ public class AnimationControl : MonoBehaviour
         
         // Debug.Log("START = " + rewindList.Count + " : " + ptr + " : " + runningObject.Count);
         if(rewindList.Count != 0 && ptr < 0 && runningObject.Count==0){
-            topo.MakeLinksOpaque();
-            topo.MakeNodesOpaque();
-            Debug.Log("Rewind Ends"); 
-            enabled = false;
+            PacketCleanup();
+            // Debug.Log("Rewind Ends"); 
             return;
         }
 
@@ -469,33 +476,11 @@ public class AnimationControl : MonoBehaviour
     }
 
     void ReadDisk(){
-        // Find expired objects
-        expiredObjects.Clear();
-        foreach(GameObject go in runningObject.Keys){
-            if( Vector3.Normalize(runningObject[go].targetPos - runningObject[go].sourcePos) != Vector3.Normalize(runningObject[go].targetPos - go.transform.position) ||
-                Vector3.Distance(runningObject[go].targetPos, go.transform.position) <= 1f){
-                // Debug.Log("Object Expired");
-                go.transform.position = runningObject[go].targetPos;
-                expiredObjects.Add(go);
-                ObjectInfo oInfo = runningObject[go];
-                oInfo.expirationTime = referenceCounter;
-                rewindList.Add(oInfo);
-                // Debug.Log("RP Reset = " + GetRewindListPointer());
-            }
-        }
-        // Remove expired objects
-        foreach(GameObject go in expiredObjects){
-            runningPacketID.Remove(runningObject[go].packetID);
-            runningObject.Remove(go);
-            Destroy(go);
-        }
-
         // Debug.Log("DISK = " + parseRemain + " : " + holdbackRemain + " : " + runningObject.Count);
         if(parseRemain==false && holdbackRemain==false && runningObject.Count==0){
-            topo.MakeLinksOpaque();
-            topo.MakeNodesOpaque();
-            Debug.Log("Update Ends"); 
-            enabled = false;
+            PacketCleanup();
+            // Debug.Log("Update Ends"); 
+            return;
         }
 
         // Kept it here, Since above code takes time to execute and 

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ButtonControl : MonoBehaviour
 {
     [SerializeField] private Topology topo = default;
+    [SerializeField] Button pauseResumeButton = default;
     bool showLable;
     List<GameObject> hostTextObject;
     List<GameObject> textObj;
@@ -102,23 +103,42 @@ public class ButtonControl : MonoBehaviour
         colorPatternDropdown.AddOptions(colorPatterns);
     }
     public void ColorPatternDropdownIndexChanged(int index){
-        Debug.Log("I am in " + colorPatterns[index]);
         colorControl.SetColorPattern(index);
     }
 
     public void StartAnimation(){
         anim.StartAnimation();
+        ChangePauseResumeButtonText(Global.AnimStatus.Forward);
     }
 
-    public void PauseAnimation(){
-        anim.Pause();
+    public void ResetAnimation(){
+        anim.ResetAnimation();
+        ChangePauseResumeButtonText(Global.AnimStatus.Forward);
+    }
+
+    public void PauseResumeAnimation(){
+        Global.AnimStatus status = anim.PauseResume();
+        ChangePauseResumeButtonText(status);
     }
 
     public void ForwardAnimation(){
         anim.Forward();
+        ChangePauseResumeButtonText(Global.AnimStatus.Forward);
     }
 
     public void RewindAnimation(){
         anim.Rewind();
+        ChangePauseResumeButtonText(Global.AnimStatus.Rewind);
+    }
+
+    void ChangePauseResumeButtonText(Global.AnimStatus status){
+        if(status == Global.AnimStatus.Pause){
+            // Show Resume Symbol on Button
+            pauseResumeButton.gameObject.GetComponentInChildren<Text>().text = ">";
+        }
+        else{
+            // Show Pause sysmbol on button
+            pauseResumeButton.gameObject.GetComponentInChildren<Text>().text = "||";
+        }
     }
 }

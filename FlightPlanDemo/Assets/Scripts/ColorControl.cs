@@ -12,7 +12,11 @@ public class ColorControl : MonoBehaviour
     Color colorReply = Color.blue;
     int colorPatternIndex = 0; 
 
-
+    public void ResetColorControl(){
+        ColorsByPath.Clear();
+        ColorsByOrigin.Clear();
+        paths.Clear();
+    }
     public void SetColorPattern(int index){
         colorPatternIndex = index;
     }
@@ -20,14 +24,18 @@ public class ColorControl : MonoBehaviour
         switch(colorPatternIndex){
             case 0:
             // Color Pattern 1
-                Tuple<string, string> pair = new Tuple<string, string>(origin, destination);
-                // If the pair of origin and destination is found in dictionary, return the color
-                if(ColorsByPath.ContainsKey(pair) == true){
-                    return ColorsByPath[pair];
+                Tuple<string, string, string> fwdPair = new Tuple<string, string, string>(origin, destination, pid);
+                Tuple<string, string, string> revPair = new Tuple<string, string, string>(destination, origin, pid);
+
+                if(paths.Contains(fwdPair) == true){
+                    return colorRequest;
+                }
+                if(paths.Contains(revPair) == true){
+                    return colorReply;
                 }
                 else{
-                    ColorsByPath.Add(pair, UnityEngine.Random.ColorHSV(0f, 0.5f, 1f, 1f, 0.5f, 1f));
-                    return ColorsByPath[pair];
+                    paths.Add(fwdPair);
+                    return colorRequest;
                 }
                 break;
 
@@ -44,20 +52,17 @@ public class ColorControl : MonoBehaviour
 
             case 2:
             // Color Pattern 3
-                Tuple<string, string, string> fwdPair = new Tuple<string, string, string>(origin, destination, pid);
-                Tuple<string, string, string> revPair = new Tuple<string, string, string>(destination, origin, pid);
-
-                if(paths.Contains(fwdPair) == true){
-                    return colorRequest;
-                }
-                if(paths.Contains(revPair) == true){
-                    return colorReply;
-                }
-                else{
-                    paths.Add(fwdPair);
-                    return colorRequest;
-                }
-                break;
+            Tuple<string, string> pair = new Tuple<string, string>(origin, destination);
+            // If the pair of origin and destination is found in dictionary, return the color
+            if(ColorsByPath.ContainsKey(pair) == true){
+                return ColorsByPath[pair];
+            }
+            else{
+                ColorsByPath.Add(pair, UnityEngine.Random.ColorHSV(0f, 0.5f, 1f, 1f, 0.5f, 1f));
+                return ColorsByPath[pair];
+            }
+            break;
+                
 
             default:
                 return Color.yellow;
