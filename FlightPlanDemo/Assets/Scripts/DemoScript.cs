@@ -4,20 +4,16 @@ using UnityEngine;
 
 public class DemoScript : MonoBehaviour
 {
-    // public TopoScript topo;
     public YamlParser yamlParser;
     public Topology topo;
-    public AnimationControl anim;
+    public AnimationControl anim; 
     // Start is called before the first frame update
-    IEnumerator Start()
-    {
-        // yamlParser = new YamlParser();
+    public IEnumerator Start(){
         yamlParser.Display();
         yield return StartCoroutine(yamlParser.GetYaml());
         yamlParser.YamlLoader();
         yamlParser.SetLinks();
 
-        // topo = new Topology();
         topo.SetParameters(yamlParser.GetHostNames(), yamlParser.GetSwitchNames(), 
                             yamlParser.GetSatelliteNames(), yamlParser.GetSwitchHostLinks(), 
                             yamlParser.GetSatelliteLinks());
@@ -29,8 +25,7 @@ public class DemoScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update(){
         topo.LablesFollowCam();
     }
 }

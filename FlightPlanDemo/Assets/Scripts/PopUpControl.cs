@@ -5,13 +5,12 @@ using UnityEngine.UI;
 
 public class PopUpControl : MonoBehaviour
 {
-    [SerializeField] private Text errorMessageText = default;
-    private IEnumerator coroutine;
-
-    void Start(){
+    private IEnumerator coroutine = null;
+    private Text messageText;
+    public void PopUpInit(Text msgText){
         // Initialize parameters
+        messageText = msgText;
         ShowDefaultMessage();
-        coroutine = null;
     }
     public void ShowErrorMessage(string message, int time, Color color){
         // Reset the parameters
@@ -19,10 +18,10 @@ public class PopUpControl : MonoBehaviour
             StopCoroutine(coroutine);
         }
         // Set the error message
-        errorMessageText.text = message;
-        errorMessageText.fontSize = 20;
-        errorMessageText.fontStyle = FontStyle.Normal;
-        errorMessageText.color = color;
+        messageText.text = message;
+        messageText.fontSize = 20;
+        messageText.fontStyle = FontStyle.Normal;
+        messageText.color = color;
 
         // Wait for specified amount of time      
         coroutine = wait(time);
@@ -35,9 +34,9 @@ public class PopUpControl : MonoBehaviour
     }
     // Set default message
     private void ShowDefaultMessage(){
-        errorMessageText.text = "FlightPlan Demo";
-        errorMessageText.fontSize = 28;
-        errorMessageText.fontStyle = FontStyle.Bold;
-        errorMessageText.color = Color.white;
+        messageText.text = "FlightPlan Demo";
+        messageText.fontSize = 28;
+        messageText.fontStyle = FontStyle.Bold;
+        messageText.color = Color.white;
     }
 }

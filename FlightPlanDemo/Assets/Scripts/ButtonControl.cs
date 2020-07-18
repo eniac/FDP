@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ButtonControl : MonoBehaviour
 {
     [SerializeField] private Topology topo = default;
     [SerializeField] Button pauseResumeButton = default;
+    [SerializeField] private Text messageText = default;
+    [SerializeField] private Dropdown colorPatternDropdown = default;
+    [SerializeField] private InputField searchField = default;
+    [SerializeField] private PopUpControl popup = default;
+    [SerializeField] private AnimationControl anim = default;
+    [SerializeField] private ColorControl colorControl = default;
     bool showLable;
     List<GameObject> hostTextObject;
     List<GameObject> textObj;
@@ -15,12 +22,7 @@ public class ButtonControl : MonoBehaviour
     List<GameObject> linkObject;
     List<GameObject> switchObject;
     List<GameObject> satObject;
-    List<string> colorPatterns = new List<string>(){"Color Pattern 1", "Color Pattern 2", "Color Pattern 3"};
-    [SerializeField] private Dropdown colorPatternDropdown = default;
-    [SerializeField] private InputField searchField = default;
-    [SerializeField] private PopUpControl popup = default;
-    [SerializeField] private AnimationControl anim = default;
-    [SerializeField] private ColorControl colorControl = default;
+    List<string> colorPatterns = new List<string>(){"Request/Reply Color", "Origin based Color", "Path based Color"};
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +34,7 @@ public class ButtonControl : MonoBehaviour
         textObj = topo.GetTextObjects();
         linkObject = topo.GetLinkObjects();
         PopulateColorPatternDropdown();
+        popup.PopUpInit(messageText);
     }
 
     public void ToggleLables(){
@@ -141,4 +144,9 @@ public class ButtonControl : MonoBehaviour
             pauseResumeButton.gameObject.GetComponentInChildren<Text>().text = "||";
         }
     }
+
+    public void BackToStart(){
+        // Jump to the previous scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+    } 
 }

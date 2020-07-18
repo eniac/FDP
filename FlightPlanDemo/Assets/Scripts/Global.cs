@@ -14,6 +14,8 @@ public static class Global
         Normal=0,
         Jump
     }
+    public static string experimentYaml;
+    public static string experimentMetadata;
     public static float gVar = 10;
     public const float U_SEC = 1000000f;
 }

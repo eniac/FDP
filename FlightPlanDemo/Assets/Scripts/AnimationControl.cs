@@ -51,7 +51,6 @@ public class AnimationControl : MonoBehaviour
     Global.AnimStatus animationStatus;
     float referenceCounter;
     float referenceCounterThreshold=0;
-    bool thresholdReached = false;
     Global.AnimStatus lastAnimStatus;
     bool startCounter;
     bool forwardFlag;
@@ -72,9 +71,11 @@ public class AnimationControl : MonoBehaviour
 
     // Get file from file system or server
     public IEnumerator GetElapsedTimeFile(){
-        var filePath = Path.Combine(Application.streamingAssetsPath, "interval.txt");
-        
+        // var filePath = Path.Combine(Application.streamingAssetsPath, "interval.txt");
+        var filePath = Global.experimentMetadata;
+        Debug.Log("metadata File = " + filePath);
         if (filePath.Contains ("://") || filePath.Contains (":///")) {
+            Debug.Log("Anim WebRequest");
             // Using UnityWebRequest class
             var loaded = new UnityWebRequest(filePath);
             loaded.downloadHandler = new DownloadHandlerBuffer();
@@ -92,7 +93,6 @@ public class AnimationControl : MonoBehaviour
 
     public void ResetAnimation(){
         PacketCleanup();
-        sliderControl.SetTimeSlider(0);
     }
     public void StartAnimation(){
         // Debug.Log("Restarting Animation");
@@ -131,7 +131,6 @@ public class AnimationControl : MonoBehaviour
         colorControl.ResetColorControl();
 
         Time.timeScale = 1;
-        thresholdReached = false;
         forwardFlag = false;
         rewindFlag = false;
         rewindListPointer = rewindList.Count - 1;
@@ -158,6 +157,9 @@ public class AnimationControl : MonoBehaviour
 
         topo.MakeLinksOpaque();
         topo.MakeNodesOpaque();
+
+        sliderControl.SetTimeSlider(0);
+
         enabled = false;
     }
 
@@ -250,7 +252,7 @@ public class AnimationControl : MonoBehaviour
         // Set slider mode to jump
         sliderControl.SetSliderMode(Global.SliderMode.Jump);
         // Do fast forward
-        Time.timeScale = 10;
+        Time.timeScale = JUMP_SPEED_FACTOR;
     }
 
     void StartAnimationAction(Global.AnimStatus status){
@@ -288,7 +290,6 @@ public class AnimationControl : MonoBehaviour
 
         Global.AnimStatus status = GetAnimationStatus();
         if(startCounter == true){
-            thresholdReached = false;
             ReferenceCounterUpdate(status);
         }
 
@@ -348,7 +349,7 @@ public class AnimationControl : MonoBehaviour
                 endPos = runningObject[go].sourcePos;
             }
             if( Vector3.Normalize(endPos - startPos) != Vector3.Normalize(endPos - go.transform.position) || 
-                Vector3.Distance(endPos, go.transform.position) <= 1f){
+                Vector3.Distance(endPos, go.transform.position) <= 1f*Time.timeScale){
                 go.transform.position = endPos;
                 expiredObjects.Add(go);
                 if(status == Global.AnimStatus.Disk){

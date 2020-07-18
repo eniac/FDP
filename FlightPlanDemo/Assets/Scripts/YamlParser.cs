@@ -41,8 +41,9 @@ public class YamlParser : MonoBehaviour
 
     // Get file from file system or server
     public IEnumerator GetYaml(){
-        var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4_autotest1.yml");
-        
+        // var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4.yml");
+        var filePath = Global.experimentYaml;
+        Debug.Log("Yaml Path in parser = " + filePath);
 
         if (filePath.Contains ("://") || filePath.Contains (":///")) {
             // WWW class is depricated
@@ -51,6 +52,7 @@ public class YamlParser : MonoBehaviour
             // yamlString = www.text;
 
             // Uning UnityWebRequest class
+            Debug.Log("YamlParser WebRequest");
             var loaded = new UnityWebRequest(filePath);
             loaded.downloadHandler = new DownloadHandlerBuffer();
             yield return loaded.SendWebRequest();
