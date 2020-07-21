@@ -21,6 +21,7 @@ static class Constants
     public const string HOST_STRING = "Host";
     public const string SWITCH_STRING = "Switch";
     public const string SAT_STRING = "Satellite";
+    public const string DROPPER_STRING = "dropper";
     public const float STRUCTURE_X = 0.0f;
     public const float STRUCTURE_Y = 0.0f;
     public const float STRUCTURE_Z = 0.0f;
@@ -56,6 +57,7 @@ public class Topology : MonoBehaviour
     bool highlightedNodesStatus;
     List<string> highlightedNodes;
     Dictionary<string, Color> colorDict;
+    List<GameObject> DropperLinkObjects = new List<GameObject>();
 
     public enum BlendMode
     {
@@ -456,9 +458,18 @@ public class Topology : MonoBehaviour
                 go.transform.localScale = scale/2.0f;
                 // Rotation
                 go.transform.rotation = Quaternion.FromToRotation(Vector3.up, positions[link.Key]-positions[node]);
+                // Highlight lossy link which involves dropper
+                HighlightLossyLink(ref go, link.Key, node);
                 // Adding object in a list to change its properties in future
                 linkObjectList.Add(go);
             }
+        }
+    }
+    void HighlightLossyLink(ref GameObject go, string node1, string node2){
+        // if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
+        if(node1.ToLower().Contains("p0h0") || node2.ToLower().Contains("p0h0")){
+            go.GetComponent<MeshRenderer>().material.color = Color.red;
+            DropperLinkObjects.Add(go);
         }
     }
     // Display labels on the nodes
@@ -756,4 +767,8 @@ public class Topology : MonoBehaviour
         return positions[name];
     }
 
+    // Get the Dropper link objcts
+    public List<GameObject> GetDropperLinkObjects(){
+        return DropperLinkObjects;
+    }
 }

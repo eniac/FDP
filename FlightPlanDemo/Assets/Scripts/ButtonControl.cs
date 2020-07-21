@@ -147,6 +147,6 @@ public class ButtonControl : MonoBehaviour
 
     public void BackToStart(){
         // Jump to the previous scene
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        // SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     } 
 }

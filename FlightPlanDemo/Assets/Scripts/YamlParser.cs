@@ -41,8 +41,8 @@ public class YamlParser : MonoBehaviour
 
     // Get file from file system or server
     public IEnumerator GetYaml(){
-        // var filePath = Path.Combine(Application.streamingAssetsPath, "alv_k=4.yml");
-        var filePath = Global.experimentYaml;
+        // var filePath = Path.Combine(Application.streamingAssetsPath, "ALV_Complete_fec_e2e/alv_k=4.yml");
+        var filePath = Path.Combine(Application.streamingAssetsPath, Global.experimentYaml);
         Debug.Log("Yaml Path in parser = " + filePath);
 
         if (filePath.Contains ("://") || filePath.Contains (":///")) {

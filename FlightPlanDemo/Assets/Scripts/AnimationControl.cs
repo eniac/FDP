@@ -14,10 +14,12 @@ struct ObjectInfo{
     public float instantiationTime;
     public Vector3 sourcePos;
     public Vector3 targetPos;
+    public string target;
     public string origin;
     public string destination;
     public string packetID;
 };
+
 public class AnimationControl : MonoBehaviour
 {
     [SerializeField] Topology topo = default;
@@ -40,6 +42,7 @@ public class AnimationControl : MonoBehaviour
     List<GameObject> expiredObjects;
     List<string> runningPacketID;
     Dictionary<string, Queue<ObjectInfo>> packetHoldBackQueue;
+    const float packetLossIdentificationTime = 1f;
     List<ObjectInfo> rewindList;
     int rewindListPointer;
     List<ObjectInfo> forwardList;
@@ -55,6 +58,7 @@ public class AnimationControl : MonoBehaviour
     bool startCounter;
     bool forwardFlag;
     bool rewindFlag;
+    List<GameObject> DropperLinkObjects;
 
     public enum PacketInfoIdx{
         Time=0,
@@ -71,8 +75,8 @@ public class AnimationControl : MonoBehaviour
 
     // Get file from file system or server
     public IEnumerator GetElapsedTimeFile(){
-        // var filePath = Path.Combine(Application.streamingAssetsPath, "interval.txt");
-        var filePath = Global.experimentMetadata;
+        // var filePath = Path.Combine(Application.streamingAssetsPath, "ALV_split1_autotest1/metadata.txt");
+        var filePath = Path.Combine(Application.streamingAssetsPath, Global.experimentMetadata);
         Debug.Log("metadata File = " + filePath);
         if (filePath.Contains ("://") || filePath.Contains (":///")) {
             Debug.Log("Anim WebRequest");
@@ -85,6 +89,7 @@ public class AnimationControl : MonoBehaviour
         else{
             elapsedTimeString = File.ReadAllText(filePath);
         }
+        DropperLinkObjects = topo.GetDropperLinkObjects();
     }
 
     public void AdjustSpeed(float speed_factor){
@@ -141,6 +146,36 @@ public class AnimationControl : MonoBehaviour
         holdbackRemain = true;
         firstUpdate = true;
         enabled = true;
+        if(DropperLinkObjects.Count > 0){
+            InvokeRepeating("DropperLinkBlink", 0, 0.05f);
+        }
+    }
+
+    // IEnumerator DropperLinkBlink(){
+    //     foreach(var go in DropperLinkObjects){
+    //         go.GetComponent<MeshRenderer>().enabled = false;
+    //         yield return new WaitForSeconds(0.1f);
+    //         go.GetComponent<MeshRenderer>().enabled = true;  
+    //     }     
+    // }
+
+    void DropperLinkBlink(){
+        foreach(var go in DropperLinkObjects){
+            if(go.GetComponent<MeshRenderer>().enabled == false){
+                go.GetComponent<MeshRenderer>().enabled = true;
+            }
+            else{
+                 go.GetComponent<MeshRenderer>().enabled = false;
+            }
+            
+        }
+    }
+
+    void StopDropperLinkBlink(){
+        CancelInvoke("DropperLinkBlink");
+        foreach(var go in DropperLinkObjects){
+            go.GetComponent<MeshRenderer>().enabled = true;
+        }
     }
 
     void PacketCleanup(){
@@ -159,6 +194,7 @@ public class AnimationControl : MonoBehaviour
         topo.MakeNodesOpaque();
 
         sliderControl.SetTimeSlider(0);
+        StopDropperLinkBlink();
 
         enabled = false;
     }
@@ -396,11 +432,6 @@ public class AnimationControl : MonoBehaviour
             go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID);
             // Instantiate on source position in forward
             go.transform.position = oInfo.sourcePos;
-            if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
-                // Make packets invisible
-                // go.transform.localScale = new Vector3(0,0,0);
-            }
-    
             oInfo.Object = go;
             forwardList[ptr] = oInfo;
             // Store the running object info to track it later
@@ -534,6 +565,7 @@ public class AnimationControl : MonoBehaviour
         ObjectInfo oInfo = new ObjectInfo();
         oInfo.sourcePos = topo.GetNodePosition(nextPacketInfo[(int)PacketInfoIdx.Source]);
         oInfo.targetPos = topo.GetNodePosition(nextPacketInfo[(int)PacketInfoIdx.Target]);
+        oInfo.target = nextPacketInfo[(int)PacketInfoIdx.Target];
         oInfo.packetTime = nextPacketTime;
         oInfo.origin = nextPacketInfo[(int)PacketInfoIdx.Origin];
         oInfo.destination = nextPacketInfo[(int)PacketInfoIdx.Destination];

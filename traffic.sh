@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # Check if topology file and pcap directory are passed as command line arguments
-if [[ -z "$1" ]]||[[ -z "$2" ]]
+if [[ -z "$1" ]]||[[ -z "$2" ]]||[[ -z "$3" ]] ||[[ -z "$4" ]]
 then
-  echo "Usage: ./traffic.sh <topology file path> <pacp directory path>"
+  echo "Usage: ./traffic.sh <topology file path> <pacp directory path> <StreamingAssets directory path> <name of experiment>"
   exit
 fi
 
@@ -31,6 +31,45 @@ else
   echo "${PCAP_DIR} directory does not exist"
   exit
 fi
+
+# Access StreamingAssets Directory location
+STREAMING_ASSET=$3
+if [ -d ${STREAMING_ASSET} ] 
+then
+# If there is a "/" at the end then remove it
+  if [ ${STREAMING_ASSET:length-1} = "/" ]
+  then
+    STREAMING_ASSET=${STREAMING_ASSET/%"/"/""}
+  fi
+  echo "Using PCAP directory = ${STREAMING_ASSET}"
+else
+  echo "${STREAMING_ASSET} directory does not exist"
+  exit
+fi
+
+# Create a file to use as Experiment files info and append the name of new experiment if not exist
+EXPERIMENTS=${STREAMING_ASSET}/experiments.txt
+echo "Using TOPOLOGY file = ${TOPO_FILE}"
+if [ ! -f ${TOPO_FILE} ]
+then
+  touch ${EXPERIMENTS}
+fi
+if ! grep -Fxq "$4" ${EXPERIMENTS}
+then
+  echo $4 >> ${EXPERIMENTS}
+fi
+
+
+# Create an output directory to keep the output file
+OUTPUT=${STREAMING_ASSET}"/"$4
+echo "Using TEST directory = ${OUTPUT}"
+# Removing existing output folder and create new one
+if [ -d ${OUTPUT} ] 
+then
+  rm -r ${OUTPUT}
+fi
+mkdir ${OUTPUT}
+
 
 # [python script] Reading topology file and find out the list of supporting devices
 function read_topology {
@@ -69,14 +108,6 @@ END
 satellites=$(read_topology ${TOPO_FILE})
 sat_array=(${satellites// / })
 
-# Removing existing output folder and create new one
-OUTPUT=output
-if [ -d ${OUTPUT} ] 
-then
-	rm -r ${OUTPUT}
-fi
-mkdir ${OUTPUT}
-
 # Creating empty intermediate time dump file
 TIME_DUMP=${OUTPUT}/time_dump_log.txt
 echo "Using TIME_DUMP = ${TIME_DUMP}"
@@ -90,9 +121,16 @@ touch ${TEMP}
 > ${TEMP}
 
 # Create file to keep interval of packets (in microseconds)
-TIME_STREAM=${OUTPUT}/time_stream.txt
-echo "Using TIME_STREAM = ${TIME_STREAM}"
-touch ${TIME_STREAM}
+METADATA=${OUTPUT}/metadata.txt
+echo "Using METADATA = ${METADATA}"
+touch ${METADATA}
+
+# Create a file to keep topology 
+TOPO=${OUTPUT}/topology.yml
+echo "Using TOPOLOGY = ${TOPO}"
+touch ${TOPO}
+cat ${TOPO_FILE} > ${TOPO}
+
 
 # Extracting src and dst of packet from pcap file name
 # Extracting time stamps from pcap files
@@ -105,8 +143,9 @@ for pcap_file in "${PCAP_DIR}"/*; do
   nodes=(${src_dest// / })
 
   # Take the tcp dump to temp file
-  tcpdump -x -r ${pcap_file} > ${TEMP}
+  tcpdump -xx -r ${pcap_file} > ${TEMP}
 
+ # 13 to 33 skip 21 23 24
   # Store the formated output to the temp file
   # fourth column is a unique identifier of the packet 
   # containing the 22th-33rd byte of the packet, but excluding the 23rd and 24th bytes
@@ -131,20 +170,20 @@ for pcap_file in "${PCAP_DIR}"/*; do
         printf "%s%s", $8, $9
       }
       if(substr($1,1,7)=="0x0010:"){
-        printf " %s%s ", $2, $3
-        printf "%s0000%s%s%s%s", substr($4,3,2), $6, $7, $8, $9
+        printf "%s%s%s00%s", $2, $3, $4, substr($5,3,2)
+        printf " %s%s %s", $7, $8, $9
       }
       if(substr($1,1,7)=="0x0020:"){
-        printf "%s\n", substr($2,1,2)
+        printf "%s\n", $2
       }
     }
     if(args[2]=="1"){
       if(substr($1,1,7)=="0x0030:"){
-        printf "%s%s %s%s ", $2, $3, $4, $5
-        printf "%s0000%s%s", substr($6,3,2), $8, $9
+        printf "%s%s%s%s%s00%s", $2, $3, $4, $5, $6, substr($7,3,2)
+        printf " %s", $9
       }
       if(substr($1,1,7)=="0x0040:"){
-        printf "%s%s%s\n", $2, $3, substr($4,1,2)
+        printf "%s %s%s\n", $2, $3, $4
       }
     }
   }' ${TEMP} > ${TIME_DUMP}
@@ -152,13 +191,13 @@ for pcap_file in "${PCAP_DIR}"/*; do
   > ${TEMP}
 
   # Merge the existing data with the new pcapfile data in sorted order based upon time stamp
-  sort ${TIME_DUMP} ${TIME_STREAM} > ${TEMP}
-  cat ${TEMP} > ${TIME_STREAM}
+  sort ${TIME_DUMP} ${METADATA} > ${TEMP}
+  cat ${TEMP} > ${METADATA}
 done
 
 # Store the final data into time_dump_log.txt file
-cat ${TIME_STREAM} > ${TIME_DUMP}
-> ${TIME_STREAM}
+cat ${METADATA} > ${TIME_DUMP}
+> ${METADATA}
 
 # First packet time is a reference time to calculate the elapsed time of all the packets
 time=$(head -n 1 ${TIME_DUMP})
@@ -167,13 +206,13 @@ readarray -d " " -t time_stream <<< ${time}
 # FInding out elapsed time and hash of each packet
 echo "Finding hash and elapsed time of each packet..."
 awk -v BASE="${time_stream[0]}" '{ 
-  cmd="echo -n " $6 " | md5sum|cut -d\" \" -f1"; cmd|getline hash;
+  cmd="echo -n " $4 " | md5sum|cut -d\" \" -f1"; cmd|getline hash;
   close(cmd)
   split(BASE, base_time_array, /[:.]/)
   split($1, time_array, /[:.]/) 
   elapsed_time=(time_array[1] - base_time_array[1])*60*60*1000*1000 + (time_array[2] - base_time_array[2])*60*1000*1000 + (time_array[3] - base_time_array[3])*1000*1000 + time_array[4] - base_time_array[4]
-  print elapsed_time " " $2 " " $3 " " $4 " " $5 " " hash
-}' ${TIME_DUMP} > ${TIME_STREAM}
+  print elapsed_time " " $2 " " $3 " " $5 " " $6 " " hash
+}' ${TIME_DUMP} > ${METADATA}
 
 rm -r ${TEMP}
 
