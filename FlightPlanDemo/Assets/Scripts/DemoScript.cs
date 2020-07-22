@@ -22,6 +22,7 @@ public class DemoScript : MonoBehaviour
         topo.DisplayTopology();
 
         yield return StartCoroutine(anim.GetElapsedTimeFile());
+        anim.StartAnimation();
     }
 
     // Update is called once per frame

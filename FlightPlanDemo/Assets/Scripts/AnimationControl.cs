@@ -25,8 +25,10 @@ public class AnimationControl : MonoBehaviour
     [SerializeField] Topology topo = default;
     [SerializeField] SliderControl sliderControl = default;
     [SerializeField] ColorControl colorControl = default;
+    [SerializeField] GameObject loadingPanel = default;
     [SerializeField] float SPEED_FACTOR = 1;
     float JUMP_SPEED_FACTOR = 10;
+    float FIRST_PASS_SPEED_FACTOR = 30;
     const float MERGE_WINDOW = 0.5f;   
     const float BASE_SPEED = 10.0f;
     Vector3 packetSize = new Vector3(0.7f, 0.7f, 0.7f);
@@ -59,6 +61,7 @@ public class AnimationControl : MonoBehaviour
     bool forwardFlag;
     bool rewindFlag;
     List<GameObject> DropperLinkObjects;
+    bool firstPass = true;
 
     public enum PacketInfoIdx{
         Time=0,
@@ -101,11 +104,10 @@ public class AnimationControl : MonoBehaviour
     }
     public void StartAnimation(){
         // Debug.Log("Restarting Animation");
-
-
         counter = 1;
         window_counter = 1;
         speed = BASE_SPEED * SPEED_FACTOR;
+        Time.timeScale = 1;
 
         // Objects initialization
         packetTimeString = new StringReader(elapsedTimeString);
@@ -135,7 +137,6 @@ public class AnimationControl : MonoBehaviour
         sliderControl.SetSliderMode(Global.SliderMode.Normal);
         colorControl.ResetColorControl();
 
-        Time.timeScale = 1;
         forwardFlag = false;
         rewindFlag = false;
         rewindListPointer = rewindList.Count - 1;
@@ -145,6 +146,9 @@ public class AnimationControl : MonoBehaviour
         parseRemain = true;
         holdbackRemain = true;
         firstUpdate = true;
+        if(firstPass == true){
+            Time.timeScale = FIRST_PASS_SPEED_FACTOR;
+        }
         enabled = true;
         if(DropperLinkObjects.Count > 0){
             InvokeRepeating("DropperLinkBlink", 0, 0.05f);
@@ -197,6 +201,12 @@ public class AnimationControl : MonoBehaviour
         StopDropperLinkBlink();
 
         enabled = false;
+
+        if(Time.timeScale != 1 && firstPass == true){
+            firstPass = false;
+            sliderControl.SetSliderMaxValue(referenceCounter);
+            loadingPanel.SetActive(false);
+        }
     }
 
     void SetAnimationStatus(Global.AnimStatus status){

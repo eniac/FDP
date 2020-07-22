@@ -17,9 +17,11 @@ public class SliderControl : MonoBehaviour
     bool timeSliderValueChange;
 
     void Start(){
-        timeSlider.minValue = lastTimeSliderPos;
-        timeSlider.maxValue = 27891602f/Global.U_SEC;
-        // timeSlider.maxValue = 3350946/Global.U_SEC + 15f - 0.989f;
+        timeSlider.minValue = lastTimeSliderPos;    
+        // timeSlider.maxValue = 47240005/Global.U_SEC;                    // split1_demo1
+        // timeSlider.maxValue = 27891602f/Global.U_SEC;                // split1_autotest1
+        // timeSlider.maxValue = 3350946/Global.U_SEC + 15f - 0.989f;   // split1_autotest3B
+        timeSlider.maxValue = 0;
         timeSlider.value = lastTimeSliderPos;
         RectTransform rect= timeSlider.GetComponent<RectTransform>();
         // Debug.Log("Slider size = " + rect.sizeDelta.ToString() + rect.rect.width + " - " + rect.rect.height + " : " + rect.offsetMax + " - " + rect.offsetMin);
@@ -32,6 +34,11 @@ public class SliderControl : MonoBehaviour
         timeSliderValueChange = false;
         
         // HPSliderRect.sizeDelta = new Vector2(PlayerMaxHP, HPSliderRect.sizeDelta.y);
+    }
+
+    public void SetSliderMaxValue(float value){
+        timeSlider.maxValue = value;
+        timeSlider.gameObject.transform.parent.Find("RemainingTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)value, 3, MidpointRounding.AwayFromZero).ToString();
     }
 
     public void SetSliderMode(Global.SliderMode mode){

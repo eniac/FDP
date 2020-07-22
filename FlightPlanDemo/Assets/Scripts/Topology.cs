@@ -466,8 +466,8 @@ public class Topology : MonoBehaviour
         }
     }
     void HighlightLossyLink(ref GameObject go, string node1, string node2){
-        // if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
-        if(node1.ToLower().Contains("p0h0") || node2.ToLower().Contains("p0h0")){
+        if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
+        // if(node1.ToLower().Contains("p0h0") || node2.ToLower().Contains("p0h0")){
             go.GetComponent<MeshRenderer>().material.color = Color.red;
             DropperLinkObjects.Add(go);
         }
