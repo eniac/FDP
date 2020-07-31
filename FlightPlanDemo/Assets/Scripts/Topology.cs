@@ -405,9 +405,15 @@ public class Topology : MonoBehaviour
         foreach (string s in s_names){
             GameObject go = Instantiate(s_prefab) as GameObject;
             go.transform.position = positions[s];
+            
             goList.Add(go);
             switchObjectDict.Add(s, go);
-            DisplayLabels(ref go, s, "Switch");
+            if(s.ToLower().Contains(Constants.DROPPER_STRING)){
+                go.GetComponent<MeshRenderer>().enabled = false;
+            }
+            else{
+                DisplayLabels(ref go, s, "Switch");
+            }
             if(colorDict.ContainsKey(Constants.SWITCH_STRING)==false){
                 colorDict.Add(Constants.SWITCH_STRING, go.GetComponent<MeshRenderer>().material.color);
             }
@@ -451,10 +457,12 @@ public class Topology : MonoBehaviour
             foreach(var node in link.Value){
                 GameObject go = Instantiate(link_prefab) as GameObject;
                 // Setting the position
+                // go.transform.position = PipePosition(link.Key, node);
                 go.transform.position = (positions[link.Key]-positions[node])/2.0f + positions[node];
                 // Scaling
                 var scale = go.transform.localScale;
-                scale.y = (positions[link.Key]-positions[node]).magnitude - switchObjectDict[link.Key].transform.localScale.y;
+                scale.y = PipeScale(link.Key, node);
+                // scale.y = (positions[link.Key]-positions[node]).magnitude - switchObjectDict[link.Key].transform.localScale.y;
                 go.transform.localScale = scale/2.0f;
                 // Rotation
                 go.transform.rotation = Quaternion.FromToRotation(Vector3.up, positions[link.Key]-positions[node]);
@@ -463,6 +471,23 @@ public class Topology : MonoBehaviour
                 // Adding object in a list to change its properties in future
                 linkObjectList.Add(go);
             }
+        }
+    }
+
+    // Vector3 PipePosition(string node1, string node2){
+    //     if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
+    //         return (positions[node1]-positions[node2]).magnitude;
+    //     }
+    //     else{
+    //         return (positions[node1]-positions[node2])/2.0f + positions[node2];
+    //     }
+    // }
+    float PipeScale(string node1, string node2){
+        if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
+            return (positions[node1]-positions[node2]).magnitude;
+        }
+        else{
+            return (positions[node1]-positions[node2]).magnitude - switchObjectDict[node1].transform.localScale.y;
         }
     }
     void HighlightLossyLink(ref GameObject go, string node1, string node2){
@@ -664,15 +689,15 @@ public class Topology : MonoBehaviour
         foreach(var node in highlightedNodes){
             if(switchObjectDict.ContainsKey(node)){
                 highlitedObjects.Add(switchObjectDict[node]);
-                switchObjectDict[node].GetComponent<MeshRenderer>().material.color = Color.yellow;
+                switchObjectDict[node].GetComponent<MeshRenderer>().material.color = Color.red;
             }
             else if(satObjectDict.ContainsKey(node)){
                 highlitedObjects.Add(satObjectDict[node]);
-                satObjectDict[node].GetComponent<MeshRenderer>().material.color = Color.yellow;
+                satObjectDict[node].GetComponent<MeshRenderer>().material.color = Color.red;
             }
             else if(hostObjectDict.ContainsKey(node)){
                 highlitedObjects.Add(hostObjectDict[node]);
-                hostObjectDict[node].GetComponent<MeshRenderer>().material.color = Color.yellow;
+                hostObjectDict[node].GetComponent<MeshRenderer>().material.color = Color.red;
             }
         }
         camControl.MoveCamToNodes(highlitedObjects);

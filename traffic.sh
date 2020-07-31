@@ -162,28 +162,51 @@ for pcap_file in "${PCAP_DIR}"/*; do
 
   awk -v ARG="${src_dest},${is_sat}" '{ 
     split(ARG, args, /[,]/)
-    if(substr($1,1,2)!="0x") { 
-      printf "%s %s ", $1, args[1]
-    }
-    if(args[2]=="0"){
-      if(substr($1,1,7)=="0x0000:"){
-        printf "%s%s", $8, $9
+    if(/length/){
+      printf "%s %s 0000 0000 ", $1,args[1]
+      getline;
+      # printf "%s ", $0
+      if($8 == "88cc"){
+        # Broadcast packet
+        print "ffff np" 
       }
-      if(substr($1,1,7)=="0x0010:"){
-        printf "%s%s%s00%s", $2, $3, $4, substr($5,3,2)
-        printf " %s%s %s", $7, $8, $9
+      else if($8 == "0800"){
+        # Full IP header
+        getline;
+        print $3 " np"
       }
-      if(substr($1,1,7)=="0x0020:"){
-        printf "%s\n", $2
+      else if($8 == "081c"){
+        # FEC header ahead
+        if(substr($9,3,2)+0 < lastindex+0){
+          count[$8]++
+          block_count = count[$8]
+        }
+        lastindex = substr($9,3,2)
+        
+        # If not the parity packet check other headers
+        getline;
+        if($2 == "0800"){
+          # Full IP header ahead
+          lastID = $6
+          print $6 " np"
+        }
+        else if($2 == "1234"){
+          # Compressed IP header ahead
+          lastID = $6
+          print $6 " np"
+        }
+        else if($2 == "081c"){
+          # Parity packet
+          printf "%s pp%d%d\n", lastID, block_count+0, lastindex+0
+        }
+        else{
+          # Unknown header ahead
+          lastID = "Unknown"
+          print "Unknown np"
+        }
       }
-    }
-    if(args[2]=="1"){
-      if(substr($1,1,7)=="0x0030:"){
-        printf "%s%s%s%s%s00%s", $2, $3, $4, $5, $6, substr($7,3,2)
-        printf " %s", $9
-      }
-      if(substr($1,1,7)=="0x0040:"){
-        printf "%s %s%s\n", $2, $3, $4
+      else{
+        # Flightplan header
       }
     }
   }' ${TEMP} > ${TIME_DUMP}
@@ -206,12 +229,12 @@ readarray -d " " -t time_stream <<< ${time}
 # FInding out elapsed time and hash of each packet
 echo "Finding hash and elapsed time of each packet..."
 awk -v BASE="${time_stream[0]}" '{ 
-  cmd="echo -n " $4 " | md5sum|cut -d\" \" -f1"; cmd|getline hash;
+  cmd="echo -n " $6 " | md5sum|cut -d\" \" -f1"; cmd|getline hash;
   close(cmd)
   split(BASE, base_time_array, /[:.]/)
   split($1, time_array, /[:.]/) 
   elapsed_time=(time_array[1] - base_time_array[1])*60*60*1000*1000 + (time_array[2] - base_time_array[2])*60*1000*1000 + (time_array[3] - base_time_array[3])*1000*1000 + time_array[4] - base_time_array[4]
-  print elapsed_time " " $2 " " $3 " " $5 " " $6 " " hash
+  print elapsed_time " " $2 " " $3 " " $4 " " $5 " " hash " " $7
 }' ${TIME_DUMP} > ${METADATA}
 
 rm -r ${TEMP}

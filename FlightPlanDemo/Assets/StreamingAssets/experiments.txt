@@ -1,3 +1,11 @@
 split1_autotest3B
 split1_autotest1
 split1_demo1
+Run_ALV_selftest
+ALV_fec
+ALV_fec1
+alv_k=2
+alv_k=2_dropper
+alv_k-2_100
+alv_k=2_dropper_100
+ALV_complete_fec

@@ -8,7 +8,7 @@ public class ColorControl : MonoBehaviour
     Dictionary<Tuple<string, string>, Color> ColorsByPath = new Dictionary<Tuple<string, string>, Color>();
     Dictionary<string, Color> ColorsByOrigin = new Dictionary<string, Color>();
     HashSet<Tuple<string, string, string>> paths = new HashSet<Tuple<string, string, string>>();
-    Color colorRequest = Color.yellow;
+    Color colorRequest = Color.red;
     Color colorReply = Color.blue;
     int colorPatternIndex = 0; 
 
@@ -20,7 +20,10 @@ public class ColorControl : MonoBehaviour
     public void SetColorPattern(int index){
         colorPatternIndex = index;
     }
-    public Color GetPacketColor(string origin, string destination, string pid){
+    public Color GetPacketColor(string origin, string destination, string pid, bool parity, Color pColor){
+        if(parity == true){
+            return pColor;
+        }
         Color color = Color.yellow;
         switch(colorPatternIndex){
             case 0:

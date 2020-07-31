@@ -8,6 +8,7 @@ public class SliderControl : MonoBehaviour
 {
     [SerializeField] AnimationControl anim = default;
     [SerializeField] Slider timeSlider = default;
+    [SerializeField] Slider speedSlider = default;
     Global.SliderMode sliderMode;
     float lastTimeSliderPos = 0f;
     float lastPointerDownPos = 0f;
@@ -17,11 +18,12 @@ public class SliderControl : MonoBehaviour
     bool timeSliderValueChange;
 
     void Start(){
-        timeSlider.minValue = lastTimeSliderPos;    
+        timeSlider.minValue = lastTimeSliderPos;  
+        timeSlider.maxValue = 28.0f;
         // timeSlider.maxValue = 47240005/Global.U_SEC;                    // split1_demo1
         // timeSlider.maxValue = 27891602f/Global.U_SEC;                // split1_autotest1
         // timeSlider.maxValue = 3350946/Global.U_SEC + 15f - 0.989f;   // split1_autotest3B
-        timeSlider.maxValue = 0;
+        // timeSlider.maxValue = 0;
         timeSlider.value = lastTimeSliderPos;
         RectTransform rect= timeSlider.GetComponent<RectTransform>();
         // Debug.Log("Slider size = " + rect.sizeDelta.ToString() + rect.rect.width + " - " + rect.rect.height + " : " + rect.offsetMax + " - " + rect.offsetMin);
@@ -32,13 +34,17 @@ public class SliderControl : MonoBehaviour
         timeSliderLength = length;
         timeSliderOffset = xOffset;
         timeSliderValueChange = false;
+
+        speedSlider.minValue = 0;
+        speedSlider.maxValue = 3;
+        speedSlider.value = 1;
         
         // HPSliderRect.sizeDelta = new Vector2(PlayerMaxHP, HPSliderRect.sizeDelta.y);
     }
 
     public void SetSliderMaxValue(float value){
-        timeSlider.maxValue = value;
-        timeSlider.gameObject.transform.parent.Find("RemainingTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)value, 3, MidpointRounding.AwayFromZero).ToString();
+        // timeSlider.maxValue = value;
+        // timeSlider.gameObject.transform.parent.Find("RemainingTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)value, 3, MidpointRounding.AwayFromZero).ToString();
     }
 
     public void SetSliderMode(Global.SliderMode mode){
@@ -86,4 +92,11 @@ public class SliderControl : MonoBehaviour
         anim.DoJump(timeSliderDifference + timeSlider.value - lastPointerDownPos);
     }
 
+    public void AdjustSpeed(float speed){
+        anim.AdjustSpeed(speed);
+    }
+
+    public void SetSpeedSliderDefault(){
+        speedSlider.value = 1;
+    }
 }

@@ -146,6 +146,8 @@ public class ButtonControl : MonoBehaviour
     }
 
     public void BackToStart(){
+        // Reset time
+        anim.ResetFixedDeltaTime();
         // Jump to the previous scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     } 

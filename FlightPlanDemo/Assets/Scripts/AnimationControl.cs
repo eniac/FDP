@@ -18,6 +18,7 @@ struct ObjectInfo{
     public string origin;
     public string destination;
     public string packetID;
+    public bool parity;
 };
 
 public class AnimationControl : MonoBehaviour
@@ -26,20 +27,24 @@ public class AnimationControl : MonoBehaviour
     [SerializeField] SliderControl sliderControl = default;
     [SerializeField] ColorControl colorControl = default;
     [SerializeField] GameObject loadingPanel = default;
+    [SerializeField] GraphControl graph = default;
     [SerializeField] float SPEED_FACTOR = 1;
+    float fixedDeltaTime = 0f;
     float JUMP_SPEED_FACTOR = 10;
-    float FIRST_PASS_SPEED_FACTOR = 30;
+    float FIRST_PASS_SPEED_FACTOR = 10;
     const float MERGE_WINDOW = 0.5f;   
     const float BASE_SPEED = 10.0f;
     Vector3 packetSize = new Vector3(0.7f, 0.7f, 0.7f);
     float speed;
-    int counter;
+    int counter = 0;
+    int counterFix = 0;
     int window_counter;
     string elapsedTimeString;
     StringReader packetTimeString;
     float animStartTime;
     float nextPacketTime;
     GameObject packet_prefab;
+    GameObject parity_prefab;
     Dictionary<GameObject, ObjectInfo> runningObject;
     List<GameObject> expiredObjects;
     List<string> runningPacketID;
@@ -56,12 +61,20 @@ public class AnimationControl : MonoBehaviour
     Global.AnimStatus animationStatus;
     float referenceCounter;
     float referenceCounterThreshold=0;
+    float rc = 0f;
+    int rcCounter = 0;
     Global.AnimStatus lastAnimStatus;
     bool startCounter;
     bool forwardFlag;
     bool rewindFlag;
     List<GameObject> DropperLinkObjects;
     bool firstPass = true;
+    bool firstPassInflight = true;
+    float inflightTimeStart = 0;
+    Dictionary<float, int> graphRequestData = new Dictionary<float, int>(); 
+    Dictionary<float, int> graphReplyData = new Dictionary<float, int>(); 
+    int graphRequestPacket = 0;
+    int graphReplyPackets = 0;
 
     public enum PacketInfoIdx{
         Time=0,
@@ -69,11 +82,13 @@ public class AnimationControl : MonoBehaviour
         Target,
         Origin,
         Destination,
-        Pid
+        Pid,
+        Parity
     }
     
     public void Start(){
         enabled = false;        // Stop calling update, it will only be called after StartAnimation
+        this.fixedDeltaTime = Time.fixedDeltaTime;
     }
 
     // Get file from file system or server
@@ -82,7 +97,6 @@ public class AnimationControl : MonoBehaviour
         var filePath = Path.Combine(Application.streamingAssetsPath, Global.experimentMetadata);
         Debug.Log("metadata File = " + filePath);
         if (filePath.Contains ("://") || filePath.Contains (":///")) {
-            Debug.Log("Anim WebRequest");
             // Using UnityWebRequest class
             var loaded = new UnityWebRequest(filePath);
             loaded.downloadHandler = new DownloadHandlerBuffer();
@@ -95,19 +109,21 @@ public class AnimationControl : MonoBehaviour
         DropperLinkObjects = topo.GetDropperLinkObjects();
     }
 
-    public void AdjustSpeed(float speed_factor){
-        SPEED_FACTOR = speed_factor;
+    public void AdjustSpeed(float speed){
+        Time.timeScale = speed;
+        // Time.fixedDeltaTime = this.fixedDeltaTime * Time.timeScale;
     }
 
+    public void ResetFixedDeltaTime(){
+        Time.fixedDeltaTime = this.fixedDeltaTime;
+    }
     public void ResetAnimation(){
         PacketCleanup();
     }
     public void StartAnimation(){
         // Debug.Log("Restarting Animation");
-        counter = 1;
-        window_counter = 1;
         speed = BASE_SPEED * SPEED_FACTOR;
-        Time.timeScale = 1;
+        AdjustSpeed(1);
 
         // Objects initialization
         packetTimeString = new StringReader(elapsedTimeString);
@@ -122,6 +138,7 @@ public class AnimationControl : MonoBehaviour
         }
         PacketCleanup();
         packet_prefab = Resources.Load("Packet") as GameObject;
+        parity_prefab = Resources.Load("Parity") as GameObject;
 
         animStartTime = Time.time;
 
@@ -129,13 +146,15 @@ public class AnimationControl : MonoBehaviour
         nextPacketInfo = packetTimeString.ReadLine().Split(' ');
         nextPacketTime = (float)Convert.ToInt32(nextPacketInfo[(int)PacketInfoIdx.Time]);
         // Debug.Log("nextPacketInfo = " + nextPacketInfo[(int)PacketInfoIdx.Time] + ":" + nextPacketInfo[(int)PacketInfoIdx.Source] + ":" + nextPacketInfo[(int)PacketInfoIdx.Target]);
-        counter++;
 
         topo.MakeLinksTransparent();
         topo.MakeNodesTransparent();
         SetAnimationStatus(Global.AnimStatus.Disk);
         sliderControl.SetSliderMode(Global.SliderMode.Normal);
         colorControl.ResetColorControl();
+
+        rcCounter = 0;
+        rc = 0;
 
         forwardFlag = false;
         rewindFlag = false;
@@ -147,13 +166,18 @@ public class AnimationControl : MonoBehaviour
         holdbackRemain = true;
         firstUpdate = true;
         if(firstPass == true){
-            Time.timeScale = FIRST_PASS_SPEED_FACTOR;
+            AdjustSpeed(FIRST_PASS_SPEED_FACTOR);
         }
+        Debug.Log("Start Time = " + Time.realtimeSinceStartup);
         enabled = true;
         if(DropperLinkObjects.Count > 0){
             InvokeRepeating("DropperLinkBlink", 0, 0.05f);
         }
     }
+
+    // void FixedUpdate(){
+    //     counterFix++;
+    // }
 
     // IEnumerator DropperLinkBlink(){
     //     foreach(var go in DropperLinkObjects){
@@ -183,6 +207,20 @@ public class AnimationControl : MonoBehaviour
     }
 
     void PacketCleanup(){
+        counter = 0;
+        counterFix = 0;
+        Debug.Log("End Time = " + Time.realtimeSinceStartup);
+
+        if(firstPassInflight == false){
+            graph.Show(graphRequestData, graphReplyData);
+        }
+        graphReplyData.Clear();
+        graphRequestData.Clear();
+        graphRequestPacket = 0;
+        graphReplyPackets = 0;
+
+        sliderControl.SetSpeedSliderDefault();
+
         // Removal of objects if any remained while restarting/resetting the animation
         expiredObjects.Clear();
         foreach(GameObject go in runningObject.Keys){
@@ -200,13 +238,11 @@ public class AnimationControl : MonoBehaviour
         sliderControl.SetTimeSlider(0);
         StopDropperLinkBlink();
 
-        enabled = false;
-
-        if(Time.timeScale != 1 && firstPass == true){
-            firstPass = false;
-            sliderControl.SetSliderMaxValue(referenceCounter);
-            loadingPanel.SetActive(false);
+        if(firstPass==false){
+            firstPassInflight = false;
         }
+
+        enabled = false;
     }
 
     void SetAnimationStatus(Global.AnimStatus status){
@@ -251,14 +287,18 @@ public class AnimationControl : MonoBehaviour
     }
     void ReferenceCounterUpdate(Global.AnimStatus status){
         if(status==Global.AnimStatus.Disk || status == Global.AnimStatus.Forward){
-            referenceCounter += (Time.deltaTime * SPEED_FACTOR);
+            // referenceCounter += Time.deltaTime;
+            referenceCounter += Time.fixedDeltaTime;
             if(sliderControl.GetSliderMode() == Global.SliderMode.Normal){
                 sliderControl.SetTimeSlider(referenceCounter);
             }
         }
         else if(status == Global.AnimStatus.Rewind){
-            if(referenceCounter - (Time.deltaTime * SPEED_FACTOR) >= 0){
-                referenceCounter -= (Time.deltaTime * SPEED_FACTOR);
+            // if(referenceCounter - Time.deltaTime >= 0){
+            //     referenceCounter -= Time.deltaTime;
+            // }
+            if(referenceCounter - Time.fixedDeltaTime >= 0){
+                referenceCounter -= Time.fixedDeltaTime;
             }
             else{
                 referenceCounter = 0f;
@@ -267,6 +307,7 @@ public class AnimationControl : MonoBehaviour
                 sliderControl.SetTimeSlider(referenceCounter);
             }
         }
+        // Debug.Log(referenceCounter);
     }
     public void SetLastAnimStatus(){
         if(GetAnimationStatus() == Global.AnimStatus.Disk){
@@ -298,7 +339,7 @@ public class AnimationControl : MonoBehaviour
         // Set slider mode to jump
         sliderControl.SetSliderMode(Global.SliderMode.Jump);
         // Do fast forward
-        Time.timeScale = JUMP_SPEED_FACTOR;
+        AdjustSpeed(JUMP_SPEED_FACTOR);
     }
 
     void StartAnimationAction(Global.AnimStatus status){
@@ -317,7 +358,12 @@ public class AnimationControl : MonoBehaviour
         return referenceCounterThreshold;
     }
 
-    void Update(){
+    void FixedUpdate(){
+        counter++;
+        rcCounter++;
+        rc = rc + Time.fixedDeltaTime;
+        // Debug.Log(rcCounter + " : " + rc + " : " + counter + " : " + referenceCounter);
+        
         CleanupExpiredObjects();
         speed = BASE_SPEED * SPEED_FACTOR;
         if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
@@ -330,7 +376,7 @@ public class AnimationControl : MonoBehaviour
                 sliderControl.SetSliderMode(Global.SliderMode.Normal);
                 StartAnimationAction(GetLastAnimStatus());
                 // Normal speed
-                Time.timeScale = 1;
+                AdjustSpeed(1);
             } 
         }
 
@@ -407,6 +453,10 @@ public class AnimationControl : MonoBehaviour
         }
         // Remove expired objects
         foreach(GameObject go in expiredObjects){
+            if(runningObject[go].target == "p0h0"){
+                graphReplyPackets++;
+                // graphReplyData.Add(referenceCounter, graphReplyPackets);
+            }
             runningPacketID.Remove(runningObject[go].packetID);
             runningObject.Remove(go);
             Destroy(go);
@@ -438,8 +488,15 @@ public class AnimationControl : MonoBehaviour
         while(ptr < forwardList.Count && forwardList[ptr].instantiationTime <= referenceCounter){
             // Debug.Log("FWD IN = " + ptr + " : " + forwardList[ptr].instantiationTime + " : " + referenceCounter);
             ObjectInfo oInfo = forwardList[ptr];
-            GameObject go = Instantiate(packet_prefab) as GameObject;
-            go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID);
+            GameObject go;
+            if(oInfo.parity==true){
+                go = Instantiate(parity_prefab) as GameObject;
+            }
+            else{
+                go = Instantiate(packet_prefab) as GameObject;
+            }
+            
+            go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.parity, go.GetComponent<MeshRenderer>().material.color);
             // Instantiate on source position in forward
             go.transform.position = oInfo.sourcePos;
             oInfo.Object = go;
@@ -492,8 +549,14 @@ public class AnimationControl : MonoBehaviour
 
         while(ptr >= 0 && rewindList[ptr].expirationTime >= referenceCounter){
             ObjectInfo oInfo = rewindList[ptr];
-            GameObject go = Instantiate(packet_prefab) as GameObject;
-            go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID);
+            GameObject go;
+            if(oInfo.parity==true){
+                go = Instantiate(parity_prefab) as GameObject;
+            }
+            else{
+                go = Instantiate(packet_prefab) as GameObject;
+            }
+            go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.parity, go.GetComponent<MeshRenderer>().material.color);
             // Instantiate on target position in rewind
             go.transform.position = oInfo.targetPos;
             if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
@@ -522,6 +585,11 @@ public class AnimationControl : MonoBehaviour
         if(parseRemain==false && holdbackRemain==false && runningObject.Count==0){
             PacketCleanup();
             // Debug.Log("Update Ends"); 
+            if(firstUpdate == false && firstPass == true){
+                firstPass = false;
+                sliderControl.SetSliderMaxValue(referenceCounter);
+                loadingPanel.SetActive(false);
+            }
             return;
         }
 
@@ -530,6 +598,7 @@ public class AnimationControl : MonoBehaviour
         // which will generate multiple packets simultaneously in the begining
         if(firstUpdate == true){
             animStartTime = Time.time;
+            // Debug.Log("animStartTime = " + Time.fixedTime + " : " + Time.fixedUnscaledTime + " : " + Time.unscaledTime + " : " + Time.time);
             referenceCounter = 0;
             startCounter = true;
             firstUpdate = false;
@@ -550,7 +619,6 @@ public class AnimationControl : MonoBehaviour
                     // float et = currentTime - animStartTime;
                     // Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/Global.U_SEC + " :: " + et + " :: " + nextPacketInfo[(int)PacketInfoIdx.Time] + " : " + nextPacketInfo[(int)PacketInfoIdx.Source] + " : " + nextPacketInfo[(int)PacketInfoIdx.Target]);
                     // Debug.Log("[" + window_counter + "] [" + counter + "] " + nextPacketTime/Global.U_SEC + " :: " + et);
-                    counter++;
                 }
                 else{
                     // enabled = false;
@@ -580,6 +648,13 @@ public class AnimationControl : MonoBehaviour
         oInfo.origin = nextPacketInfo[(int)PacketInfoIdx.Origin];
         oInfo.destination = nextPacketInfo[(int)PacketInfoIdx.Destination];
         oInfo.packetID = nextPacketInfo[(int)PacketInfoIdx.Pid];
+        oInfo.parity = false;
+        // if(nextPacketInfo[(int)PacketInfoIdx.Parity] == "np"){
+        //     oInfo.parity = false;
+        // }
+        // else{
+        //     oInfo.parity = true;
+        // }
 
         // If packet is already running on link store the info in holdback queue for future reference (in time order) 
         if(runningPacketID.Contains(oInfo.packetID)){
@@ -595,9 +670,15 @@ public class AnimationControl : MonoBehaviour
             return;
         }
         // If this is new packet, instantiate an object 
-        GameObject go = Instantiate(packet_prefab) as GameObject;
-        go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID);
-        // Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
+        GameObject go;
+        if(oInfo.parity==true){
+            go = Instantiate(parity_prefab) as GameObject;
+        }
+        else{
+            go = Instantiate(packet_prefab) as GameObject;
+        }
+        go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.parity, go.GetComponent<MeshRenderer>().material.color);
+        // Debug.Log("Instantiate = " + oInfo.packetTime + " : " + oInfo.packetID);
         go.transform.position = oInfo.sourcePos;
         if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
             // Make packets invisible
@@ -608,6 +689,10 @@ public class AnimationControl : MonoBehaviour
         // Store the running object info to track it later
         SetForwardListPointer(forwardList.Count);
         oInfo.instantiationTime = referenceCounter;
+        if(nextPacketInfo[(int)PacketInfoIdx.Source] == "p0h0"){
+            graphRequestPacket++;
+            // graphRequestData.Add(referenceCounter, graphRequestPacket);
+        }
         forwardList.Add(oInfo);
         runningObject.Add(go, oInfo);
         runningPacketID.Add(oInfo.packetID);
@@ -621,9 +706,15 @@ public class AnimationControl : MonoBehaviour
                 if(runningPacketID.Contains(pid)==false){
                     ObjectInfo oInfo = packetHoldBackQueue[pid].Dequeue();
                     // Debug.Log("Deque = " + oInfo.packetTime + " " + oInfo.packetID);
-                    GameObject go = Instantiate(packet_prefab) as GameObject;
-                    go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID);
-                    // Debug.Log("Instantiate = " + oInfo.packetTime + " " + oInfo.packetID);
+                    GameObject go;
+                    if(oInfo.parity==true){
+                        go = Instantiate(parity_prefab) as GameObject;
+                    }
+                    else{
+                        go = Instantiate(packet_prefab) as GameObject;
+                    }
+                    go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.parity, go.GetComponent<MeshRenderer>().material.color);
+                    // Debug.Log("Hold Instantiate = " + oInfo.packetTime/Global.U_SEC + " : " + oInfo.packetID);
                     go.transform.position = oInfo.sourcePos;
                     if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
                         // Make packets invisible
