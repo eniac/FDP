@@ -17,7 +17,7 @@ public class StartMenuControl : MonoBehaviour
     [SerializeField] private PopUpControl popup = default;
     const string EXP_TEXT = "Choose an Experiment...";
     List<string> experimentNames = new List<string>(){EXP_TEXT};
-    string chooseExperiment = EXP_TEXT;
+    string chosenExperiment = EXP_TEXT;
 
     public IEnumerator Start(){
         yield return StartCoroutine(GetExperiments());
@@ -54,11 +54,12 @@ public class StartMenuControl : MonoBehaviour
     }
 
     public void ExperimentDropdownIndexChanged(int index){
-        chooseExperiment = experimentNames[index];
+        chosenExperiment = experimentNames[index];
+        Global.chosanExperimentName = chosenExperiment;
     }
     
     public void StartDemo(){
-        if(chooseExperiment == EXP_TEXT){
+        if(chosenExperiment == EXP_TEXT){
             popup.ShowErrorMessage("Please choose an Experiment!!!", 8, Color.red);
             return;
         }
@@ -69,8 +70,8 @@ public class StartMenuControl : MonoBehaviour
     }
 
     void SetFileNames(){
-        Global.experimentYaml = chooseExperiment + "/topology.yml";
-        Global.experimentMetadata = chooseExperiment + "/metadata.txt";
+        Global.experimentYaml = chosenExperiment + "/topology.yml";
+        Global.experimentMetadata = chosenExperiment + "/metadata.txt";
     }
 
     public void QuitDemo(){
@@ -88,7 +89,7 @@ public class StartMenuControl : MonoBehaviour
 //     [SerializeField] private PopUpControl popup = default;
 //     List<string> experimentNames = new List<string>(){"Choose an Experiment..."};
 //     List<FileInfo> experimentZips = new List<FileInfo>();
-//     FileInfo chooseExperiment = null;
+//     FileInfo chosenExperiment = null;
 
 //     public void Start(){
 //         DirectoryInfo dir = new DirectoryInfo(Application.streamingAssetsPath);
@@ -109,16 +110,16 @@ public class StartMenuControl : MonoBehaviour
 //     }
 //     public void ExperimentDropdownIndexChanged(int index){
 //         if(index == 0){
-//             chooseExperiment = null;
+//             chosenExperiment = null;
 //         }
 //         else{
 //             // Avoid index=0, since this idex is only a string showing "choose an experiment"
-//             chooseExperiment = experimentZips[index-1];
+//             chosenExperiment = experimentZips[index-1];
 //         }
 //     }
     
 //     public void StartDemo(){
-//         if(chooseExperiment == null){
+//         if(chosenExperiment == null){
 //             popup.ShowErrorMessage("Please choose an Experiment!!!", 8, Color.red);
 //             return;
 //         }
@@ -135,7 +136,7 @@ public class StartMenuControl : MonoBehaviour
 //     }
 
 //     void unZipFile(){
-//         string zipPath = Path.Combine(Application.streamingAssetsPath, chooseExperiment.Name);
+//         string zipPath = Path.Combine(Application.streamingAssetsPath, chosenExperiment.Name);
 //         string unZipPath = Path.Combine(Application.streamingAssetsPath, Path.GetFileNameWithoutExtension(zipPath));
 //         string extractPath = Path.Combine(Application.streamingAssetsPath, "");
 

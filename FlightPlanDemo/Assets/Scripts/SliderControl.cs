@@ -19,7 +19,7 @@ public class SliderControl : MonoBehaviour
 
     void Start(){
         timeSlider.minValue = lastTimeSliderPos;  
-        timeSlider.maxValue = 28.0f;
+        timeSlider.maxValue = 121.0f;
         // timeSlider.maxValue = 47240005/Global.U_SEC;                    // split1_demo1
         // timeSlider.maxValue = 27891602f/Global.U_SEC;                // split1_autotest1
         // timeSlider.maxValue = 3350946/Global.U_SEC + 15f - 0.989f;   // split1_autotest3B
@@ -43,8 +43,8 @@ public class SliderControl : MonoBehaviour
     }
 
     public void SetSliderMaxValue(float value){
-        // timeSlider.maxValue = value;
-        // timeSlider.gameObject.transform.parent.Find("RemainingTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)value, 3, MidpointRounding.AwayFromZero).ToString();
+        timeSlider.maxValue = value;
+        timeSlider.gameObject.transform.parent.Find("RemainingTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)value, 3, MidpointRounding.AwayFromZero).ToString();
     }
 
     public void SetSliderMode(Global.SliderMode mode){

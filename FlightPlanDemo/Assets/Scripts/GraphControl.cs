@@ -3,79 +3,100 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+struct GraphAttributes{
+    public GameObject lastCircleGameObject;
+    public Color pointColor;
+    public Color segmentColor;
+    public float yMax;
+    public float xMax;
+    public List<GameObject> points;
+    public List<GameObject> segments;
+};
 public class GraphControl : MonoBehaviour
 {
     [SerializeField] private Sprite circleSprite = default; 
     private RectTransform graphContainer;
     private RectTransform labelTemplateX;
     private RectTransform labelTemplateY;
+    private RectTransform labelAxisX;
+    private RectTransform labelAxisY;
+    private RectTransform legends;
+    private RectTransform graphTitle;
+    Dictionary<Global.GraphType, GraphAttributes> gAttr = new Dictionary<Global.GraphType, GraphAttributes>();
+    RectTransform labelX, labelY, legend, title;
 
-
+    float graphHeight;
+    float graphWidth;
     private void Awake(){
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
         labelTemplateX = graphContainer.Find("LabelTemplateX").GetComponent<RectTransform>();
         labelTemplateY = graphContainer.Find("LabelTemplateY").GetComponent<RectTransform>();
+        labelAxisX = graphContainer.Find("LabelAxisX").GetComponent<RectTransform>();
+        labelAxisY = graphContainer.Find("LabelAxisY").GetComponent<RectTransform>();
+        legends = graphContainer.Find("Legends").GetComponent<RectTransform>();
+        graphTitle = graphContainer.Find("Title").GetComponent<RectTransform>();
 
-        // List<int> valueList = new List<int>(){5, 98, 56, 45, 30, 22, 17, 15, 13, 17, 25, 37, 40, 36, 33};
-        // ShowGraph(valueList);
+        labelX = Instantiate(labelAxisX);
+        labelX.SetParent(graphContainer);
+        labelX.gameObject.SetActive(true);
+        labelX.anchoredPosition = new Vector2(0, -15f);
+        
+        labelY = Instantiate(labelAxisY);
+        labelY.SetParent(graphContainer);
+        labelY.gameObject.SetActive(true);
+        labelY.anchoredPosition = new Vector2(-25f, 0);
+        
+        legend = Instantiate(legends);
+        legend.SetParent(graphContainer);
+        legend.gameObject.SetActive(true);
+        legend.anchoredPosition = new Vector2(60, -30f);
+
+        title = Instantiate(graphTitle);
+        title.SetParent(graphContainer);
+        title.gameObject.SetActive(true);
+        title.anchoredPosition = new Vector2(0, 15f);
+        
+        graphHeight = graphContainer.sizeDelta.y;
+        graphWidth = graphContainer.sizeDelta.x;
     }
 
-    public void Show(Dictionary<float, int> requestData, Dictionary<float, int> replyData){
-        if(requestData.Count!=0){
-            foreach(var data in requestData){
-                Debug.Log(data.Key + " : " + data.Value);
-            }
-        }
-        if(replyData.Count!=0){
-            foreach(var data in replyData){
-                Debug.Log(data.Key + " : " + data.Value);
-            }
-        }
+    public void GraphParamInit(string x, string y, string l, string t){
+        labelX.GetComponent<Text>().text = x;
+        labelY.GetComponent<Text>().text = y;
+        legend.GetComponent<Text>().text = l;
+        title.GetComponent<Text>().text = t;
+    }
 
-        float graphHeight = graphContainer.sizeDelta.y;
-        float graphWidth = graphContainer.sizeDelta.x;
-        float yMax = 110f;               //22f;      
-        float xMax = 120f;               //30f;
-        Color color;
-        GameObject lastCircleGameObject = null;
-        foreach(var data in requestData){
-            float xPos = (data.Key/xMax) * graphWidth;     // Normalized x position
-            float yPos = (data.Value/yMax) * graphHeight;   // Normalized y position
-            color = new Color(1f, 0f, 0f, 1f);
-            GameObject goCircle = CreateCircle(new Vector2(xPos, yPos), color);
-            if(lastCircleGameObject != null){
-                color = new Color(1f, 0f, 0f, 0.5f);
-                CreateDotConnection(lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, goCircle.GetComponent<RectTransform>().anchoredPosition, color);
-            }
-            lastCircleGameObject = goCircle;
+    public void GraphInit(Global.GraphType gType, Color pointColor, Color segmentColor, float xMax, float yMax){
+        GraphAttributes gt = new GraphAttributes();
+        gt.lastCircleGameObject = null;
+        gt.pointColor = pointColor;
+        gt.segmentColor = segmentColor;
+        gt.xMax = xMax;
+        gt.yMax = yMax;
+        gt.points = new List<GameObject>();
+        gt.segments = new List<GameObject>();
+        if(gAttr.ContainsKey(gType)==true){
+            gAttr[gType] = gt;
         }
-
-        lastCircleGameObject = null;
-        foreach(var data in replyData){
-            float xPos = (data.Key/xMax) * graphWidth;     // Normalized x position
-            float yPos = (data.Value/yMax) * graphHeight;   // Normalized y position
-            color = new Color(0f, 0f, 1f, 1f);
-            GameObject goCircle = CreateCircle(new Vector2(xPos, yPos), color);
-            if(lastCircleGameObject != null){
-                color = new Color(0f, 0f, 1f, 0.5f);
-                CreateDotConnection(lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, goCircle.GetComponent<RectTransform>().anchoredPosition, color);
-            }
-            lastCircleGameObject = goCircle;
+        else{
+            gAttr.Add(gType, gt);
         }
 
         // Labeling X axis
-        int separatorCount = 10;
+        float separatorCount = 3f;
         for(int i=0; i<=separatorCount; i++){
             RectTransform labelX = Instantiate(labelTemplateX);
             labelX.SetParent(graphContainer);
             labelX.gameObject.SetActive(true);
             float normalizedValue = i * 1f / separatorCount;
-            labelX.anchoredPosition = new Vector2(normalizedValue*graphWidth, -3f);
-            labelX.GetComponent<Text>().text = Mathf.RoundToInt(normalizedValue * xMax).ToString();
+            labelX.anchoredPosition = new Vector2(normalizedValue*graphWidth, -5f);
+            // labelX.GetComponent<Text>().text = Mathf.RoundToInt(normalizedValue * xMax).ToString();
+            labelX.GetComponent<Text>().text = (normalizedValue * xMax).ToString();
         }
 
         // Labeling Y axis
-        separatorCount = 10;
+        separatorCount = 5f;
         for(int i=0; i<=separatorCount; i++){
             RectTransform labelY = Instantiate(labelTemplateY);
             labelY.SetParent(graphContainer);
@@ -83,6 +104,32 @@ public class GraphControl : MonoBehaviour
             float normalizedValue = i * 1f / separatorCount;
             labelY.anchoredPosition = new Vector2(-3f, normalizedValue*graphHeight);
             labelY.GetComponent<Text>().text = Mathf.RoundToInt(normalizedValue * yMax).ToString();
+        }
+    }
+    public void ShowPlot(Global.GraphType gType, float x, float y){
+        GraphAttributes gt = gAttr[gType];
+        float xPos = (x/gt.xMax) * graphWidth;     // Normalized x position
+        float yPos = (y/gt.yMax) * graphHeight;   // Normalized y position
+        GameObject goCircle = CreateCircle(new Vector2(xPos, yPos), gt.pointColor);
+        gt.points.Add(goCircle);
+        if(gt.lastCircleGameObject != null){
+            GameObject goConn = CreateDotConnection(gt.lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, goCircle.GetComponent<RectTransform>().anchoredPosition, gt.segmentColor);
+            gt.segments.Add(goConn);
+        }
+        gt.lastCircleGameObject = goCircle;
+        gAttr[gType] = gt;
+    }
+
+    public void ClearPlot(Global.GraphType gType){
+        if(gAttr.ContainsKey(gType)==false){
+            return;
+        }
+        GraphAttributes gt = gAttr[gType];
+        foreach(var go in gt.points){
+            Destroy(go);
+        }
+        foreach(var go in gt.segments){
+            Destroy(go);
         }
     }
 
@@ -93,6 +140,7 @@ public class GraphControl : MonoBehaviour
         go.transform.SetParent(graphContainer, false);
         go.GetComponent<Image>().sprite = circleSprite;
         go.GetComponent<Image>().color = color;
+        go.transform.localScale = new Vector3(0,0,0);
         // Change the position and size of circle
         RectTransform rectTransform = go.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = anchoredPosition;
@@ -102,42 +150,7 @@ public class GraphControl : MonoBehaviour
         return go;
     }
 
-    private void ShowGraph(List<int> valueList){
-        float graphHeight = graphContainer.sizeDelta.y;
-        float yMax = 100f;      // Maximum y value
-        float xSize = 7f;       // Horizontal spacing between points
-        GameObject lastCircleGameObject = null;
-        for(int i=0; i<valueList.Count; i++){
-            float xPos = xSize + i * xSize;
-            // Normalized y position
-            float yPos = ((valueList[i])/yMax) * graphHeight;
-            GameObject goCircle = CreateCircle(new Vector2(xPos, yPos), new Color(1f, 1f, 1f, 1f));
-            if(lastCircleGameObject != null){
-                CreateDotConnection(lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, goCircle.GetComponent<RectTransform>().anchoredPosition, new Color(1f, 1f, 1f, 0.5f));
-            }
-            lastCircleGameObject = goCircle;
-
-            // Labeling X axis
-            RectTransform labelX = Instantiate(labelTemplateX);
-            labelX.SetParent(graphContainer);
-            labelX.gameObject.SetActive(true);
-            labelX.anchoredPosition = new Vector2(xPos, -3f);
-            labelX.GetComponent<Text>().text = i.ToString();
-        }
-
-        // Labeling Y axis
-        int separatorCount = 10;
-        for(int i=0; i<=separatorCount; i++){
-            RectTransform labelY = Instantiate(labelTemplateY);
-            labelY.SetParent(graphContainer);
-            labelY.gameObject.SetActive(true);
-            float normalizedValue = i * 1f / separatorCount;
-            labelY.anchoredPosition = new Vector2(-3f, normalizedValue*graphHeight);
-            labelY.GetComponent<Text>().text = Mathf.RoundToInt(normalizedValue * yMax).ToString();
-        }
-    }
-
-    private void CreateDotConnection(Vector2 posA, Vector2 posB, Color color){
+    private GameObject CreateDotConnection(Vector2 posA, Vector2 posB, Color color){
         GameObject go = new GameObject("dotConnection", typeof(Image));
         go.transform.SetParent(graphContainer, false);
         go.GetComponent<Image>().color = color;
@@ -153,5 +166,7 @@ public class GraphControl : MonoBehaviour
         rectTransform.anchorMin = new Vector2(0,0);
         rectTransform.anchorMax = new Vector2(0,0);
         rectTransform.localEulerAngles = new Vector3(0, 0, angle);
+
+        return go;
     }
 }

@@ -14,11 +14,12 @@ struct ObjectInfo{
     public float instantiationTime;
     public Vector3 sourcePos;
     public Vector3 targetPos;
+    public string source;
     public string target;
     public string origin;
     public string destination;
     public string packetID;
-    public bool parity;
+    public Global.PacketType packetType;
 };
 
 public class AnimationControl : MonoBehaviour
@@ -27,8 +28,8 @@ public class AnimationControl : MonoBehaviour
     [SerializeField] SliderControl sliderControl = default;
     [SerializeField] ColorControl colorControl = default;
     [SerializeField] GameObject loadingPanel = default;
-    [SerializeField] GraphControl graph = default;
     [SerializeField] float SPEED_FACTOR = 1;
+    [SerializeField] GraphInput graphInput = default;
     float fixedDeltaTime = 0f;
     float JUMP_SPEED_FACTOR = 10;
     float FIRST_PASS_SPEED_FACTOR = 10;
@@ -44,7 +45,7 @@ public class AnimationControl : MonoBehaviour
     float animStartTime;
     float nextPacketTime;
     GameObject packet_prefab;
-    GameObject parity_prefab;
+    GameObject parity_prefab, mcd_prefab, hc_prefab;
     Dictionary<GameObject, ObjectInfo> runningObject;
     List<GameObject> expiredObjects;
     List<string> runningPacketID;
@@ -71,10 +72,12 @@ public class AnimationControl : MonoBehaviour
     bool firstPass = true;
     bool firstPassInflight = true;
     float inflightTimeStart = 0;
-    Dictionary<float, int> graphRequestData = new Dictionary<float, int>(); 
-    Dictionary<float, int> graphReplyData = new Dictionary<float, int>(); 
-    int graphRequestPacket = 0;
-    int graphReplyPackets = 0;
+    // Dictionary<float, int> graphRequestData = new Dictionary<float, int>(); 
+    // Dictionary<float, int> graphReplyData = new Dictionary<float, int>(); 
+    ObjectInfo lastPacket;
+    HashSet<string> usedID = new HashSet<string>();
+    Dictionary<string, string> idMap = new Dictionary<string, string>();
+    Dictionary<string, Tuple<string, string>> OriginDestinationMap = new Dictionary<string, Tuple<string, string>>();
 
     public enum PacketInfoIdx{
         Time=0,
@@ -139,6 +142,8 @@ public class AnimationControl : MonoBehaviour
         PacketCleanup();
         packet_prefab = Resources.Load("Packet") as GameObject;
         parity_prefab = Resources.Load("Parity") as GameObject;
+        mcd_prefab = Resources.Load("Mcd") as GameObject;
+        hc_prefab = Resources.Load("Hc") as GameObject;
 
         animStartTime = Time.time;
 
@@ -169,6 +174,10 @@ public class AnimationControl : MonoBehaviour
             AdjustSpeed(FIRST_PASS_SPEED_FACTOR);
         }
         Debug.Log("Start Time = " + Time.realtimeSinceStartup);
+
+        // Graph cleanup and Initialization
+        GraphCleanup();
+
         enabled = true;
         if(DropperLinkObjects.Count > 0){
             InvokeRepeating("DropperLinkBlink", 0, 0.05f);
@@ -211,13 +220,9 @@ public class AnimationControl : MonoBehaviour
         counterFix = 0;
         Debug.Log("End Time = " + Time.realtimeSinceStartup);
 
-        if(firstPassInflight == false){
-            graph.Show(graphRequestData, graphReplyData);
+        if(firstPassInflight==true){
+            GraphCleanup();
         }
-        graphReplyData.Clear();
-        graphRequestData.Clear();
-        graphRequestPacket = 0;
-        graphReplyPackets = 0;
 
         sliderControl.SetSpeedSliderDefault();
 
@@ -243,6 +248,11 @@ public class AnimationControl : MonoBehaviour
         }
 
         enabled = false;
+    }
+
+    void GraphCleanup(){
+        graphInput.ClearPlot();
+        graphInput.GraphInputInit();
     }
 
     void SetAnimationStatus(Global.AnimStatus status){
@@ -307,6 +317,7 @@ public class AnimationControl : MonoBehaviour
                 sliderControl.SetTimeSlider(referenceCounter);
             }
         }
+        graphInput.ReferenceCounterValue(referenceCounter);
         // Debug.Log(referenceCounter);
     }
     public void SetLastAnimStatus(){
@@ -453,10 +464,6 @@ public class AnimationControl : MonoBehaviour
         }
         // Remove expired objects
         foreach(GameObject go in expiredObjects){
-            if(runningObject[go].target == "p0h0"){
-                graphReplyPackets++;
-                // graphReplyData.Add(referenceCounter, graphReplyPackets);
-            }
             runningPacketID.Remove(runningObject[go].packetID);
             runningObject.Remove(go);
             Destroy(go);
@@ -488,15 +495,7 @@ public class AnimationControl : MonoBehaviour
         while(ptr < forwardList.Count && forwardList[ptr].instantiationTime <= referenceCounter){
             // Debug.Log("FWD IN = " + ptr + " : " + forwardList[ptr].instantiationTime + " : " + referenceCounter);
             ObjectInfo oInfo = forwardList[ptr];
-            GameObject go;
-            if(oInfo.parity==true){
-                go = Instantiate(parity_prefab) as GameObject;
-            }
-            else{
-                go = Instantiate(packet_prefab) as GameObject;
-            }
-            
-            go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.parity, go.GetComponent<MeshRenderer>().material.color);
+            GameObject go = InstantiatePacket(oInfo);
             // Instantiate on source position in forward
             go.transform.position = oInfo.sourcePos;
             oInfo.Object = go;
@@ -549,14 +548,7 @@ public class AnimationControl : MonoBehaviour
 
         while(ptr >= 0 && rewindList[ptr].expirationTime >= referenceCounter){
             ObjectInfo oInfo = rewindList[ptr];
-            GameObject go;
-            if(oInfo.parity==true){
-                go = Instantiate(parity_prefab) as GameObject;
-            }
-            else{
-                go = Instantiate(packet_prefab) as GameObject;
-            }
-            go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.parity, go.GetComponent<MeshRenderer>().material.color);
+            GameObject go = InstantiatePacket(oInfo);
             // Instantiate on target position in rewind
             go.transform.position = oInfo.targetPos;
             if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
@@ -583,11 +575,12 @@ public class AnimationControl : MonoBehaviour
     void ReadDisk(){
         // Debug.Log("DISK = " + parseRemain + " : " + holdbackRemain + " : " + runningObject.Count);
         if(parseRemain==false && holdbackRemain==false && runningObject.Count==0){
+            Debug.Log("-----------------PacketCleanup--------------------------");
             PacketCleanup();
             // Debug.Log("Update Ends"); 
             if(firstUpdate == false && firstPass == true){
                 firstPass = false;
-                sliderControl.SetSliderMaxValue(referenceCounter);
+                // sliderControl.SetSliderMaxValue(referenceCounter);
                 loadingPanel.SetActive(false);
             }
             return;
@@ -643,18 +636,59 @@ public class AnimationControl : MonoBehaviour
         ObjectInfo oInfo = new ObjectInfo();
         oInfo.sourcePos = topo.GetNodePosition(nextPacketInfo[(int)PacketInfoIdx.Source]);
         oInfo.targetPos = topo.GetNodePosition(nextPacketInfo[(int)PacketInfoIdx.Target]);
+        oInfo.source = nextPacketInfo[(int)PacketInfoIdx.Source];
         oInfo.target = nextPacketInfo[(int)PacketInfoIdx.Target];
         oInfo.packetTime = nextPacketTime;
         oInfo.origin = nextPacketInfo[(int)PacketInfoIdx.Origin];
         oInfo.destination = nextPacketInfo[(int)PacketInfoIdx.Destination];
         oInfo.packetID = nextPacketInfo[(int)PacketInfoIdx.Pid];
-        oInfo.parity = false;
-        // if(nextPacketInfo[(int)PacketInfoIdx.Parity] == "np"){
-        //     oInfo.parity = false;
-        // }
-        // else{
-        //     oInfo.parity = true;
-        // }
+        oInfo.packetType = Global.PacketType.Normal;
+        try{
+            if(nextPacketInfo[(int)PacketInfoIdx.Parity] == "PR"){
+                oInfo.packetType = Global.PacketType.Parity;
+            }
+            else if(nextPacketInfo[(int)PacketInfoIdx.Parity] == "MCD"){
+                oInfo.packetType = Global.PacketType.MCD;
+            }
+            else if(nextPacketInfo[(int)PacketInfoIdx.Parity] == "HC"){
+                oInfo.packetType = Global.PacketType.HC;
+            }
+            else{
+                oInfo.packetType = Global.PacketType.Normal;
+            }
+        }
+        catch{
+            oInfo.packetType = Global.PacketType.Normal;
+        }
+
+        // Findout origin and destination of the pckets which doesn't have these
+        if(oInfo.origin == "00000000" && OriginDestinationMap.ContainsKey(oInfo.packetID)==true){
+            oInfo.origin = OriginDestinationMap[oInfo.packetID].Item1;
+            oInfo.destination = OriginDestinationMap[oInfo.packetID].Item2;
+            // Debug.Log("CHANGE = " + oInfo.packetID + " : " + oInfo.origin + " - " + oInfo.destination);
+        }
+        else if(oInfo.origin != "00000000" && OriginDestinationMap.ContainsKey(oInfo.packetID)==false){
+            Tuple<string, string> orgDest = new Tuple<string, string>(oInfo.origin, oInfo.destination);
+            OriginDestinationMap.Add(oInfo.packetID, orgDest);
+        }
+
+        // Approximate ack/reply packet finding
+        try{
+            if(idMap.ContainsKey(oInfo.packetID)){
+                oInfo.packetID = idMap[oInfo.packetID];
+            }
+            else if(topo.IsHost(lastPacket.target) && topo.IsHost(oInfo.source) && lastPacket.target==oInfo.source && usedID.Contains(lastPacket.packetID)==false){
+                idMap.Add(oInfo.packetID, lastPacket.packetID);
+                // Debug.Log("ACK = " + oInfo.packetID);
+                oInfo.packetID = lastPacket.target;
+                usedID.Add(lastPacket.packetID); 
+            }
+        }
+        catch{
+            // lastpacket info was null
+        }
+        
+        lastPacket = oInfo;
 
         // If packet is already running on link store the info in holdback queue for future reference (in time order) 
         if(runningPacketID.Contains(oInfo.packetID)){
@@ -670,29 +704,13 @@ public class AnimationControl : MonoBehaviour
             return;
         }
         // If this is new packet, instantiate an object 
-        GameObject go;
-        if(oInfo.parity==true){
-            go = Instantiate(parity_prefab) as GameObject;
-        }
-        else{
-            go = Instantiate(packet_prefab) as GameObject;
-        }
-        go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.parity, go.GetComponent<MeshRenderer>().material.color);
-        // Debug.Log("Instantiate = " + oInfo.packetTime + " : " + oInfo.packetID);
+        GameObject go = InstantiatePacket(oInfo);
         go.transform.position = oInfo.sourcePos;
-        if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
-            // Make packets invisible
-            // go.transform.localScale = new Vector3(0,0,0);
-        }
         oInfo.Object = go;
 
         // Store the running object info to track it later
         SetForwardListPointer(forwardList.Count);
         oInfo.instantiationTime = referenceCounter;
-        if(nextPacketInfo[(int)PacketInfoIdx.Source] == "p0h0"){
-            graphRequestPacket++;
-            // graphRequestData.Add(referenceCounter, graphRequestPacket);
-        }
         forwardList.Add(oInfo);
         runningObject.Add(go, oInfo);
         runningPacketID.Add(oInfo.packetID);
@@ -706,20 +724,8 @@ public class AnimationControl : MonoBehaviour
                 if(runningPacketID.Contains(pid)==false){
                     ObjectInfo oInfo = packetHoldBackQueue[pid].Dequeue();
                     // Debug.Log("Deque = " + oInfo.packetTime + " " + oInfo.packetID);
-                    GameObject go;
-                    if(oInfo.parity==true){
-                        go = Instantiate(parity_prefab) as GameObject;
-                    }
-                    else{
-                        go = Instantiate(packet_prefab) as GameObject;
-                    }
-                    go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.parity, go.GetComponent<MeshRenderer>().material.color);
-                    // Debug.Log("Hold Instantiate = " + oInfo.packetTime/Global.U_SEC + " : " + oInfo.packetID);
+                    GameObject go = InstantiatePacket(oInfo);
                     go.transform.position = oInfo.sourcePos;
-                    if(sliderControl.GetSliderMode() == Global.SliderMode.Jump){
-                        // Make packets invisible
-                        // go.transform.localScale = new Vector3(0,0,0);
-                    }
                     oInfo.Object = go;
 
                     // Store the running object info to track it later
@@ -734,5 +740,25 @@ public class AnimationControl : MonoBehaviour
         }
         holdbackRemain = isRemain;
     }
+
+    private GameObject InstantiatePacket(ObjectInfo oInfo){
+        GameObject go;
+        if(oInfo.packetType==Global.PacketType.Parity){
+            go = Instantiate(parity_prefab) as GameObject;
+        }
+        else if(oInfo.packetType==Global.PacketType.MCD){
+            go = Instantiate(mcd_prefab) as GameObject;
+        }
+        else if(oInfo.packetType==Global.PacketType.HC){
+            go = Instantiate(hc_prefab) as GameObject;
+        }
+        else{
+            go = Instantiate(packet_prefab) as GameObject;
+        }
+
+        go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.packetType, go.GetComponent<MeshRenderer>().material.color);
+        return go;
+    }
 }
+
 

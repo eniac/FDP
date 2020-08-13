@@ -137,6 +137,10 @@ cat ${TOPO_FILE} > ${TOPO}
 # Storing the above information in following structure [time_stamp src dst]
 for pcap_file in "${PCAP_DIR}"/*; do
   # Extracting src and dst of packet from pcap file name
+  if [[ ${pcap_file} != *"_to_"* ]]
+  then
+    continue
+  fi
   src_dest=${pcap_file##*/}
   src_dest=${src_dest%.pcap}
   src_dest=${src_dest//"_to_"/" "}
@@ -163,46 +167,107 @@ for pcap_file in "${PCAP_DIR}"/*; do
   awk -v ARG="${src_dest},${is_sat}" '{ 
     split(ARG, args, /[,]/)
     if(/length/){
-      printf "%s %s 0000 0000 ", $1,args[1]
+      printf "%s %s ", $1,args[1]
       getline;
-      # printf "%s ", $0
       if($8 == "88cc"){
         # Broadcast packet
-        print "ffff np" 
+        print "ffff 00000000 00000000 NO" 
       }
       else if($8 == "0800"){
+
         # Full IP header
         getline;
-        print $3 " np"
-      }
-      else if($8 == "081c"){
-        # FEC header ahead
-        if(substr($9,3,2)+0 < lastindex+0){
-          count[$8]++
-          block_count = count[$8]
+
+        # ID from IP header
+        lID = $3
+
+        # Higher level protocol header (TCP/UDP/ICMP)
+        protocol = substr($5,3,2)
+
+        # Origin and destination
+        src=$7$8
+        d=$9
+        getline
+        dest=d""$2
+
+        # UDP(MEMCACHE) header
+        if(protocol == "11"){
+          lastIDf = lID
+          printf "%s %s %s MCD\n", lastIDf, src, dest
         }
-        lastindex = substr($9,3,2)
-        
-        # If not the parity packet check other headers
-        getline;
-        if($2 == "0800"){
-          # Full IP header ahead
-          lastID = $6
-          print $6 " np"
+
+        # ICMP header
+        else if(protocol == "01"){
+          lastIDf = lID
+          printf "%s %s %s NO\n", lastIDf, src, dest
         }
-        else if($2 == "1234"){
-          # Compressed IP header ahead
-          lastID = $6
-          print $6 " np"
-        }
-        else if($2 == "081c"){
-          # Parity packet
-          printf "%s pp%d%d\n", lastID, block_count+0, lastindex+0
-        }
+
+        # TCP header
         else{
-          # Unknown header ahead
+          getline
+          lastIDf = lID""$3
+          printf "%s %s %s NO\n", lastIDf, src, dest
+        }
+      }
+
+      # FEC header ahead
+      else if($8 == "081c"){
+        
+        getline;
+
+        # Full IP header ahead
+        if($2 == "0800"){
+          
+          # ID from IP header
+          lID = $6
+
+          # Higher level protocol header (TCP/UDP/ICMP)
+          protocol = substr($8,3,2)
+
+          # Origin and destination
+          getline
+          src=$2$3
+          dest=$4$5
+
+          # UDP(MEMCACHE) header
+          if(protocol == "11"){
+            lastID = lID
+            printf "%s %s %s MCD\n", lastID, src, dest
+          }
+
+          # ICMP header
+          else if(protocol == "01"){
+            lastID = lID
+            printf "%s %s %s NO\n", lastID, src, dest
+          }
+
+          # TCP header
+          else{
+            getline
+            # Assuming only TCP header
+            lastID = lID""$6
+            printf "%s %s %s NO\n", lastID, src, dest
+          }
+        }
+
+        # Compressed IP header ahead
+        else if($2 == "1234"){
+          lID = $6
+          # Assuming only TCP header
+          lastID = lID""$9
+          printf "%s 00000000 00000000 HC\n", lastID
+          
+        }
+
+        # Parity packet header ahead
+        else if($2 == "081c"){
+          printf "%s 00000000 00000000 PR\n", lastID
+        }
+
+        # Unknown header ahead
+        else{
           lastID = "Unknown"
-          print "Unknown np"
+          print "Unknown 00000000 00000000 NO"
         }
       }
       else{
@@ -229,12 +294,12 @@ readarray -d " " -t time_stream <<< ${time}
 # FInding out elapsed time and hash of each packet
 echo "Finding hash and elapsed time of each packet..."
 awk -v BASE="${time_stream[0]}" '{ 
-  cmd="echo -n " $6 " | md5sum|cut -d\" \" -f1"; cmd|getline hash;
+  cmd="echo -n " $4 " | md5sum|cut -d\" \" -f1"; cmd|getline hash;
   close(cmd)
   split(BASE, base_time_array, /[:.]/)
   split($1, time_array, /[:.]/) 
   elapsed_time=(time_array[1] - base_time_array[1])*60*60*1000*1000 + (time_array[2] - base_time_array[2])*60*1000*1000 + (time_array[3] - base_time_array[3])*1000*1000 + time_array[4] - base_time_array[4]
-  print elapsed_time " " $2 " " $3 " " $4 " " $5 " " hash " " $7
+  print elapsed_time " " $2 " " $3 " " $5 " " $6 " " hash " " $7
 }' ${TIME_DUMP} > ${METADATA}
 
 rm -r ${TEMP}

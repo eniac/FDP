@@ -20,8 +20,8 @@ public class ColorControl : MonoBehaviour
     public void SetColorPattern(int index){
         colorPatternIndex = index;
     }
-    public Color GetPacketColor(string origin, string destination, string pid, bool parity, Color pColor){
-        if(parity == true){
+    public Color GetPacketColor(string origin, string destination, string pid, Global.PacketType pType, Color pColor){
+        if(pType != Global.PacketType.Normal){
             return pColor;
         }
         Color color = Color.yellow;

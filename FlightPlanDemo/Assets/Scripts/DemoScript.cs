@@ -7,6 +7,7 @@ public class DemoScript : MonoBehaviour
     public YamlParser yamlParser;
     public Topology topo;
     public AnimationControl anim; 
+    [SerializeField] GraphInput graphInput = default;
     // Start is called before the first frame update
     public IEnumerator Start(){
         yamlParser.Display();

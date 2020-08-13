@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3958295185093087855}
   - component: {fileID: 3958295185093087854}
   m_Layer: 0
-  m_Name: Parity
+  m_Name: Hc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31266dcbb0ad346319c84441b7ee4682, type: 2}
+  - {fileID: 2100000, guid: 0195a37b3706f16478583bff02c3b101, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

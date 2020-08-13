@@ -457,8 +457,8 @@ public class Topology : MonoBehaviour
             foreach(var node in link.Value){
                 GameObject go = Instantiate(link_prefab) as GameObject;
                 // Setting the position
-                // go.transform.position = PipePosition(link.Key, node);
-                go.transform.position = (positions[link.Key]-positions[node])/2.0f + positions[node];
+                go.transform.position = PipePosition(link.Key, node);
+                // go.transform.position = (positions[link.Key]-positions[node])/2.0f + positions[node];
                 // Scaling
                 var scale = go.transform.localScale;
                 scale.y = PipeScale(link.Key, node);
@@ -474,14 +474,24 @@ public class Topology : MonoBehaviour
         }
     }
 
-    // Vector3 PipePosition(string node1, string node2){
-    //     if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
-    //         return (positions[node1]-positions[node2]).magnitude;
-    //     }
-    //     else{
-    //         return (positions[node1]-positions[node2])/2.0f + positions[node2];
-    //     }
-    // }
+    Vector3 PipePosition(string node1, string node2){
+        string d_node="", node="";
+        if(node1.ToLower().Contains(Constants.DROPPER_STRING)){
+            d_node = node1;
+            node = node2;
+        }
+        else if(node2.ToLower().Contains(Constants.DROPPER_STRING)){
+            d_node = node2;
+            node = node1;
+        }
+
+        if(d_node.Length==0 && node.Length==0){
+            return (positions[node1]-positions[node2])/2.0f + positions[node2];
+        }
+        else{
+            return (positions[d_node]-positions[node])/2.0f + positions[node];
+        }
+    }
     float PipeScale(string node1, string node2){
         if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
             return (positions[node1]-positions[node2]).magnitude;
@@ -795,5 +805,12 @@ public class Topology : MonoBehaviour
     // Get the Dropper link objcts
     public List<GameObject> GetDropperLinkObjects(){
         return DropperLinkObjects;
+    }
+
+    public bool IsHost(string name){
+        if(h_names.Contains(name)){
+            return true;
+        }
+        return false;
     }
 }
