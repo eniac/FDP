@@ -34,7 +34,7 @@ public class PopUpControl : MonoBehaviour
     }
     // Set default message
     private void ShowDefaultMessage(){
-        messageText.text = "FlightPlan Demo";
+        messageText.text = "Flightplan Demo Platform";
         messageText.fontSize = 28;
         messageText.fontStyle = FontStyle.Bold;
         messageText.color = Color.white;

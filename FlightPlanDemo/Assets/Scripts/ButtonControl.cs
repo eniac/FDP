@@ -14,6 +14,7 @@ public class ButtonControl : MonoBehaviour
     [SerializeField] private PopUpControl popup = default;
     [SerializeField] private AnimationControl anim = default;
     [SerializeField] private ColorControl colorControl = default;
+    [SerializeField] private Text packetLegend = default;
     bool showLable;
     List<GameObject> hostTextObject;
     List<GameObject> textObj;
@@ -22,7 +23,7 @@ public class ButtonControl : MonoBehaviour
     List<GameObject> linkObject;
     List<GameObject> switchObject;
     List<GameObject> satObject;
-    List<string> colorPatterns = new List<string>(){"Request/Reply Color", "Origin based Color", "Path based Color"};
+    List<string> colorPatterns = new List<string>(){"Origin based Color", "Request/Reply Color", "Path based Color"};
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +36,7 @@ public class ButtonControl : MonoBehaviour
         linkObject = topo.GetLinkObjects();
         PopulateColorPatternDropdown();
         popup.PopUpInit(messageText);
+        topo.packetLegendInit(packetLegend);
     }
 
     public void ToggleLables(){

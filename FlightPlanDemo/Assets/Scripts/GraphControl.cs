@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,6 +61,9 @@ public class GraphControl : MonoBehaviour
         graphWidth = graphContainer.sizeDelta.x;
     }
 
+    public void HideGraph(){
+        graphContainer.gameObject.SetActive(false);
+    }
     public void GraphParamInit(string x, string y, string l, string t){
         labelX.GetComponent<Text>().text = x;
         labelY.GetComponent<Text>().text = y;
@@ -92,7 +96,7 @@ public class GraphControl : MonoBehaviour
             float normalizedValue = i * 1f / separatorCount;
             labelX.anchoredPosition = new Vector2(normalizedValue*graphWidth, -5f);
             // labelX.GetComponent<Text>().text = Mathf.RoundToInt(normalizedValue * xMax).ToString();
-            labelX.GetComponent<Text>().text = (normalizedValue * xMax).ToString();
+            labelX.GetComponent<Text>().text = ((float)(Math.Round((double)(normalizedValue * xMax), 3))).ToString();
         }
 
         // Labeling Y axis
@@ -121,6 +125,7 @@ public class GraphControl : MonoBehaviour
     }
 
     public void ClearPlot(Global.GraphType gType){
+        
         if(gAttr.ContainsKey(gType)==false){
             return;
         }

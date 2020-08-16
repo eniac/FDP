@@ -21,6 +21,7 @@ public class YamlParser : MonoBehaviour
     List<string> h_names;
     List<string> s_names;
     List<string> sat_names;
+    List<string> dropper_names = new List<string>();
     Dictionary<string, List<string>> s_h_links;
     Dictionary<string, List<string>> sat_links;
 
@@ -125,8 +126,15 @@ public class YamlParser : MonoBehaviour
 
         // Extracting links from switches
         foreach (KeyValuePair<string, SwitchAttribute> s_kvp in obj.Switches){
-            // Extracting Switch Names
-            s_names.Add(s_kvp.Key);
+            
+            if(IsDropper(s_kvp.Key)){
+                // Extracting dropper names
+                dropper_names.Add(s_kvp.Key);
+            }
+            else{
+                // Extracting Switch Names
+                s_names.Add(s_kvp.Key);
+            }
             // Extracting Interface
             if(s_kvp.Value.Interface != null){
                 foreach(var intr in s_kvp.Value.Interface){
@@ -210,13 +218,25 @@ public class YamlParser : MonoBehaviour
     public List<string> GetSatelliteNames(){
         return sat_names;
     }
+    public List<string> GetDropperNames(){
+        return dropper_names;
+    }
     public Dictionary<string, List<string>> GetSwitchHostLinks(){
         return s_h_links;
     }
     public Dictionary<string, List<string>> GetSatelliteLinks(){
         return sat_links;
     }
+    // Find out dropper Node
+    bool IsDropper(string node){
+        if(node.ToLower().Contains("dropper")){
+            return true;
+        }
+        return false;
+    }
 }
+
+
 
 class RootObject
 {

@@ -19,24 +19,37 @@ public class GraphInput : MonoBehaviour
     List<string> lastData = new List<string>();
     List<float> relative_scale = new List<float>();
     float animTime=0, scale=1, rc=0;
+    string expPktTargetNode=null, targetNode=null;
+    bool show=true;
+    float graphStartTime=-1f;
 
     public IEnumerator Start(){
         UpdateDisable();
         if(Global.chosanExperimentName == "complete_fec_e2e"){
+            show = true;
             yield return StartCoroutine(GetGraphLogText("complete_fec_e2e/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_fec_e2e/graph_log2.txt"));
         }
         else if(Global.chosanExperimentName == "complete_mcd_e2e"){
+            show = true;
             yield return StartCoroutine(GetGraphLogText("complete_mcd_e2e/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_mcd_e2e/graph_log2.txt"));
         }
         else if(Global.chosanExperimentName == "complete_hc_e2e"){
+            show = true;
             yield return StartCoroutine(GetGraphLogText("complete_hc_e2e/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_hc_e2e/graph_log2.txt"));
+        }
+        else if(Global.chosanExperimentName == "complete_all_e2e"){
+            animTime = 80f;
+            show = false;
         }
     }
 
     IEnumerator GetGraphLogText(string fileName){
+        if(show ==false){
+            yield break;
+        }
         string graphText="";
         StringReader reader;
         var filePath = Path.Combine(Application.streamingAssetsPath, fileName);
@@ -55,6 +68,11 @@ public class GraphInput : MonoBehaviour
     }
 
     public void GraphInputInit(){
+        if(show == false){
+            sliderControl.SetSliderMaxValue(animTime);
+            graph.HideGraph();
+            return;
+        }
         graphLogReader.Clear();
         for(int i=0; i<graphLogText.Count; i++){
             var reader = new StringReader(graphLogText[i]);
@@ -67,10 +85,10 @@ public class GraphInput : MonoBehaviour
 
         graph.GraphParamInit(xLabel, yLabel, legend, title);
         if(nCurveMax > 0){
-            graph.GraphInit(Global.GraphType.Type0, new Color(1f, 0f, 0f, 1f), new Color(1f, 0f, 0f, 0.5f), xMax, yMax);
+            graph.GraphInit(Global.GraphType.Type0, new Color(1f, 1f, 0f, 1f), new Color(1f, 1f, 0f, 0.5f), xMax, yMax);
         }
         if(nCurveMax > 1){
-            graph.GraphInit(Global.GraphType.Type1, new Color(0f, 0f, 1f, 1f), new Color(0f, 0f, 1f, 0.5f), xMax, yMax );
+            graph.GraphInit(Global.GraphType.Type1, new Color(0f, 1f, 0.25f, 1f), new Color(0f, 1f, 0.25f, 0.5f), xMax, yMax );
         }
         if(nCurveMax > 2){
             graph.GraphInit(Global.GraphType.Type1, new Color(0f, 1f, 1f, 1f), new Color(0f, 1f, 1f, 0.5f), xMax, yMax );
@@ -80,78 +98,35 @@ public class GraphInput : MonoBehaviour
 
     void GetGraphData(){
         if(Global.chosanExperimentName == "complete_fec_e2e"){
-            xLabel = "time";
+            xLabel = "time (sec)";
             yLabel = "# packets received at receiver";
-            legend = "<color=red>---- No FEC</color>\n <color=blue>---- With FEC</color>";
+            legend = "<color=#ffff00>---- No FEC</color>\n <color=#00ff40>---- With FEC</color>";
             title = "FEC Effectiveness";
             nCurveMax = 2;
             animTime = 121f;
-            // var coord = GetCoordinateMax(); 
-            // xMax = coord[0];
-            // yMax = coord[1];
-            // scale = animTime/xMax;
-            // for(int i=0; i<graphLogText.Count; i++){
-            //     lastData[i] = graphLogReader[i].ReadLine();
-            // }
+            targetNode = "p3h0";
             GetCoordinates();
         }
         else if(Global.chosanExperimentName == "complete_mcd_e2e"){
-            xLabel = "time";
+            xLabel = "time (sec)";
             yLabel = "# packets received at receiver";
-            legend = "<color=red>---- No MCD</color>\n <color=blue>---- With MCD</color>";
+            legend = "<color=#ffff00>---- No MCD</color>\n <color=#00ff40>---- With MCD</color>";
             title = "MCD Effectiveness";
             nCurveMax = 2;
             animTime = 76f;
-            // var coord = GetCoordinateMax();
-            // xMax = coord[0];
-            // yMax = coord[1];
-            // scale = animTime/xMax;
-            // for(int i=0; i<graphLogText.Count; i++){
-            //     lastData[i] = graphLogReader[i].ReadLine();
-            // }
+            targetNode = "p1h0";
             GetCoordinates();
         }
         else if(Global.chosanExperimentName == "complete_hc_e2e"){
-            xLabel = "time";
+            xLabel = "time (sec)";
             yLabel = "# bytes";
-            legend = "<color=red>---- Before Header Compression</color>\n <color=blue>---- After Header Compression</color>";
+            legend = "<color=#ffff00>---- Before Header Compression</color>\n <color=#00ff40>---- After Header Compression</color>";
             title = "HC Effectiveness";
             nCurveMax = 2;
             animTime = 34f;
-            // var coord = GetCoordinateMax();
-            // xMax = coord[0];
-            // yMax = coord[1];
-            // scale = animTime/xMax;
-            // for(int i=0; i<graphLogText.Count; i++){
-            //     lastData[i] = graphLogReader[i].ReadLine();
-            // }
+            targetNode = "p0e0";
             GetCoordinates();
         }
-    }
-
-    List<float> GetCoordinateMax(){
-        float xmax=0f, ymax=0f;
-        for(int i=0; i<graphLogText.Count; i++){
-            string[] lines = graphLogText[i].Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            // Debug.Log("last Line = " + lines[lines.Length - 1].ToString() + " - " + lines.Length + " - " + lines.GetType());
-            
-            string[] data = lines[lines.Length - 1].Split(' ');
-            relative_scale.Add(float.Parse(data[0])/Global.U_SEC);
-            if(xmax<float.Parse(data[0])){
-                xmax = float.Parse(data[0])/Global.U_SEC;
-            }
-            if(ymax<float.Parse(data[1])){
-                ymax = float.Parse(data[1]);
-            }
-            lastData.Add(null);
-        }
-        for(int i=0; i<graphLogText.Count; i++){
-            relative_scale[i] = xmax/relative_scale[i];
-        }
-        List<float> coord = new List<float>();
-        coord.Add(xmax);
-        coord.Add(ymax);
-        return coord;
     }
 
     void GetCoordinates(){
@@ -176,7 +151,7 @@ public class GraphInput : MonoBehaviour
 
         xMax = xmax;
         yMax = ymax;
-        scale = animTime/xMax;
+        // scale = animTime/xMax;
         for(int i=0; i<graphLogText.Count; i++){
             lastData[i] = graphLogReader[i].ReadLine();
         }
@@ -189,6 +164,13 @@ public class GraphInput : MonoBehaviour
         graphLogReader.Clear();
         lastData.Clear();
         relative_scale.Clear();
+        expPktTargetNode = null;
+        targetNode = null;
+        graphStartTime = -1f;
+    }
+
+    public void ExpiredPacketTargetNode(string expPktTargetNode){
+        this.expPktTargetNode = expPktTargetNode;
     }
 
     public void ReferenceCounterValue(float rc){
@@ -196,23 +178,30 @@ public class GraphInput : MonoBehaviour
     }
 
     void FixedUpdate(){
+        if(graphStartTime==-1f){
+            // Debug.Log("GRAPH = " + graphStartTime + " : " + targetNode + " : " + expPktTargetNode);
+            if(targetNode==null || expPktTargetNode==null || targetNode != expPktTargetNode){
+                return;
+            }
+            else{
+                scale = (animTime-rc)/xMax;
+                graphStartTime = rc;
+            }
+        }
         // nextPacketInfo = graphLogReader.ReadLine().Split(' ');
         string[] coord;
         for(int i=0; i<graphLogText.Count; i++){
             // Debug.Log("[" + i + "] " + lastData[i] + rc);
-            if(lastData[i] != null){
+            if(lastData.Count>0 && lastData[i] != null){
                 coord = lastData[i].Split(' ');
                 var xVal = float.Parse(coord[0])*scale*relative_scale[i]/Global.U_SEC;
-                if(xVal <= rc){
+                if(xVal+graphStartTime <= rc){
                     float x = float.Parse(coord[0])/Global.U_SEC*relative_scale[i];
                     graph.ShowPlot((Global.GraphType)i, x, float.Parse(coord[1]));
                     lastData[i] = graphLogReader[i].ReadLine();
                 }
             }
         }
-    }
-    public void ShowPlot(){
-        // graph.ShowPlot(gType, referenceCounter, graphReplyPackets);
     }
 
     void UpdateEnable(){

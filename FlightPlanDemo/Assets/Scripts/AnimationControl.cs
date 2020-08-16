@@ -221,7 +221,8 @@ public class AnimationControl : MonoBehaviour
         Debug.Log("End Time = " + Time.realtimeSinceStartup);
 
         if(firstPassInflight==true){
-            GraphCleanup();
+            // GraphCleanup();
+            graphInput.ClearPlot();
         }
 
         sliderControl.SetSpeedSliderDefault();
@@ -459,6 +460,10 @@ public class AnimationControl : MonoBehaviour
                     ObjectInfo oInfo = runningObject[go];
                     oInfo.expirationTime = referenceCounter;
                     rewindList.Add(oInfo);
+                    if(oInfo.origin!="00000000"){
+                        // Avoiding broadcast packet
+                        graphInput.ExpiredPacketTargetNode(oInfo.target);
+                    }
                 }
             }
         }
@@ -575,7 +580,6 @@ public class AnimationControl : MonoBehaviour
     void ReadDisk(){
         // Debug.Log("DISK = " + parseRemain + " : " + holdbackRemain + " : " + runningObject.Count);
         if(parseRemain==false && holdbackRemain==false && runningObject.Count==0){
-            Debug.Log("-----------------PacketCleanup--------------------------");
             PacketCleanup();
             // Debug.Log("Update Ends"); 
             if(firstUpdate == false && firstPass == true){
@@ -679,7 +683,6 @@ public class AnimationControl : MonoBehaviour
             }
             else if(topo.IsHost(lastPacket.target) && topo.IsHost(oInfo.source) && lastPacket.target==oInfo.source && usedID.Contains(lastPacket.packetID)==false){
                 idMap.Add(oInfo.packetID, lastPacket.packetID);
-                // Debug.Log("ACK = " + oInfo.packetID);
                 oInfo.packetID = lastPacket.target;
                 usedID.Add(lastPacket.packetID); 
             }
@@ -687,8 +690,12 @@ public class AnimationControl : MonoBehaviour
         catch{
             // lastpacket info was null
         }
-        
         lastPacket = oInfo;
+        // // More trick
+        // if(topo.IsHost(oInfo.target)){
+        //     lastPacket = oInfo;
+        // }
+        
 
         // If packet is already running on link store the info in holdback queue for future reference (in time order) 
         if(runningPacketID.Contains(oInfo.packetID)){
@@ -704,6 +711,15 @@ public class AnimationControl : MonoBehaviour
             return;
         }
         // If this is new packet, instantiate an object 
+        // if(oInfo.source=="p1h0"){
+        //     Debug.Log("Disk ACK = " + oInfo.packetID);
+        // }
+        // if(oInfo.source=="p1h0" && oInfo.packetType==Global.PacketType.Normal){
+        //     Debug.Log("Disk ACK Normal = " + oInfo.packetID);
+        // }
+        // if(oInfo.source=="p0a0"){
+        //     Debug.Log("Disk Green = " + oInfo.packetID);
+        // }
         GameObject go = InstantiatePacket(oInfo);
         go.transform.position = oInfo.sourcePos;
         oInfo.Object = go;
@@ -724,6 +740,9 @@ public class AnimationControl : MonoBehaviour
                 if(runningPacketID.Contains(pid)==false){
                     ObjectInfo oInfo = packetHoldBackQueue[pid].Dequeue();
                     // Debug.Log("Deque = " + oInfo.packetTime + " " + oInfo.packetID);
+                    // if(oInfo.source=="p1h0" && oInfo.packetType==Global.PacketType.Normal){
+                    //     Debug.Log("Hold ACK Normal = " + oInfo.packetID);
+                    // }
                     GameObject go = InstantiatePacket(oInfo);
                     go.transform.position = oInfo.sourcePos;
                     oInfo.Object = go;

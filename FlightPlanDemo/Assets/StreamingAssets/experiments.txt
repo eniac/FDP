@@ -1,14 +1,4 @@
-split1_autotest3B
-split1_autotest1
-split1_demo1
-fec_v3
-Run_ALV_selftest
-alv_k=2
-alv_k=2_dropper
-alv_k=2_100
-alv_k=2_dropper_100
-fec_v7
-mcd_v1
 complete_fec_e2e
 complete_mcd_e2e
 complete_hc_e2e
+complete_all_e2e

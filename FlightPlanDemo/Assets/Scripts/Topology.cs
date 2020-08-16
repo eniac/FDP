@@ -39,9 +39,11 @@ public class Topology : MonoBehaviour
     [SerializeField] private CamMovement camControl = default; 
     [SerializeField] private Camera mainCamera = default;
     [SerializeField] private string LayerToUse = default;
+    private Text packetLegend;
     List<string> h_names;
     List<string> s_names;
     List<string> sat_names;
+    List<string> dropper_names;
     Dictionary<string, List<string>> s_h_links;
     Dictionary<string, List<string>> sat_links;
     List<GameObject> goList;
@@ -82,18 +84,28 @@ public class Topology : MonoBehaviour
         highlightedNodesStatus = false;
         highlightedNodes = new List<string>();
         colorDict = new Dictionary<string, Color>();
+        ShowPacketLegend();
     }
     public void SetParameters(List<string> h_names, List<string> s_names, 
-                                List<string> sat_names, Dictionary<string, 
+                                List<string> sat_names, List<string> dropper_names, Dictionary<string, 
                                 List<string>> s_h_links, Dictionary<string, List<string>> sat_links){
         this.h_names = h_names;
         this.s_names = s_names;
         this.sat_names = sat_names;
+        this.dropper_names = dropper_names;
         this.s_h_links = s_h_links;
         this.sat_links = sat_links;
     }
     public void Display(){
         Debug.Log("I am in Topology :)");
+    }
+
+    // Find out dropper Node
+    bool IsDropper(string node){
+        if(dropper_names.Contains(node)){
+            return true;
+        }
+        return false;
     }
 
     // Find positions of each node in the topology
@@ -108,9 +120,15 @@ public class Topology : MonoBehaviour
         // Finding the level of every node and their successors (in fat Tree network)
         while(level.ContainsKey(level_number)){
 	        // Traversing all the nodes of 
-            foreach(var node in level[level_number]){	
+            foreach(var node in level[level_number]){
+                if(IsDropper(node)){
+                    continue;
+                }
 		        // Traversing all the nodes linked with 'node'
                 foreach(var linked_node in s_h_links[node]){
+                    if(IsDropper(linked_node)){
+                        continue;
+                    }
                     // Find out the elligible parent node which should not be at same level or lower level	
                     if(level[level_number].Contains(linked_node)==false && (level_number<=0 || level[level_number-1].Contains(linked_node)==false)){
                         // Add Parent node to one above level list and update 'level' dictionary
@@ -203,9 +221,20 @@ public class Topology : MonoBehaviour
             layer_number++;
         }
 
+
+        // Get position of dropper
+        foreach(var d in dropper_names){
+            string node1 = s_h_links[d][0];
+            string node2 = s_h_links[d][1];
+            positions[d] = (positions[node1]-positions[node2])/2.0f + positions[node2];
+        }
+
         // Removing duplicate pipes from s_h_lnks
         foreach (KeyValuePair<string, List<string>> link in s_h_links){
             foreach(var node in link.Value){
+                if(IsDropper(node) || IsDropper(link.Key)){
+                    continue;
+                }
                 if(s_h_links.ContainsKey(node) && s_h_links[node].Contains(link.Key)){
                     s_h_links[node].Remove(link.Key);
                 }
@@ -455,6 +484,7 @@ public class Topology : MonoBehaviour
         GameObject link_prefab = Resources.Load("Link") as GameObject;
         foreach (KeyValuePair<string, List<string>> link in s_h_links){
             foreach(var node in link.Value){
+                Debug.Log("Pipes = " + link.Key + " : " + node);
                 GameObject go = Instantiate(link_prefab) as GameObject;
                 // Setting the position
                 go.transform.position = PipePosition(link.Key, node);
@@ -463,6 +493,7 @@ public class Topology : MonoBehaviour
                 var scale = go.transform.localScale;
                 scale.y = PipeScale(link.Key, node);
                 // scale.y = (positions[link.Key]-positions[node]).magnitude - switchObjectDict[link.Key].transform.localScale.y;
+                
                 go.transform.localScale = scale/2.0f;
                 // Rotation
                 go.transform.rotation = Quaternion.FromToRotation(Vector3.up, positions[link.Key]-positions[node]);
@@ -475,30 +506,49 @@ public class Topology : MonoBehaviour
     }
 
     Vector3 PipePosition(string node1, string node2){
-        string d_node="", node="";
-        if(node1.ToLower().Contains(Constants.DROPPER_STRING)){
-            d_node = node1;
-            node = node2;
-        }
-        else if(node2.ToLower().Contains(Constants.DROPPER_STRING)){
-            d_node = node2;
-            node = node1;
-        }
+        // string d_node="", node="";
+        // if(node1.ToLower().Contains(Constants.DROPPER_STRING)){
+        //     d_node = node1;
+        //     node = node2;
+        // }
+        // else if(node2.ToLower().Contains(Constants.DROPPER_STRING)){
+        //     d_node = node2;
+        //     node = node1;
+        // }
 
-        if(d_node.Length==0 && node.Length==0){
-            return (positions[node1]-positions[node2])/2.0f + positions[node2];
+        // if(d_node.Length==0 && node.Length==0){
+        //     return (positions[node1]-positions[node2])/2.0f + positions[node2];
+        // }
+        // else{
+        //     return (positions[d_node]-positions[node])/2.0f + positions[node];
+        // }
+        if(IsDropper(node1)){
+            string d = node1;
+            node1 = s_h_links[d][0];
+            node2 = s_h_links[d][1];
         }
-        else{
-            return (positions[d_node]-positions[node])/2.0f + positions[node];
+        else if(IsDropper(node2)){
+            string d = node2;
+            node1 = s_h_links[d][0];
+            node2 = s_h_links[d][1];
         }
+        return (positions[node1]-positions[node2])/2.0f + positions[node2];
     }
     float PipeScale(string node1, string node2){
-        if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
-            return (positions[node1]-positions[node2]).magnitude;
+        // if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
+        //     return (positions[node1]-positions[node2]).magnitude;
+        // }
+        if(IsDropper(node1)){
+            string d = node1;
+            node1 = s_h_links[d][0];
+            node2 = s_h_links[d][1];
         }
-        else{
-            return (positions[node1]-positions[node2]).magnitude - switchObjectDict[node1].transform.localScale.y;
+        else if(IsDropper(node2)){
+            string d = node2;
+            node1 = s_h_links[d][0];
+            node2 = s_h_links[d][1];
         }
+        return (positions[node1]-positions[node2]).magnitude - switchObjectDict[node1].transform.localScale.y;
     }
     void HighlightLossyLink(ref GameObject go, string node1, string node2){
         if(node1.ToLower().Contains(Constants.DROPPER_STRING) || node2.ToLower().Contains(Constants.DROPPER_STRING)){
@@ -812,5 +862,33 @@ public class Topology : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void packetLegendInit(Text legendText){
+        // Initialize parameters
+        packetLegend = legendText;
+        ShowPacketLegend();
+    }
+    // Show Packet legend on side panel
+    public void ShowPacketLegend(){
+        string legend = "";
+        if(Global.chosanExperimentName == "complete_fec_e2e"){
+        //    legend = "<color=#ffffff>o</color> <color=#ffffff> Parity Packet</color>";
+           legend = "<color=#ffffff>o Parity Packet</color>";
+        }
+        else if(Global.chosanExperimentName == "complete_mcd_e2e"){
+        //    legend = "<color=#0EF3E1>o </color><color=#ffffff>MCD Request Packet</color>\n<color=#61D612>o </color> <color=#ffffff>MCD Reply Packet</color>\n<color=#ffffff>o </color><color=#ffffff> Parity Packets</color>";
+           legend = "<color=#0EF3E1>o MCD Request Packet</color>\n<color=#61D612>o MCD Reply Packet</color>\n<color=#ffffff>o Parity Packets</color>";
+        }
+        else if(Global.chosanExperimentName == "complete_hc_e2e"){
+            // legend = "<color=#ff00ff>o </color><color=#ffffff> HC Packet</color>\n<color=#ffffff>o </color><color=#ffffff> Parity Packet</color>";
+            legend = "<color=#ff00ff>o HC Packet</color>\n<color=#ffffff>o Parity Packet</color>";
+        }
+        else if(Global.chosanExperimentName == "complete_all_e2e"){
+            // legend = "<color=#0EF3E1>o </color><color=#ffffff>MCD Request Packet</color>\n<color=#61D612>o </color> <color=#ffffff>MCD Reply Packet</color>\n<color=#ff00ff>o </color><color=#ffffff> HC Packet</color>\n<color=#ffffff>o </color><color=#ffffff> Parity Packets</color>";
+            legend = "<color=#0EF3E1>o MCD Request Packet</color>\n<color=#61D612>o MCD Reply Packet</color>\n<color=#ff00ff>o HC Packet</color>\n<color=#ffffff>o Parity Packets</color> ";
+        }
+        Debug.Log("Packet Lagend = " + legend);
+        packetLegend.text = legend;
     }
 }
