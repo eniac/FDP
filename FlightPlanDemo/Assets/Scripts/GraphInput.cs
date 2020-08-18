@@ -24,26 +24,51 @@ public class GraphInput : MonoBehaviour
     float graphStartTime=-1f;
 
     public IEnumerator Start(){
+        string legendText = "";
+        List<Color> color = new List<Color>(){Color.black};
         UpdateDisable();
         if(Global.chosanExperimentName == "complete_fec_e2e"){
             show = true;
             yield return StartCoroutine(GetGraphLogText("complete_fec_e2e/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_fec_e2e/graph_log2.txt"));
+            legendText = "Parity Packet\nTCP Request Packet\nTCP Reply Packet";
+            color = GetColors(new List<string>(){"#ffffff", "#0000ff", "#ffff00"});
         }
         else if(Global.chosanExperimentName == "complete_mcd_e2e"){
             show = true;
             yield return StartCoroutine(GetGraphLogText("complete_mcd_e2e/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_mcd_e2e/graph_log2.txt"));
+            legendText = "MCD Request Packet\nMCD Reply Packet\nMCD Cached Packet\nParity Packet\nICMP Request Packet";
+            color = GetColors(new List<string>(){"#0EF3E1", "#61D612", "#FF8A00", "#ffffff", "#0000ff"});
         }
         else if(Global.chosanExperimentName == "complete_hc_e2e"){
             show = true;
             yield return StartCoroutine(GetGraphLogText("complete_hc_e2e/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_hc_e2e/graph_log2.txt"));
+            legendText = "HC Packet\nParity Packet\nTCP Request Packet\nTCP Reply Packet";
+            color = GetColors(new List<string>(){"#ff00ff", "#ffffff", "#0000ff", "#ffff00"});
         }
         else if(Global.chosanExperimentName == "complete_all_e2e"){
             animTime = 80f;
             show = false;
+            legendText = "MCD Request Packet\nMCD Reply Packet\nMCD Cached Packet\nHC Packet\nParity Packet\nICMP Request Packet\nTCP Request Packet\nTCP Reply Packet";
+            color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ff00ff", "#ffffff", "#0000ff", "#ffff00", "#ff0000"});
         }
+        graph.ShowLegendColor(legendText, color);
+    }
+
+    List<Color> GetColors(List<string> hexColor){
+        List<Color> color = new List<Color>();
+        Color outColor;
+        foreach(var c in hexColor){
+            if ( ColorUtility.TryParseHtmlString(c, out outColor)){
+                color.Add(outColor);
+            }
+            else{
+                color.Add(Color.black);
+            }
+        }
+        return color;
     }
 
     IEnumerator GetGraphLogText(string fileName){

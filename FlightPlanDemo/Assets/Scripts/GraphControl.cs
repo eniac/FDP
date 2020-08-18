@@ -59,6 +59,40 @@ public class GraphControl : MonoBehaviour
         
         graphHeight = graphContainer.sizeDelta.y;
         graphWidth = graphContainer.sizeDelta.x;
+
+    }
+
+     // Show Packet legend on side panel
+    public void ShowLegendColor(string text, List<Color> colors){
+        float legendX = 270f;
+        float legendYstart = 152f;
+        float legendYdiff = -21f;
+        RectTransform legendText = transform.Find("PacketLegendText").GetComponent<RectTransform>();
+        legendText.gameObject.SetActive(true);
+        legendText.anchoredPosition = new Vector2(-160f, 70f);
+        legendText.GetComponent<Text>().text = text;
+
+        float y=legendYstart;
+        foreach(var c in colors){
+            CreateColorLegend(new Vector2(legendX, y), c);
+            y = y+legendYdiff;    
+        }
+    }
+
+    private void CreateColorLegend(Vector2 anchoredPosition, Color color){
+        // create a circle to show the values
+        // GameObject go = new GameObject("circle", typeof(Image));
+        GameObject legend_prefab = Resources.Load("PacketLegendColor") as GameObject;
+        GameObject go = Instantiate(legend_prefab) as GameObject;
+        // Set the parent of circles to graphContainer
+        go.transform.SetParent(gameObject.GetComponent<RectTransform>(), false);
+        go.GetComponent<Image>().color = color;
+        // Change the position and size of circle
+        RectTransform rectTransform = go.GetComponent<RectTransform>();
+        rectTransform.anchoredPosition = anchoredPosition;
+        rectTransform.sizeDelta = new Vector2(10f,10f);
+        rectTransform.anchorMin = new Vector2(0,0);
+        rectTransform.anchorMax = new Vector2(0,0);
     }
 
     public void HideGraph(){

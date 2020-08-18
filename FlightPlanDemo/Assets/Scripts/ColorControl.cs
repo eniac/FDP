@@ -11,7 +11,8 @@ public class ColorControl : MonoBehaviour
     Color colorRequest = Color.red;
     Color colorReply = Color.blue;
     List<Color> mcdColor = new List<Color>(){ new Color(0.055f, 0.95f, 1f), new Color(0.454f, 0.953f, 0.059f) };
-    List<Color> originColor = new List<Color>(){new Color(0f, 0f, 1f), new Color(1f, 0f, 0f), new Color(1f, 1f, 0f), new Color(0.5f, 0f, 0.5f), new Color(0f, 1f, 1f) };
+    Color mcdCacheColor = new Color(1f, 0.54f, 0f);
+    List<Color> originColor = new List<Color>(){new Color(0f, 0f, 1f), new Color(1f, 1f, 0f), new Color(1f, 0f, 0f), new Color(0.5f, 0f, 0.5f), new Color(0f, 1f, 1f) };
     int mcdColorIndex=0;
     int originColorIndex=0;
     int colorPatternIndex = 0; 
@@ -36,28 +37,34 @@ public class ColorControl : MonoBehaviour
                 color = ColorsByOrigin[org];
             }
             else{
-                Debug.Log("MCD = " + org + " : " + mcdColorIndex);
+                // Debug.Log("MCD = " + org + " : " + mcdColorIndex);
                 ColorsByOrigin.Add(org, mcdColor[mcdColorIndex]);
                 color = ColorsByOrigin[org];
                 mcdColorIndex++;
             }
+            // Debug.Log("COLOR = " + color + " : " + pid);
             return color;
         }
+        // If packet type is MCD cache
+        if(pType == Global.PacketType.MCDcache){
+            return mcdCacheColor;
+        }
         // Packet type is other then mcd and normal
-        else if(pType != Global.PacketType.Normal){
+        else if(pType == Global.PacketType.HC || pType == Global.PacketType.Parity){
             return pColor;
         }
         // FOr all normal packets
         switch(colorPatternIndex){
             case 0:
             // Color Pattern 1
-                if(ColorsByOrigin.ContainsKey(origin) == true){
-                    color = ColorsByOrigin[origin];
+                string org = pType.ToString()+origin;
+                if(ColorsByOrigin.ContainsKey(org) == true){
+                    color = ColorsByOrigin[org];
                 }
                 else{
                     // ColorsByOrigin.Add(origin, UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
-                    ColorsByOrigin.Add(origin, originColor[originColorIndex]);
-                    color = ColorsByOrigin[origin];
+                    ColorsByOrigin.Add(org, originColor[originColorIndex]);
+                    color = ColorsByOrigin[org];
                     originColorIndex = (originColorIndex + 1)%originColor.Count;
                 }
                 break;

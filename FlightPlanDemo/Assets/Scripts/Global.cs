@@ -25,7 +25,10 @@ public static class Global
         Normal=0,
         Parity,
         MCD,
-        HC
+        MCDcache,
+        HC,
+        TCP,
+        ICMP
     }
     public static string chosanExperimentName;
     public static string experimentYaml;

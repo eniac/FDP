@@ -39,7 +39,6 @@ public class Topology : MonoBehaviour
     [SerializeField] private CamMovement camControl = default; 
     [SerializeField] private Camera mainCamera = default;
     [SerializeField] private string LayerToUse = default;
-    private Text packetLegend;
     List<string> h_names;
     List<string> s_names;
     List<string> sat_names;
@@ -84,7 +83,6 @@ public class Topology : MonoBehaviour
         highlightedNodesStatus = false;
         highlightedNodes = new List<string>();
         colorDict = new Dictionary<string, Color>();
-        ShowPacketLegend();
     }
     public void SetParameters(List<string> h_names, List<string> s_names, 
                                 List<string> sat_names, List<string> dropper_names, Dictionary<string, 
@@ -484,7 +482,6 @@ public class Topology : MonoBehaviour
         GameObject link_prefab = Resources.Load("Link") as GameObject;
         foreach (KeyValuePair<string, List<string>> link in s_h_links){
             foreach(var node in link.Value){
-                Debug.Log("Pipes = " + link.Key + " : " + node);
                 GameObject go = Instantiate(link_prefab) as GameObject;
                 // Setting the position
                 go.transform.position = PipePosition(link.Key, node);
@@ -862,33 +859,5 @@ public class Topology : MonoBehaviour
             return true;
         }
         return false;
-    }
-
-    public void packetLegendInit(Text legendText){
-        // Initialize parameters
-        packetLegend = legendText;
-        ShowPacketLegend();
-    }
-    // Show Packet legend on side panel
-    public void ShowPacketLegend(){
-        string legend = "";
-        if(Global.chosanExperimentName == "complete_fec_e2e"){
-        //    legend = "<color=#ffffff>o</color> <color=#ffffff> Parity Packet</color>";
-           legend = "<color=#ffffff>o Parity Packet</color>";
-        }
-        else if(Global.chosanExperimentName == "complete_mcd_e2e"){
-        //    legend = "<color=#0EF3E1>o </color><color=#ffffff>MCD Request Packet</color>\n<color=#61D612>o </color> <color=#ffffff>MCD Reply Packet</color>\n<color=#ffffff>o </color><color=#ffffff> Parity Packets</color>";
-           legend = "<color=#0EF3E1>o MCD Request Packet</color>\n<color=#61D612>o MCD Reply Packet</color>\n<color=#ffffff>o Parity Packets</color>";
-        }
-        else if(Global.chosanExperimentName == "complete_hc_e2e"){
-            // legend = "<color=#ff00ff>o </color><color=#ffffff> HC Packet</color>\n<color=#ffffff>o </color><color=#ffffff> Parity Packet</color>";
-            legend = "<color=#ff00ff>o HC Packet</color>\n<color=#ffffff>o Parity Packet</color>";
-        }
-        else if(Global.chosanExperimentName == "complete_all_e2e"){
-            // legend = "<color=#0EF3E1>o </color><color=#ffffff>MCD Request Packet</color>\n<color=#61D612>o </color> <color=#ffffff>MCD Reply Packet</color>\n<color=#ff00ff>o </color><color=#ffffff> HC Packet</color>\n<color=#ffffff>o </color><color=#ffffff> Parity Packets</color>";
-            legend = "<color=#0EF3E1>o MCD Request Packet</color>\n<color=#61D612>o MCD Reply Packet</color>\n<color=#ff00ff>o HC Packet</color>\n<color=#ffffff>o Parity Packets</color> ";
-        }
-        Debug.Log("Packet Lagend = " + legend);
-        packetLegend.text = legend;
     }
 }

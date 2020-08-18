@@ -14,7 +14,6 @@ public class ButtonControl : MonoBehaviour
     [SerializeField] private PopUpControl popup = default;
     [SerializeField] private AnimationControl anim = default;
     [SerializeField] private ColorControl colorControl = default;
-    [SerializeField] private Text packetLegend = default;
     bool showLable;
     List<GameObject> hostTextObject;
     List<GameObject> textObj;
@@ -36,7 +35,6 @@ public class ButtonControl : MonoBehaviour
         linkObject = topo.GetLinkObjects();
         PopulateColorPatternDropdown();
         popup.PopUpInit(messageText);
-        topo.packetLegendInit(packetLegend);
     }
 
     public void ToggleLables(){

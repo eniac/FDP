@@ -78,6 +78,7 @@ public class AnimationControl : MonoBehaviour
     HashSet<string> usedID = new HashSet<string>();
     Dictionary<string, string> idMap = new Dictionary<string, string>();
     Dictionary<string, Tuple<string, string>> OriginDestinationMap = new Dictionary<string, Tuple<string, string>>();
+    Dictionary<string, Tuple<string, bool>> mcdCache = new Dictionary<string, Tuple<string, bool>>();  // <packetID, <last origin, is cached packet>>
 
     public enum PacketInfoIdx{
         Time=0,
@@ -237,6 +238,7 @@ public class AnimationControl : MonoBehaviour
         packetHoldBackQueue.Clear();
         rewindList.Clear();
         forwardList.Clear();
+        mcdCache.Clear();
 
         topo.MakeLinksOpaque();
         topo.MakeNodesOpaque();
@@ -507,7 +509,8 @@ public class AnimationControl : MonoBehaviour
             forwardList[ptr] = oInfo;
             // Store the running object info to track it later
             runningObject.Add(go, oInfo);
-            runningPacketID.Add(oInfo.packetID);
+            // runningPacketID.Add(oInfo.packetID);
+            AddToRunningPacketID(oInfo);
             // If we reached at the end of the list, get out of this loop, 
             // later we will start reading from disk file
             if(ptr >= forwardList.Count - 1){
@@ -564,7 +567,8 @@ public class AnimationControl : MonoBehaviour
             rewindList[ptr] = oInfo;
             // Store the running object info to track it later
             runningObject.Add(go, oInfo);
-            runningPacketID.Add(oInfo.packetID);
+            // runningPacketID.Add(oInfo.packetID);
+            AddToRunningPacketID(oInfo);
             // Decrement rewind list pointer
             RewindListPointerDec();
             ptr = GetRewindListPointer();
@@ -647,6 +651,8 @@ public class AnimationControl : MonoBehaviour
         oInfo.destination = nextPacketInfo[(int)PacketInfoIdx.Destination];
         oInfo.packetID = nextPacketInfo[(int)PacketInfoIdx.Pid];
         oInfo.packetType = Global.PacketType.Normal;
+
+        // Findout packet type
         try{
             if(nextPacketInfo[(int)PacketInfoIdx.Parity] == "PR"){
                 oInfo.packetType = Global.PacketType.Parity;
@@ -657,12 +663,37 @@ public class AnimationControl : MonoBehaviour
             else if(nextPacketInfo[(int)PacketInfoIdx.Parity] == "HC"){
                 oInfo.packetType = Global.PacketType.HC;
             }
+            else if(nextPacketInfo[(int)PacketInfoIdx.Parity] == "TCP"){
+                oInfo.packetType = Global.PacketType.TCP;
+            }
+            else if(nextPacketInfo[(int)PacketInfoIdx.Parity] == "ICMP"){
+                oInfo.packetType = Global.PacketType.ICMP;
+            }
             else{
                 oInfo.packetType = Global.PacketType.Normal;
             }
         }
         catch{
             oInfo.packetType = Global.PacketType.Normal;
+        }
+        // TODO hardcoded source and target
+        if(oInfo.packetType == Global.PacketType.MCD){
+            if(mcdCache.ContainsKey(oInfo.packetID)){
+                if((oInfo.source == "p0a0" && oInfo.target == "dropper" 
+                    && (mcdCache[oInfo.packetID].Item1 == "dropper" 
+                    || mcdCache[oInfo.packetID].Item1 == "p0e0")) 
+                    || mcdCache[oInfo.packetID].Item2==true){
+                    // Debug.Log("MCD COLOR = " + oInfo.packetID);
+                    oInfo.packetType = Global.PacketType.MCDcache;
+                    mcdCache[oInfo.packetID] = new Tuple<string, bool>(oInfo.source, true);
+                }
+                else{
+                    mcdCache[oInfo.packetID] = new Tuple<string, bool>(oInfo.source, false);
+                }
+            }
+            else{
+                mcdCache.Add(oInfo.packetID, new Tuple<string, bool>(oInfo.source, false));
+            }
         }
 
         // Findout origin and destination of the pckets which doesn't have these
@@ -720,6 +751,16 @@ public class AnimationControl : MonoBehaviour
         // if(oInfo.source=="p0a0"){
         //     Debug.Log("Disk Green = " + oInfo.packetID);
         // }
+        if(oInfo.source=="p1e0" && oInfo.target=="p1a0" && oInfo.packetType==Global.PacketType.TCP){
+            Debug.Log("Disk = " + oInfo.source + " : " + oInfo.target + " : " + oInfo.packetID);
+        }
+        // Debug.Log("Disk = " + oInfo.source + " : " + oInfo.target + " : " + oInfo.packetID);
+        // if(oInfo.target=="dropper"){
+        //     Debug.Log("Disk To Dropper = " + oInfo.packetID);
+        // }
+        // if(oInfo.source=="dropper"){
+        //     Debug.Log("Disk From Dropper = " + oInfo.packetID);
+        // }
         GameObject go = InstantiatePacket(oInfo);
         go.transform.position = oInfo.sourcePos;
         oInfo.Object = go;
@@ -729,7 +770,8 @@ public class AnimationControl : MonoBehaviour
         oInfo.instantiationTime = referenceCounter;
         forwardList.Add(oInfo);
         runningObject.Add(go, oInfo);
-        runningPacketID.Add(oInfo.packetID);
+        // runningPacketID.Add(oInfo.packetID);
+        AddToRunningPacketID(oInfo);
     }
 
     void InstantiateHoldBackPackets(){
@@ -743,6 +785,15 @@ public class AnimationControl : MonoBehaviour
                     // if(oInfo.source=="p1h0" && oInfo.packetType==Global.PacketType.Normal){
                     //     Debug.Log("Hold ACK Normal = " + oInfo.packetID);
                     // }
+                    if(oInfo.source=="p1e0" && oInfo.target=="p1a0" && oInfo.packetType==Global.PacketType.TCP){
+                        Debug.Log("Hold = " + oInfo.source + " : " + oInfo.target + " : " + oInfo.packetID);
+                    }
+                    // if(oInfo.target=="dropper"){
+                    //     Debug.Log("Hold To Dropper = " + oInfo.packetID);
+                    // }
+                    // if(oInfo.source=="dropper"){
+                    //     Debug.Log("Hold From Dropper = " + oInfo.packetID);
+                    // }
                     GameObject go = InstantiatePacket(oInfo);
                     go.transform.position = oInfo.sourcePos;
                     oInfo.Object = go;
@@ -752,7 +803,8 @@ public class AnimationControl : MonoBehaviour
                     oInfo.instantiationTime = referenceCounter;
                     forwardList.Add(oInfo);
                     runningObject.Add(go, oInfo);
-                    runningPacketID.Add(oInfo.packetID);
+                    // runningPacketID.Add(oInfo.packetID);
+                    AddToRunningPacketID(oInfo);
                 }
                 isRemain = true;
             }
@@ -777,6 +829,14 @@ public class AnimationControl : MonoBehaviour
 
         go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(oInfo.origin, oInfo.destination, oInfo.packetID, oInfo.packetType, go.GetComponent<MeshRenderer>().material.color);
         return go;
+    }
+
+    void AddToRunningPacketID(ObjectInfo oInfo){
+        string pid = oInfo.packetID;
+        if(oInfo.packetType==Global.PacketType.Parity){
+            pid = pid + "PR";
+        }
+        runningPacketID.Add(pid);
     }
 }
 
