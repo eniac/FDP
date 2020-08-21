@@ -787,7 +787,7 @@ public class Topology : MonoBehaviour
         // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
         foreach(var obj in linkObjectList){
             Color color = obj.GetComponent<MeshRenderer>().material.color;
-            color.a = 0.1f;
+            color.a = 0.05f;
             obj.GetComponent<MeshRenderer>().material.color = color;
         }
     }

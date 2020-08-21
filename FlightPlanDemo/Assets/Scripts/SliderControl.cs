@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class SliderControl : MonoBehaviour
 {
-    [SerializeField] AnimationControl anim = default;
+    // [SerializeField] AnimationControl anim = default;
+    [SerializeField] AnimControl anim = default;
     [SerializeField] Slider timeSlider = default;
     [SerializeField] Slider speedSlider = default;
     Global.SliderMode sliderMode;
@@ -72,24 +73,24 @@ public class SliderControl : MonoBehaviour
     }
 
     public void TimeSliderPointerDown(){
-        anim.SetLastAnimStatus();
-        if(anim.GetAnimationStatus() != Global.AnimStatus.Pause){
-            anim.Pause();
-            // SetTimeSlider(((timeSlider.maxValue - timeSlider.minValue)/timeSliderLength * 1f)*(Input.mousePosition.x * 1f - timeSliderOffset * 1f));
-        }
-        // Debug.Log("DOWN SLIDER POS = " + timeSlider.value); 
-        if(timeSliderValueChange == false){
-            timeSliderDifference = 0f;
-        } 
-        // Debug.Log("DOWN POINTER DIFFERENCE = " + timeSliderDifference); 
-        lastPointerDownPos = timeSlider.value;
-        timeSliderValueChange = false;
+        // anim.SetLastAnimStatus();
+        // if(anim.GetAnimationStatus() != Global.AnimStatus.Pause){
+        //     anim.Pause();
+        //     // SetTimeSlider(((timeSlider.maxValue - timeSlider.minValue)/timeSliderLength * 1f)*(Input.mousePosition.x * 1f - timeSliderOffset * 1f));
+        // }
+        // // Debug.Log("DOWN SLIDER POS = " + timeSlider.value); 
+        // if(timeSliderValueChange == false){
+        //     timeSliderDifference = 0f;
+        // } 
+        // // Debug.Log("DOWN POINTER DIFFERENCE = " + timeSliderDifference); 
+        // lastPointerDownPos = timeSlider.value;
+        // timeSliderValueChange = false;
     }
 
     public void TimeSliderPointerUp(){
         // Debug.Log("UP SLIDER POS = " + timeSlider.value); 
         // Debug.Log("FINAL diff = " + (timeSliderDifference + timeSlider.value - lastPointerDownPos).ToString() );   
-        anim.DoJump(timeSliderDifference + timeSlider.value - lastPointerDownPos);
+        // anim.DoJump(timeSliderDifference + timeSlider.value - lastPointerDownPos);
     }
 
     public void AdjustSpeed(float speed){

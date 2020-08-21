@@ -1439,7 +1439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   yamlParser: {fileID: 1387507263}
   topo: {fileID: 2137916003}
-  anim: {fileID: 318403038}
+  anim: {fileID: 799778270}
   graphInput: {fileID: 834313939}
 --- !u!1 &397595629
 GameObject:
@@ -2958,6 +2958,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799247384}
   m_CullTransparentMesh: 0
+--- !u!1 &799778269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 799778271}
+  - component: {fileID: 799778270}
+  m_Layer: 0
+  m_Name: AnimController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &799778270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799778269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f886f5cc90e434642b148c862b669b62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topo: {fileID: 2137916003}
+  colorControl: {fileID: 754768620}
+  graphInput: {fileID: 834313939}
+--- !u!4 &799778271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799778269}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 683.5495, y: 389.18753, z: -111.4562}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &811932477
 GameObject:
   m_ObjectHideFlags: 0
@@ -5034,7 +5080,7 @@ MonoBehaviour:
   colorPatternDropdown: {fileID: 300711185}
   searchField: {fileID: 1085076803}
   popup: {fileID: 664334349}
-  anim: {fileID: 318403038}
+  anim: {fileID: 799778270}
   colorControl: {fileID: 754768620}
 --- !u!1 &1330491895
 GameObject:
@@ -5065,7 +5111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27f1b08b9a8b2573eb8af1c25902da7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anim: {fileID: 318403038}
+  anim: {fileID: 799778270}
   timeSlider: {fileID: 1204916001}
   speedSlider: {fileID: 330675441}
 --- !u!4 &1330491897

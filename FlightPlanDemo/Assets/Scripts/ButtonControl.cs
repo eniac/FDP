@@ -12,7 +12,8 @@ public class ButtonControl : MonoBehaviour
     [SerializeField] private Dropdown colorPatternDropdown = default;
     [SerializeField] private InputField searchField = default;
     [SerializeField] private PopUpControl popup = default;
-    [SerializeField] private AnimationControl anim = default;
+    // [SerializeField] private AnimationControl anim = default;
+    [SerializeField] private AnimControl anim = default;
     [SerializeField] private ColorControl colorControl = default;
     bool showLable;
     List<GameObject> hostTextObject;
@@ -115,13 +116,14 @@ public class ButtonControl : MonoBehaviour
     }
 
     public void ResetAnimation(){
-        anim.ResetAnimation();
-        ChangePauseResumeButtonText(Global.AnimStatus.Forward);
+        // anim.ResetAnimation();
+        // ChangePauseResumeButtonText(Global.AnimStatus.Forward);
     }
 
     public void PauseResumeAnimation(){
-        Global.AnimStatus status = anim.PauseResume();
-        ChangePauseResumeButtonText(status);
+        anim.Pause();
+        // Global.AnimStatus status = anim.PauseResume();
+        // ChangePauseResumeButtonText(status);
     }
 
     public void ForwardAnimation(){
@@ -135,19 +137,19 @@ public class ButtonControl : MonoBehaviour
     }
 
     void ChangePauseResumeButtonText(Global.AnimStatus status){
-        if(status == Global.AnimStatus.Pause){
-            // Show Resume Symbol on Button
-            pauseResumeButton.gameObject.GetComponentInChildren<Text>().text = ">";
-        }
-        else{
-            // Show Pause sysmbol on button
-            pauseResumeButton.gameObject.GetComponentInChildren<Text>().text = "||";
-        }
+        // if(status == Global.AnimStatus.Pause){
+        //     // Show Resume Symbol on Button
+        //     pauseResumeButton.gameObject.GetComponentInChildren<Text>().text = ">";
+        // }
+        // else{
+        //     // Show Pause sysmbol on button
+        //     pauseResumeButton.gameObject.GetComponentInChildren<Text>().text = "||";
+        // }
     }
 
     public void BackToStart(){
         // Reset time
-        anim.ResetFixedDeltaTime();
+        // anim.ResetFixedDeltaTime();
         // Jump to the previous scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     } 

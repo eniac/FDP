@@ -6,7 +6,8 @@ public class DemoScript : MonoBehaviour
 {
     public YamlParser yamlParser;
     public Topology topo;
-    public AnimationControl anim; 
+    // public AnimationControl anim; 
+    [SerializeField] AnimControl anim;
     [SerializeField] GraphInput graphInput = default;
 
     // Start is called before the first frame update
@@ -23,9 +24,13 @@ public class DemoScript : MonoBehaviour
         topo.GetPosition();
         topo.DisplayTopology();
 
-        yield return StartCoroutine(anim.GetElapsedTimeFile());
+        // yield return StartCoroutine(anim.GetElapsedTimeFile());
         
-        anim.StartAnimation();
+        // anim.StartAnimation();
+
+        yield return StartCoroutine(anim.GetMetadataFile());
+        
+        anim.AnimationInit();
     }
 
     // Update is called once per frame

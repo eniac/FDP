@@ -31,27 +31,27 @@ public class GraphInput : MonoBehaviour
             show = true;
             yield return StartCoroutine(GetGraphLogText("complete_fec_e2e/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_fec_e2e/graph_log2.txt"));
-            legendText = "Parity Packet\nTCP Request Packet\nTCP Reply Packet";
+            legendText = "Parity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
             color = GetColors(new List<string>(){"#ffffff", "#0000ff", "#ffff00"});
         }
         else if(Global.chosanExperimentName == "complete_mcd_e2e"){
             show = true;
             yield return StartCoroutine(GetGraphLogText("complete_mcd_e2e/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_mcd_e2e/graph_log2.txt"));
-            legendText = "MCD Request Packet\nMCD Reply Packet\nMCD Cached Packet\nParity Packet\nICMP Request Packet";
+            legendText = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
             color = GetColors(new List<string>(){"#0EF3E1", "#61D612", "#FF8A00", "#ffffff", "#0000ff"});
         }
         else if(Global.chosanExperimentName == "complete_hc_e2e"){
             show = true;
             yield return StartCoroutine(GetGraphLogText("complete_hc_e2e/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_hc_e2e/graph_log2.txt"));
-            legendText = "HC Packet\nParity Packet\nTCP Request Packet\nTCP Reply Packet";
+            legendText = "Compressed\nParity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
             color = GetColors(new List<string>(){"#ff00ff", "#ffffff", "#0000ff", "#ffff00"});
         }
         else if(Global.chosanExperimentName == "complete_all_e2e"){
             animTime = 80f;
             show = false;
-            legendText = "MCD Request Packet\nMCD Reply Packet\nMCD Cached Packet\nHC Packet\nParity Packet\nICMP Request Packet\nTCP Request Packet\nTCP Reply Packet";
+            legendText = "MCD Request\nMCD Reply\nMCD Cached\nCompressed\nParity\nICMP Request\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
             color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ff00ff", "#ffffff", "#0000ff", "#ffff00", "#ff0000"});
         }
         graph.ShowLegendColor(legendText, color);
@@ -129,7 +129,7 @@ public class GraphInput : MonoBehaviour
             title = "FEC Effectiveness";
             nCurveMax = 2;
             animTime = 121f;
-            targetNode = "p3h0";
+            targetNode = "p1h0";
             GetCoordinates();
         }
         else if(Global.chosanExperimentName == "complete_mcd_e2e"){

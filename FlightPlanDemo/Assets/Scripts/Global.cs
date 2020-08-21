@@ -8,6 +8,7 @@ public static class Global
         Pause=0,
         Forward,
         Rewind,
+        PrePlay,
         Disk
     }
     public enum SliderMode{

@@ -49,9 +49,12 @@ public class ColorControl : MonoBehaviour
         if(pType == Global.PacketType.MCDcache){
             return mcdCacheColor;
         }
+        else if(pType == Global.PacketType.Parity){
+            return Color.white;
+        }
         // Packet type is other then mcd and normal
-        else if(pType == Global.PacketType.HC || pType == Global.PacketType.Parity){
-            return pColor;
+        else if(pType == Global.PacketType.HC){
+            return new Color(1f, 0, 1f);
         }
         // FOr all normal packets
         switch(colorPatternIndex){
