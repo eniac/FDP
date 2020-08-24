@@ -860,4 +860,11 @@ public class Topology : MonoBehaviour
         }
         return false;
     }
+
+    public bool IsSatellite(string name){
+        if(sat_names.Contains(name)){
+            return true;
+        }
+        return false;
+    }
 }

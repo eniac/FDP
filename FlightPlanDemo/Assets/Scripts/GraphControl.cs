@@ -12,6 +12,7 @@ struct GraphAttributes{
     public float xMax;
     public List<GameObject> points;
     public List<GameObject> segments;
+    public float segmentWidth;
 };
 public class GraphControl : MonoBehaviour
 {
@@ -57,8 +58,8 @@ public class GraphControl : MonoBehaviour
         title.gameObject.SetActive(true);
         title.anchoredPosition = new Vector2(0, 15f);
         
-        graphHeight = graphContainer.sizeDelta.y;
-        graphWidth = graphContainer.sizeDelta.x;
+        graphHeight = graphContainer.sizeDelta.y - 10f;
+        graphWidth = graphContainer.sizeDelta.x - 10f;
 
     }
 
@@ -105,7 +106,7 @@ public class GraphControl : MonoBehaviour
         title.GetComponent<Text>().text = t;
     }
 
-    public void GraphInit(Global.GraphType gType, Color pointColor, Color segmentColor, float xMax, float yMax){
+    public void GraphInit(Global.GraphType gType, Color pointColor, Color segmentColor, float xMax, float yMax, float segmentWidth=1f){
         GraphAttributes gt = new GraphAttributes();
         gt.lastCircleGameObject = null;
         gt.pointColor = pointColor;
@@ -114,6 +115,7 @@ public class GraphControl : MonoBehaviour
         gt.yMax = yMax;
         gt.points = new List<GameObject>();
         gt.segments = new List<GameObject>();
+        gt.segmentWidth = segmentWidth;
         if(gAttr.ContainsKey(gType)==true){
             gAttr[gType] = gt;
         }
@@ -151,7 +153,7 @@ public class GraphControl : MonoBehaviour
         GameObject goCircle = CreateCircle(new Vector2(xPos, yPos), gt.pointColor);
         gt.points.Add(goCircle);
         if(gt.lastCircleGameObject != null){
-            GameObject goConn = CreateDotConnection(gt.lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, goCircle.GetComponent<RectTransform>().anchoredPosition, gt.segmentColor);
+            GameObject goConn = CreateDotConnection(gt.lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, goCircle.GetComponent<RectTransform>().anchoredPosition, gt.segmentColor, gt.segmentWidth);
             gt.segments.Add(goConn);
         }
         gt.lastCircleGameObject = goCircle;
@@ -189,7 +191,7 @@ public class GraphControl : MonoBehaviour
         return go;
     }
 
-    private GameObject CreateDotConnection(Vector2 posA, Vector2 posB, Color color){
+    private GameObject CreateDotConnection(Vector2 posA, Vector2 posB, Color color, float segmentWidth){
         GameObject go = new GameObject("dotConnection", typeof(Image));
         go.transform.SetParent(graphContainer, false);
         go.GetComponent<Image>().color = color;
@@ -201,7 +203,7 @@ public class GraphControl : MonoBehaviour
         RectTransform rectTransform = go.GetComponent<RectTransform>();
 
         rectTransform.anchoredPosition = posA + direction * distance * 0.5f;
-        rectTransform.sizeDelta = new Vector2(distance,1f);  // Horizontal bar
+        rectTransform.sizeDelta = new Vector2(distance,segmentWidth);  // Horizontal bar
         rectTransform.anchorMin = new Vector2(0,0);
         rectTransform.anchorMax = new Vector2(0,0);
         rectTransform.localEulerAngles = new Vector3(0, 0, angle);

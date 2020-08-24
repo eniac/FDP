@@ -20,6 +20,7 @@ public class ButtonControl : MonoBehaviour
     List<GameObject> textObj;
     bool showLinkOpaque;
     bool showNodeOpaque;
+    bool showBlink = true;
     List<GameObject> linkObject;
     List<GameObject> switchObject;
     List<GameObject> satObject;
@@ -107,7 +108,7 @@ public class ButtonControl : MonoBehaviour
         colorPatternDropdown.AddOptions(colorPatterns);
     }
     public void ColorPatternDropdownIndexChanged(int index){
-        colorControl.SetColorPattern(index);
+        colorControl.SetColorPattern((Global.ColorPattern)index);
     }
 
     public void StartAnimation(){
@@ -153,4 +154,16 @@ public class ButtonControl : MonoBehaviour
         // Jump to the previous scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     } 
+
+    public void ToggleLossyLinkBlink(){
+        if(showBlink == true){
+            // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
+            anim.ShowLossyBlink();
+            showBlink = false;
+        }
+        else{
+            anim.StopLossyBlink();
+            showBlink = true;
+        }
+    }
 }

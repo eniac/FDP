@@ -6,16 +6,18 @@ using UnityEngine;
 public class ColorControl : MonoBehaviour
 {
     Dictionary<Tuple<string, string>, Color> ColorsByPath = new Dictionary<Tuple<string, string>, Color>();
-    Dictionary<string, Color> ColorsByOrigin = new Dictionary<string, Color>();
+    List<Color> pathColor = new List<Color>(){ new Color(0f, 0f, 1f), new Color(0f, 1f, 0f), new Color(1f, 0f, 0f), new Color(1f, 1f, 0f), new Color(0.5f, 0f, 0.5f), new Color(0f, 1f, 1f), new Color(0.055f, 0.95f, 1f), new Color(0.454f, 0.953f, 0.059f), new Color(1f, 0, 1f),  new Color(1f, 1f, 1f)  };
+    int pathColorIndex=0;
     HashSet<Tuple<string, string, string>> paths = new HashSet<Tuple<string, string, string>>();
     Color colorRequest = Color.red;
     Color colorReply = Color.blue;
+    Dictionary<string, Color> ColorsByOrigin = new Dictionary<string, Color>();
     List<Color> mcdColor = new List<Color>(){ new Color(0.055f, 0.95f, 1f), new Color(0.454f, 0.953f, 0.059f) };
     Color mcdCacheColor = new Color(1f, 0.54f, 0f);
     List<Color> originColor = new List<Color>(){new Color(0f, 0f, 1f), new Color(1f, 1f, 0f), new Color(1f, 0f, 0f), new Color(0.5f, 0f, 0.5f), new Color(0f, 1f, 1f) };
     int mcdColorIndex=0;
     int originColorIndex=0;
-    int colorPatternIndex = 0; 
+    Global.ColorPattern colorPatternIndex = Global.ColorPattern.OriginBased; 
 
     public void ResetColorControl(){
         ColorsByPath.Clear();
@@ -24,7 +26,7 @@ public class ColorControl : MonoBehaviour
         mcdColorIndex=0;
         originColorIndex=0;
     }
-    public void SetColorPattern(int index){
+    public void SetColorPattern(Global.ColorPattern index){
         colorPatternIndex = index;
     }
     public Color GetPacketColor(string origin, string destination, string pid, Global.PacketType pType, Color pColor){
@@ -45,6 +47,7 @@ public class ColorControl : MonoBehaviour
             // Debug.Log("COLOR = " + color + " : " + pid);
             return color;
         }
+
         // If packet type is MCD cache
         if(pType == Global.PacketType.MCDcache){
             return mcdCacheColor;
@@ -58,7 +61,7 @@ public class ColorControl : MonoBehaviour
         }
         // FOr all normal packets
         switch(colorPatternIndex){
-            case 0:
+            case Global.ColorPattern.OriginBased:
             // Color Pattern 1
                 string org = pType.ToString()+origin;
                 if(ColorsByOrigin.ContainsKey(org) == true){
@@ -68,11 +71,11 @@ public class ColorControl : MonoBehaviour
                     // ColorsByOrigin.Add(origin, UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
                     ColorsByOrigin.Add(org, originColor[originColorIndex]);
                     color = ColorsByOrigin[org];
-                    originColorIndex = (originColorIndex + 1)%originColor.Count;
+                    originColorIndex = (originColorIndex + 1) % originColor.Count;
                 }
                 break;
 
-            case 1:
+            case Global.ColorPattern.RequestReply:
             // Color Pattern 2
                 Tuple<string, string, string> fwdPair = new Tuple<string, string, string>(origin, destination, pid);
                 Tuple<string, string, string> revPair = new Tuple<string, string, string>(destination, origin, pid);
@@ -89,7 +92,7 @@ public class ColorControl : MonoBehaviour
                 }
                 break; 
 
-            case 2:
+            case Global.ColorPattern.PathBased:
                 // Color Pattern 3
                 Tuple<string, string> pair = new Tuple<string, string>(origin, destination);
                 // If the pair of origin and destination is found in dictionary, return the color
@@ -97,8 +100,10 @@ public class ColorControl : MonoBehaviour
                     color = ColorsByPath[pair];
                 }
                 else{
-                    ColorsByPath.Add(pair, UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
+                    // ColorsByPath.Add(pair, UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
+                    ColorsByPath.Add(pair, pathColor[pathColorIndex]);
                     color = ColorsByPath[pair];
+                    pathColorIndex = (pathColorIndex + 1) % pathColor.Count;
                 }
                 break;
         }

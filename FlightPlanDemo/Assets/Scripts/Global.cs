@@ -31,6 +31,11 @@ public static class Global
         TCP,
         ICMP
     }
+    public enum ColorPattern{
+        OriginBased=0,
+        RequestReply,
+        PathBased
+    }
     public static string chosanExperimentName;
     public static string experimentYaml;
     public static string experimentMetadata;
