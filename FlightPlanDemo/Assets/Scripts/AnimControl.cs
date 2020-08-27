@@ -22,6 +22,15 @@ struct PacketInfo{
     public string packetID;
     public Global.PacketType packetType;
 };
+
+struct AnimationParameters{
+    public bool sliderJump;
+    public Global.AnimStatus animStatus;
+    public float timeScale;
+    public float timeScaleBeforePause;
+    public float jumpDuration;
+    public float jumpRC;
+};
 public class AnimControl : MonoBehaviour
 {
     [SerializeField] Topology topo = default;
@@ -40,11 +49,13 @@ public class AnimControl : MonoBehaviour
         Type
     }
     const float speed = 20f;
-    const float prePlayTimeScale = 50f;
+    const float prePlayTimeScale = 30f;
     string elapsedTimeString;
     float referenceCounter=0;
     float timeScaleBeforePause = 1;
     bool prePlay = true;
+    AnimationParameters animParamBeforeSliderJump = new AnimationParameters();
+    Global.AnimStatus animStatusBeforeSliderJump = Global.AnimStatus.Forward;
     Global.AnimStatus animStatus = Global.AnimStatus.Forward;
     List<GameObject> LossyLinkObjects = new List<GameObject>();
     Dictionary<string, Global.PacketType> PacketTypeInfo = new Dictionary<string, Global.PacketType>();
@@ -88,8 +99,6 @@ public class AnimControl : MonoBehaviour
         PacketTypeInfo.Add("HC", Global.PacketType.HC);
         PacketTypeInfo.Add("TCP", Global.PacketType.TCP);
         PacketTypeInfo.Add("ICMP", Global.PacketType.ICMP);
-
-        // GetMCDcacheCheckNode();
         
         line = packetInfoString.ReadLine();
         while(line!=null){
@@ -117,25 +126,6 @@ public class AnimControl : MonoBehaviour
                 OriginDestinationMap.Add(pInfo.packetID, orgDest);
             }
 
-            // // TODO hardcoded source and target
-            // if(pInfo.packetType == Global.PacketType.MCD){
-            //     if(mcdCache.ContainsKey(pInfo.packetID)){
-            //         if((pInfo.source == mcdCacheCheckNode[0] && pInfo.target == mcdCacheCheckNode[1] 
-            //             && (mcdCache[pInfo.packetID].Item1 == mcdCacheCheckNode[2] 
-            //             || mcdCache[pInfo.packetID].Item1 == mcdCacheCheckNode[3]))
-            //             || mcdCache[pInfo.packetID].Item2==true){
-            //             pInfo.packetType = Global.PacketType.MCDcache;
-            //             mcdCache[pInfo.packetID] = new Tuple<string, bool>(pInfo.source, true);
-            //         }
-            //         else{
-            //             mcdCache[pInfo.packetID] = new Tuple<string, bool>(pInfo.source, false);
-            //         }
-            //     }
-            //     else{
-            //         mcdCache.Add(pInfo.packetID, new Tuple<string, bool>(pInfo.source, false));
-            //     }
-            // }
-
             if(packetBySource.ContainsKey(pInfo.source)){
                 if(packetBySource[pInfo.source].ContainsKey(pInfo.packetTime)){
                     pInfo.packetTime = pInfo.packetTime - 1;
@@ -150,6 +140,7 @@ public class AnimControl : MonoBehaviour
             }
 
             if(packetByTarget.ContainsKey(pInfo.target)){
+                Debug.Log("-----------Time = " + pInfo.packetTime);
                 packetByTarget[pInfo.target].Add(pInfo.packetTime, pInfo);
             }
             else{
@@ -189,6 +180,9 @@ public class AnimControl : MonoBehaviour
         graphInput.ClearPlot();
         graphInput.GraphInputInit();
 
+        animParamBeforeSliderJump.sliderJump = false;
+        animParamBeforeSliderJump.jumpDuration = 0f;
+
         LossyLinkObjects = topo.GetDropperLinkObjects();
 
         if(LossyLinkObjects.Count > 0){
@@ -219,28 +213,6 @@ public class AnimControl : MonoBehaviour
         }
     }
 
-    // TODO Hardcoded Paths
-    void GetMCDcacheCheckNode(){
-        if(Global.chosanExperimentName == "complete_mcd_e2e"){
-            mcdCacheCheckNode[0] = "p0a0";
-            mcdCacheCheckNode[1] = "dropper";
-            mcdCacheCheckNode[2] = "dropper";
-            mcdCacheCheckNode[3] = "p0e0";
-        }
-        else if(Global.chosanExperimentName == "complete_e2e_1_hl3new"){
-            mcdCacheCheckNode[0] = "c0";
-            mcdCacheCheckNode[1] = "p0a0";
-            mcdCacheCheckNode[2] = "p0a0";
-            mcdCacheCheckNode[3] = "p0a0";
-        }
-        else if(Global.chosanExperimentName == "complete_e2e_2_hl3new"){
-            // mcdCacheCheckNode[0] = "HL_V3_3";
-            // mcdCacheCheckNode[1] = "p0a0";
-            // mcdCacheCheckNode[2] = "p0a0";
-            // mcdCacheCheckNode[3] = "p0a0";
-        }
-    }
-
     void LossyLinkBlink(){
         foreach(var go in LossyLinkObjects){
             if(go.GetComponent<MeshRenderer>().enabled == false){
@@ -252,19 +224,16 @@ public class AnimControl : MonoBehaviour
             
         }
     }
-    void SetAnimationStatus(Global.AnimStatus status){
-        animStatus = status;
-    }
 
     public void StartAnimation(){
         timeScaleBeforePause = Time.timeScale;
         referenceCounter = 0;
         foreach(var k in packetBySource.Keys){
-            Debug.Log("Source = " + k);
+            // Debug.Log("Source = " + k);
             packetBySourcePtr[k] = -1;
         }
         foreach(var k in packetByTarget.Keys){
-            Debug.Log("Target = " + k);
+            // Debug.Log("Target = " + k);
             packetByTargetPtr[k] = -1;
         }
         RemoveRunningPackets();
@@ -278,15 +247,21 @@ public class AnimControl : MonoBehaviour
         EnableUpdate();
     }
 
+    void SetAnimationStatus(Global.AnimStatus status){
+        animStatus = status;
+    }
     public void Pause(){
+        Debug.Log("Pause start = " + Time.timeScale);
         if(animStatus != Global.AnimStatus.Pause){
             timeScaleBeforePause = Time.timeScale;
             AdjustSpeed(0f);
             SetAnimationStatus(Global.AnimStatus.Pause);
+            Debug.Log("Pause in = " + Time.timeScale);
         }
     }
 
     public void Forward(){
+        Debug.Log("Forward start = " + Time.timeScale);
         if(animStatus == Global.AnimStatus.Pause && Time.timeScale == 0){
             // Debug.Log("Scale before Pause = " + timeScaleBeforePause);
             AdjustSpeed(timeScaleBeforePause);
@@ -294,22 +269,65 @@ public class AnimControl : MonoBehaviour
         if(animStatus != Global.AnimStatus.Forward){
             packetByID.Clear();
             SetAnimationStatus(Global.AnimStatus.Forward);
+            Debug.Log("Forward in = " + Time.timeScale);
         }
     }
     public void Rewind(){
+        Debug.Log("Rewind start = " + Time.timeScale);
         if(animStatus == Global.AnimStatus.Pause && Time.timeScale == 0){
             AdjustSpeed(timeScaleBeforePause);
         }
         if(animStatus != Global.AnimStatus.Rewind){
             packetByID.Clear();
             SetAnimationStatus(Global.AnimStatus.Rewind);
+            Debug.Log("Rewind in = " + Time.timeScale);
         }
+    }
+
+    public void SetAnimParamBeforeSliderJump(float jumpDuration=0f){
+        if(jumpDuration!=0f){
+            animParamBeforeSliderJump.jumpDuration = jumpDuration;
+            animParamBeforeSliderJump.jumpRC = (RCtime()/Global.U_SEC)+jumpDuration;
+            animParamBeforeSliderJump.sliderJump = true;
+            AdjustSpeed(prePlayTimeScale);
+            if(jumpDuration>0){
+                Forward();
+            }
+            else{
+                Rewind();
+            }
+            return;
+        }
+        animParamBeforeSliderJump.timeScaleBeforePause = timeScaleBeforePause;
+        animParamBeforeSliderJump.animStatus = animStatus;
+        animParamBeforeSliderJump.timeScale = Time.timeScale;
+    }
+    void ResetAnimParamBeforeSliderJump(){
+        if(animParamBeforeSliderJump.animStatus == Global.AnimStatus.Pause){
+            Pause();
+        }
+        else if(animParamBeforeSliderJump.animStatus == Global.AnimStatus.Forward){
+            Forward();
+        }
+        else if(animParamBeforeSliderJump.animStatus == Global.AnimStatus.Rewind){
+            Rewind();
+        }
+        animParamBeforeSliderJump.sliderJump = false;
+        animParamBeforeSliderJump.jumpDuration = -1f;
+        AdjustSpeed(animParamBeforeSliderJump.timeScale);
+        timeScaleBeforePause = animParamBeforeSliderJump.timeScaleBeforePause;
+    }
+
+    bool SliderEvent(){
+        if(animParamBeforeSliderJump.sliderJump==true){
+            return true;
+        }
+        return false;
     }
 
     public void AdjustSpeed(float speed){
         Time.timeScale = speed;
     }
-
     void RCupdate(){
         if(animStatus == Global.AnimStatus.Forward){
             referenceCounter += Time.fixedDeltaTime;
@@ -317,8 +335,18 @@ public class AnimControl : MonoBehaviour
         else if(animStatus == Global.AnimStatus.Rewind){
             referenceCounter -= Time.fixedDeltaTime;
         }
+        if(SliderEvent()){
+            if((animParamBeforeSliderJump.jumpDuration<0 
+                && referenceCounter <= animParamBeforeSliderJump.jumpRC)
+                || (animParamBeforeSliderJump.jumpDuration>0 
+                && referenceCounter >= animParamBeforeSliderJump.jumpRC)){
+                ResetAnimParamBeforeSliderJump();
+            }
+        }
+        else{
+            sliderControl.SetTimeSlider(referenceCounter);
+        }
         graphInput.ReferenceCounterValue(referenceCounter);
-        sliderControl.SetTimeSlider(referenceCounter);
     }
 
     float RCtime(){
@@ -561,7 +589,7 @@ public class AnimControl : MonoBehaviour
     }
 
     GameObject InstantiatePacket(PacketInfo pInfo){
-        Debug.Log(RCtime() + " : " + Time.time + " : " + Time.fixedTime + " : " + Time.fixedUnscaledTime + " : " + Time.realtimeSinceStartup + " : " + Time.timeSinceLevelLoad + " : " + Time.unscaledTime);
+        // Debug.Log(RCtime() + " : " + Time.time + " : " + Time.fixedTime + " : " + Time.fixedUnscaledTime + " : " + Time.realtimeSinceStartup + " : " + Time.timeSinceLevelLoad + " : " + Time.unscaledTime);
         GameObject packet_prefab = Resources.Load("Packet") as GameObject;
         GameObject go = Instantiate(packet_prefab) as GameObject;
         go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(pInfo.origin, pInfo.destination, pInfo.packetID, pInfo.packetType, go.GetComponent<MeshRenderer>().material.color);

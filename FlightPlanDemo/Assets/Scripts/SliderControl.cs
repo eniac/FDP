@@ -85,12 +85,22 @@ public class SliderControl : MonoBehaviour
         // // Debug.Log("DOWN POINTER DIFFERENCE = " + timeSliderDifference); 
         // lastPointerDownPos = timeSlider.value;
         // timeSliderValueChange = false;
+
+        Debug.Log("Pointer Down");
+        anim.SetAnimParamBeforeSliderJump();
+        anim.Pause();
+        if(timeSliderValueChange == false){
+            timeSliderDifference = 0f;
+        } 
+        lastPointerDownPos = timeSlider.value;
+        timeSliderValueChange = false;
     }
 
     public void TimeSliderPointerUp(){
         // Debug.Log("UP SLIDER POS = " + timeSlider.value); 
-        // Debug.Log("FINAL diff = " + (timeSliderDifference + timeSlider.value - lastPointerDownPos).ToString() );   
-        // anim.DoJump(timeSliderDifference + timeSlider.value - lastPointerDownPos);
+        Debug.Log("FINAL diff = " + (timeSliderDifference + timeSlider.value - lastPointerDownPos).ToString() );   
+
+        anim.SetAnimParamBeforeSliderJump(timeSliderDifference + timeSlider.value - lastPointerDownPos);
     }
 
     public void AdjustSpeed(float speed){

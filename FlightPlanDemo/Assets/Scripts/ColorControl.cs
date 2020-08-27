@@ -106,6 +106,10 @@ public class ColorControl : MonoBehaviour
                     pathColorIndex = (pathColorIndex + 1) % pathColor.Count;
                 }
                 break;
+                
+            case Global.ColorPattern.None:
+                color = Color.yellow;
+                break;
         }
         return color;
     }

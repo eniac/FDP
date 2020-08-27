@@ -167,14 +167,14 @@ for pcap_file in "${PCAP_DIR}"/*; do
   awk -v ARG="${src_dest},${is_sat}" '{ 
     split(ARG, args, /[,]/)
     if(/length/){
-      printf "%s %s ", $1,args[1]
+      # printf "%s %s ", $1,args[1]
+      head = $1" "args[1]" "
       getline;
       if($8 == "88cc"){
-        # Broadcast packet
-        print "ffff 00000000 00000000 NO" 
+        # Broadcast packet - ignore
       }
       else if($8 == "0800"){
-
+        printf "%s", head
         # Full IP header
         getline;
 
@@ -193,26 +193,31 @@ for pcap_file in "${PCAP_DIR}"/*; do
         # UDP(MEMCACHE) header
         if(protocol == "11"){
           lastIDf = lID
-          printf "%s %s %s MCD\n", lastIDf, src, dest
+          if($6=="0000"){
+            printf "%s %s %s MCDC\n", lastIDf, src, dest  
+          }
+          else{
+            printf "%s %s %s MCD\n", lastIDf, src, dest
+          }
         }
 
         # ICMP header
         else if(protocol == "01"){
           lastIDf = lID
-          printf "%s %s %s NO\n", lastIDf, src, dest
+          printf "%s %s %s ICMP\n", lastIDf, src, dest
         }
 
         # TCP header
         else{
           getline
           lastIDf = lID""$3
-          printf "%s %s %s NO\n", lastIDf, src, dest
+          printf "%s %s %s TCP\n", lastIDf, src, dest
         }
       }
 
       # FEC header ahead
       else if($8 == "081c"){
-        
+        printf "%s", head
         getline;
 
         # Full IP header ahead
@@ -232,28 +237,31 @@ for pcap_file in "${PCAP_DIR}"/*; do
           # UDP(MEMCACHE) header
           if(protocol == "11"){
             lastID = lID
-            printf "%s %s %s MCD\n", lastID, src, dest
+            if($9=="0000"){
+              printf "%s %s %s MCDC\n", lastID, src, dest
+            }
+            else{
+              printf "%s %s %s MCD\n", lastID, src, dest
+            }
           }
 
           # ICMP header
           else if(protocol == "01"){
             lastID = lID
-            printf "%s %s %s NO\n", lastID, src, dest
+            printf "%s %s %s ICMP\n", lastID, src, dest
           }
 
           # TCP header
           else{
             getline
-            # Assuming only TCP header
             lastID = lID""$6
-            printf "%s %s %s NO\n", lastID, src, dest
+            printf "%s %s %s TCP\n", lastID, src, dest
           }
         }
 
         # Compressed IP header ahead
         else if($2 == "1234"){
           lID = $6
-          # Assuming only TCP header
           lastID = lID""$9
           printf "%s 00000000 00000000 HC\n", lastID
           
@@ -272,6 +280,116 @@ for pcap_file in "${PCAP_DIR}"/*; do
       }
       else{
         # Flightplan header
+
+        getline
+        getline
+        getline
+
+        # Broadcast packet
+        if($2 == "08cc"){
+          # Broadcast packet - ignore
+        }
+
+        # IP header
+        else if($2 == "0800"){
+
+          printf "%s", head
+
+          # ID from IP header
+          lID =$5 
+
+          # Higher level protocol header (TCP/UDP/ICMP)
+          protocol = substr($7,3,2)
+
+          # Origin and destination
+          sr=$9
+          getline
+          src=sr""$2
+          dest=$3$4
+
+          # TCP header
+          if(protocol == "06"){
+            getline
+            lastIDf = lID""$5
+            printf "%s %s %s TCP\n", lastIDf, src, dest
+          }
+
+          # ICMP protocol
+          else if(protocol == "01"){
+            lastIDf = lID
+            printf "%s %s %s ICMP\n", lastIDf, src, dest
+          }
+
+          # UDP(MEMCACHE) header
+          else if(protocol == "11"){
+            lastID = lID
+            if($8=="0000"){
+              printf "%s %s %s MCDC\n", lastID, src, dest
+            }
+            else{
+              printf "%s %s %s MCD\n", lastID, src, dest
+            }
+          }
+        }
+
+        # FEC header
+        else if($2 == "081c"){
+
+          printf "%s", head
+
+          # Full IP header ahead
+          if($4 == "0800"){
+            
+            # ID from IP header
+            lID = $8
+
+            # Higher level protocol header (TCP/UDP/ICMP)
+            getline
+            protocol = substr($2,3,2)
+
+            # Origin and destination
+            src=$4$5
+            dest=$6$7
+
+            # UDP(MEMCACHE) header
+            if(protocol == "11"){
+              lastID = lID
+              getline
+              if($3=="0000"){
+                printf "%s %s %s MCDC\n", lastID, src, dest
+              }
+              else{
+                printf "%s %s %s MCD\n", lastID, src, dest
+              }
+            }
+
+            # ICMP header
+            else if(protocol == "01"){
+              lastID = lID
+              printf "%s %s %s ICMP\n", lastID, src, dest
+            }
+
+            # TCP header
+            else if(protocol == "06"){
+              getline
+              lastID = lID""$8
+              printf "%s %s %s TCP\n", lastID, src, dest
+            }
+          }
+
+          # Compressed IP+TCP header ahead
+          else if($4 == "1234"){
+            lID = $8
+            getline
+            lastID = lID""$3
+            printf "%s 00000000 00000000 HC\n", lastID
+          }
+
+          # Parity
+          else if($4 == "081c"){
+            printf "%s 00000000 00000000 PR\n", lastID
+          }
+        }
       }
     }
   }' ${TEMP} > ${TIME_DUMP}

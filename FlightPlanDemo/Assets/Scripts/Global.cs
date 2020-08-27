@@ -34,7 +34,8 @@ public static class Global
     public enum ColorPattern{
         OriginBased=0,
         RequestReply,
-        PathBased
+        PathBased,
+        None,
     }
     public static string chosanExperimentName;
     public static string experimentYaml;

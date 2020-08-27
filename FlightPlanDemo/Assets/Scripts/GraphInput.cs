@@ -26,6 +26,7 @@ public class GraphInput : MonoBehaviour
     bool show=true;
     float graphStartTime=-1f;
     bool isXtime=true;
+    float packetTime=0;
 
     public IEnumerator Start(){
         string legendText = "";
@@ -78,9 +79,18 @@ public class GraphInput : MonoBehaviour
         }
         else if(Global.chosanExperimentName == "complete_2_FW"){
             show = true;
-            colorControl.SetColorPattern(Global.ColorPattern.PathBased);
+            colorControl.SetColorPattern(Global.ColorPattern.None);
             yield return StartCoroutine(GetGraphLogText("complete_2_FW/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("complete_2_FW/graph_log2.txt"));
+            legendText = "TCP Packets";
+            color = GetColors(new List<string>(){"#ffff00"});
+        }
+        else if(Global.chosanExperimentName == "split1"){
+            show = true;
+            yield return StartCoroutine(GetGraphLogText("split1/graph_log1.txt"));
+            yield return StartCoroutine(GetGraphLogText("split1/graph_log2.txt"));
+            legendText = "ICMP Request\nICMP Reply";
+            color = GetColors(new List<string>(){"#0000ff", "#ffff00"});
         }
         graph.ShowLegendColor(legendText, color);
     }
@@ -155,7 +165,7 @@ public class GraphInput : MonoBehaviour
         if(Global.chosanExperimentName == "complete_fec_e2e"){
             xLabel = "time (sec)";
             yLabel = "# packets received at receiver";
-            legend = "<color=#ffff00>---- No FEC</color>\n <color=#00ff40>---- With FEC (k=5, p=1)</color>";
+            legend = "<color=#ffff00>---- No FEC</color>\n <color=#00ff40>---- With FEC (k=5, h=1)</color>";
             title = "FEC Effectiveness";
             nCurveMax = 2;
             // animTime = 515;
@@ -196,7 +206,7 @@ public class GraphInput : MonoBehaviour
             GetCoordinates();
         }
         else if(Global.chosanExperimentName == "complete_2_FW"){
-            xLabel = "Number of packets";
+            xLabel = "% test completed";
             yLabel = "% success rate";
             legend = "<color=#ffff00>---- Positive Test</color>\n <color=#00ff40>---- Negative Test</color>";
             title = "Firewall Effectiveness";
@@ -205,6 +215,18 @@ public class GraphInput : MonoBehaviour
             targetNode = "p1e1";
             isXtime = false;
             GetCoordinates();
+        }
+        else if(Global.chosanExperimentName == "split1"){
+            xLabel = "time (sec)";
+            yLabel = "# bytes passing through the devices";
+            legend = "<color=#ffff00>---- FPoffload</color>\n <color=#00ff40>---- FPoffload2</color>";
+            title = "Failover Mechanism";
+            nCurveMax = 2;
+            // animTime = 121f;
+            targetNode = "p0e0";
+            GetCoordinates();
+            relative_scale[0] = 1;
+            relative_scale[1] = 1;
         }
     }
 
@@ -232,6 +254,7 @@ public class GraphInput : MonoBehaviour
         
         for(int i=0; i<graphLogText.Count; i++){
                 relative_scale[i] = xmax/relative_scale[i];
+                // relative_scale[i] = relative_scale[0]/relative_scale[i];
         }
 
         xMax = xmax;
@@ -281,6 +304,10 @@ public class GraphInput : MonoBehaviour
         UpdateGraph();     
     }
 
+    void DispatchedPacketTime(float time){
+        packetTime = time;
+    }
+
     void UpdateGraph(){
         string[] coord;
         float div=1;
@@ -316,6 +343,10 @@ public class GraphInput : MonoBehaviour
             }
         }
     }
+
+    // UpdateGraph(){
+
+    // }
 
     void UpdateEnable(){
         enabled = true;
