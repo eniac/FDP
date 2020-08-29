@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 
 struct PacketInfo{
     public GameObject Object;
-    public float packetTime;
+    public int packetTime;
     public float expirationTime;
     public float instantiationTime;
     public Vector3 sourcePos;
@@ -21,6 +21,8 @@ struct PacketInfo{
     public string destination;
     public string packetID;
     public Global.PacketType packetType;
+    public Color color;
+    public Global.PacketTag tag;
 };
 
 struct AnimationParameters{
@@ -48,12 +50,13 @@ public class AnimControl : MonoBehaviour
         Pid,
         Type
     }
+
     const float speed = 20f;
     const float prePlayTimeScale = 30f;
     string elapsedTimeString;
     float referenceCounter=0;
     float timeScaleBeforePause = 1;
-    bool prePlay = true;
+    bool prePlay = false;
     AnimationParameters animParamBeforeSliderJump = new AnimationParameters();
     Global.AnimStatus animStatusBeforeSliderJump = Global.AnimStatus.Forward;
     Global.AnimStatus animStatus = Global.AnimStatus.Forward;
@@ -62,12 +65,15 @@ public class AnimControl : MonoBehaviour
     Dictionary<string, Tuple<string, string>> OriginDestinationMap = new Dictionary<string, Tuple<string, string>>();
     Dictionary<string, Tuple<string, bool>> mcdCache = new Dictionary<string, Tuple<string, bool>>();  // <packetID, <last origin, is cached packet>>
     List<string> mcdCacheCheckNode = new List<string>(){null, null, null, null}; //cache source, cache target, cache incoming source1, cache incoming source2
-    Dictionary<string, SortedDictionary<float, PacketInfo>> packetBySource = new Dictionary<string, SortedDictionary<float, PacketInfo>>();
+    Dictionary<string, SortedDictionary<int, PacketInfo>> packetBySource = new Dictionary<string, SortedDictionary<int, PacketInfo>>();
     Dictionary<string, int> packetBySourcePtr = new Dictionary<string, int>();
-    Dictionary<string, SortedDictionary<float, PacketInfo>> packetByTarget = new Dictionary<string, SortedDictionary<float, PacketInfo>>();
+    Dictionary<string, SortedDictionary<int, PacketInfo>> packetByTarget = new Dictionary<string, SortedDictionary<int, PacketInfo>>();
     Dictionary<string, int> packetByTargetPtr = new Dictionary<string, int>();
-    Dictionary<string, Tuple<string, string, string, string>> packetByID = new Dictionary<string, Tuple<string, string, string, string>>();   // ID : (source:target)
-    Dictionary<float, PacketInfo> runningQueue = new Dictionary<float, PacketInfo>();
+    Dictionary<string, List<int>> packetIDSequence = new Dictionary<string, List<int>>(); // PacketID, list of packet time in sequence
+    Dictionary<string, int> packetIDSequencePtr = new Dictionary<string, int>();
+    List<PacketInfo> rewindSequence = new List<PacketInfo>();
+    List<PacketInfo> forwardSequence = new List<PacketInfo>();
+    Dictionary<int, PacketInfo> runningQueue = new Dictionary<int, PacketInfo>();
 
     void Start(){
         DisableUpdate();
@@ -104,7 +110,7 @@ public class AnimControl : MonoBehaviour
         while(line!=null){
             info = line.Split(' ');
             PacketInfo pInfo = new PacketInfo();
-            pInfo.packetTime = float.Parse(info[(int)PacketInfoIdx.Time]);
+            pInfo.packetTime = int.Parse(info[(int)PacketInfoIdx.Time]);
             pInfo.sourcePos = topo.GetNodePosition(info[(int)PacketInfoIdx.Source]);
             pInfo.targetPos = topo.GetNodePosition(info[(int)PacketInfoIdx.Target]);
             pInfo.source = info[(int)PacketInfoIdx.Source];
@@ -128,12 +134,12 @@ public class AnimControl : MonoBehaviour
 
             if(packetBySource.ContainsKey(pInfo.source)){
                 if(packetBySource[pInfo.source].ContainsKey(pInfo.packetTime)){
-                    pInfo.packetTime = pInfo.packetTime - 1;
+                    pInfo.packetTime = pInfo.packetTime + 1;
                 }
                 packetBySource[pInfo.source].Add(pInfo.packetTime, pInfo);
             }
             else{
-                SortedDictionary<float, PacketInfo> dict = new SortedDictionary<float, PacketInfo>();
+                SortedDictionary<int, PacketInfo> dict = new SortedDictionary<int, PacketInfo>();
                 dict.Add(pInfo.packetTime, pInfo);
                 packetBySource.Add(pInfo.source, dict);
                 packetBySourcePtr.Add(pInfo.source, -1);
@@ -144,10 +150,20 @@ public class AnimControl : MonoBehaviour
                 packetByTarget[pInfo.target].Add(pInfo.packetTime, pInfo);
             }
             else{
-                SortedDictionary<float, PacketInfo> dict = new SortedDictionary<float, PacketInfo>();
+                SortedDictionary<int, PacketInfo> dict = new SortedDictionary<int, PacketInfo>();
                 dict.Add(pInfo.packetTime, pInfo);
                 packetByTarget.Add(pInfo.target, dict);
                 packetByTargetPtr.Add(pInfo.target, -1);
+            }
+
+            if(packetIDSequence.ContainsKey(pInfo.packetID)){
+                packetIDSequence[pInfo.packetID].Add(pInfo.packetTime);
+            }
+            else{
+                List<int> l = new List<int>();
+                l.Add(pInfo.packetTime);
+                packetIDSequence.Add(pInfo.packetID, l);
+                packetIDSequencePtr.Add(pInfo.packetID, 0);
             }
             
             line = packetInfoString.ReadLine();
@@ -174,6 +190,13 @@ public class AnimControl : MonoBehaviour
         //         Debug.Log(i + " = " + t + " : " + k + " : " + packetByTarget[t][k].packetID);
         //     }
         // }
+        // Debug.Log("Packet ID Sequence");
+        // foreach(var k in packetIDSequence.Keys){
+        //     foreach(var t in packetIDSequence[k]){
+        //         Debug.Log(k + " : " + packetIDSequencePtr[k] + " : " + t);
+        //     }
+        // }
+        
 
         mcdCache.Clear();
 
@@ -187,14 +210,14 @@ public class AnimControl : MonoBehaviour
 
         if(LossyLinkObjects.Count > 0){
             InvokeRepeating("LossyLinkBlink", 0, 0.05f);
-        }
-        InvokeRepeating("DispatchPacket", 0f, 0.1f);  
+        } 
 
         prePlay = true;
 
-        AdjustSpeed(prePlayTimeScale);
+        // AdjustSpeed(prePlayTimeScale);
+        AdjustSpeed(1f);
 
-        StartAnimation();
+        // StartAnimation();
 
     }
 
@@ -236,8 +259,10 @@ public class AnimControl : MonoBehaviour
             // Debug.Log("Target = " + k);
             packetByTargetPtr[k] = -1;
         }
+        foreach(var k in packetIDSequence.Keys){
+            packetIDSequencePtr[k] = 0;
+        }
         RemoveRunningPackets();
-        packetByID.Clear();
         Forward();
         graphInput.ClearPlot();
         graphInput.GraphInputInit();
@@ -245,6 +270,7 @@ public class AnimControl : MonoBehaviour
         topo.MakeLinksTransparent();
         topo.MakeNodesTransparent();
         EnableUpdate();
+        InvokeRepeating("DispatchPacket", 0f, 0.1f); 
     }
 
     void SetAnimationStatus(Global.AnimStatus status){
@@ -267,7 +293,6 @@ public class AnimControl : MonoBehaviour
             AdjustSpeed(timeScaleBeforePause);
         }
         if(animStatus != Global.AnimStatus.Forward){
-            packetByID.Clear();
             SetAnimationStatus(Global.AnimStatus.Forward);
             Debug.Log("Forward in = " + Time.timeScale);
         }
@@ -278,7 +303,6 @@ public class AnimControl : MonoBehaviour
             AdjustSpeed(timeScaleBeforePause);
         }
         if(animStatus != Global.AnimStatus.Rewind){
-            packetByID.Clear();
             SetAnimationStatus(Global.AnimStatus.Rewind);
             Debug.Log("Rewind in = " + Time.timeScale);
         }
@@ -361,10 +385,12 @@ public class AnimControl : MonoBehaviour
         if(animStatus == Global.AnimStatus.Forward){
             RemoveForwardExpiredPackets();
             MoveForwardPackets();
+            FollowForwardSequence();
         }
         else if(animStatus == Global.AnimStatus.Rewind){
             RemoveRewindExpiredPackets();
             MoveRewindPackets();
+            FollowRewindSequence();
         }
         
         
@@ -374,18 +400,21 @@ public class AnimControl : MonoBehaviour
         if(animStatus == Global.AnimStatus.Forward){
             DispatchForwardPacket();
         }
-        else if(animStatus == Global.AnimStatus.Rewind){
-            DispatchRewindPacket();
-        }
+        // else if(animStatus == Global.AnimStatus.Rewind){
+        //     DispatchRewindPacket();
+        // }
     }
 
-    bool DispatchHostNodePacket(string hostNode, float time){
-        float spTime = 0, tpTime = 0;
+    bool DispatchHostNodePacket(string hostNode, int time){
+        int spTime = 0, tpTime = 0;
         bool doDispatch = true;
         foreach(string s in packetBySource.Keys){
             try{
                 spTime = packetBySource[s].ElementAt(packetBySourcePtr[s]+1).Key;
                 if(spTime < time){
+                    if(time == 17071057f){
+                        Debug.Log("host waiting for spTime = " + spTime);
+                    }
                     doDispatch = false;
                     break;
                 }
@@ -399,6 +428,9 @@ public class AnimControl : MonoBehaviour
             try{
                 tpTime = packetByTarget[t].ElementAt(packetByTargetPtr[t]+1).Key;
                 if(tpTime < time){
+                    if(time == 17071057f){
+                        Debug.Log("host waiting for tpTime = " + tpTime);
+                    }
                     doDispatch = false;
                     break;
                 }
@@ -414,12 +446,17 @@ public class AnimControl : MonoBehaviour
             GameObject go = InstantiatePacket(info);
 
             go.transform.position = info.sourcePos;
-            info.instantiationTime = RCtime();
             info.Object = go;
+            info.tag = Global.PacketTag.N;
             packetBySource[hostNode][time] = info;
             packetBySourcePtr[hostNode] = packetBySourcePtr[hostNode] + 1;
 
             // put to the running queue
+            // if(runningQueue.ContainsKey(info.packetTime)){
+            //     // eXCEPTION HANDELING IN FAST MODE
+            //     Destroy(runningQueue[info.packetTime].Object);
+            //     runningQueue.Remove(info.packetTime);
+            // }
             runningQueue.Add(info.packetTime, info);
             return true;
         }
@@ -427,16 +464,22 @@ public class AnimControl : MonoBehaviour
     }
 
     void DispatchForwardPacket(){
+        if(forwardSequence.Count!=0){
+            return;
+        }
         bool doTerminate=true;
+        bool packetInSeq=false;
+        string pid = null;
         foreach(string s in packetBySource.Keys){
 
             if(packetBySourcePtr[s] == packetBySource[s].Count && (packetByTarget.ContainsKey(s)==false || packetByTargetPtr[s] == packetByTarget[s].Count)){
                 continue;
             }
             // Dispatch it and update instantiate time, object
-            float spTime = -1f, tpTime = -1f;
+            int spTime = -1, tpTime = -1;
             try{
                 spTime = packetBySource[s].ElementAt(packetBySourcePtr[s]+1).Key;
+                doTerminate=false;
             }
             catch{
                 spTime = -1;
@@ -446,6 +489,7 @@ public class AnimControl : MonoBehaviour
             try{
                 // Debug.Log("F target = " + s + " : " + packetByTarget[s].Count + " : " + packetByTargetPtr[s] + " :: " + packetBySource[s].Count + " : " + packetBySourcePtr[s]);
                 tpTime = packetByTarget[s].ElementAt(packetByTargetPtr[s]+1).Key;
+                doTerminate=false;
             }
             catch{
                 tpTime = -1;
@@ -455,57 +499,51 @@ public class AnimControl : MonoBehaviour
             }
 
             if(spTime != -1 && topo.IsHost(s)==true){
+
                 if(DispatchHostNodePacket(s, spTime)){
                     doTerminate=false;
                 }
                 continue;
             }
+
+            packetInSeq = false;
+            if(spTime != -1){
+                pid = packetBySource[s][spTime].packetID;
+                if(packetIDSequencePtr[pid] < 0){
+                    packetIDSequencePtr[pid] = 0;
+                }
+                packetInSeq = (packetIDSequencePtr[pid] < packetIDSequence[pid].Count && packetIDSequence[pid][packetIDSequencePtr[pid]] == spTime);
+                if(packetInSeq==true && pid=="c7169ba12a5a9f9b1dce3179befc1c57"){
+                    Debug.Log(pid + " : " + packetInSeq + " : " + packetIDSequence[pid][packetIDSequencePtr[pid]] + " : " + spTime + " : " + tpTime + " : " + packetIDSequencePtr[pid]);
+                }                
+            }
             
-            
-            // Debug.Log(s + " : " + spTime + " : " + tpTime + " : " + RCtime());
-            if((packetByTarget.ContainsKey(s)==false && spTime!=-1f && spTime <= RCtime()) 
+                
+            if( (packetByTarget.ContainsKey(s)==false && spTime!=-1f && spTime <= (int)RCtime()) 
                 || (packetByTarget.ContainsKey(s)==true && tpTime!=-1 && spTime!=-1f && spTime < tpTime)
                 || (packetByTarget.ContainsKey(s)==true && tpTime==-1 && spTime!=-1f)
-                || (spTime != -1
-                && packetBySource[s][spTime].packetType != Global.PacketType.Parity
-                && packetByID.ContainsKey(packetBySource[s][spTime].packetID)
-                && topo.IsSatellite(packetByTarget[s][tpTime].source) == false
-                && topo.IsSatellite(packetByTarget[s][tpTime].target) == false
-                && topo.IsSatellite(packetBySource[s][spTime].source) == false
-                && topo.IsSatellite(packetBySource[s][spTime].target) == false
-                && topo.IsSatellite(packetByID[packetBySource[s][spTime].packetID].Item1) == false
-                && topo.IsSatellite(packetByID[packetBySource[s][spTime].packetID].Item2) == false
-                && packetByID[packetBySource[s][spTime].packetID].Item3 == packetBySource[s][spTime].origin
-                && packetByID[packetBySource[s][spTime].packetID].Item4 == packetBySource[s][spTime].destination 
-                && packetByID[packetBySource[s][spTime].packetID].Item2 == packetBySource[s][spTime].source) ){
+                || (packetInSeq) ){
                 
-                // // Debug.Log("F ACCEPTED = " + s + " : " + spTime + " : " + tpTime + " : " + RCtime());
-                // if(packetByID.ContainsKey(packetBySource[s][spTime].packetID) ){
-                //     // Debug.Log("F = " + packetBySource[s][spTime].packetID + " (" + packetByID[packetBySource[s][spTime].packetID].Item1 + " : " + packetByID[packetBySource[s][spTime].packetID].Item2 + " ) " + packetBySource[s][spTime].source + " : " + packetBySource[s][spTime].target);
-                //     Debug.Log("ID = " + packetBySourcePtr[s] + " : " + packetByTargetPtr[s] + " : " + spTime + " : " + tpTime + " : " + " (" + packetByID[packetBySource[s][spTime].packetID].Item1 + " : " + packetByID[packetBySource[s][spTime].packetID].Item2 + " ) " + packetBySource[s][spTime].source + " : " + packetBySource[s][spTime].target + " : " + packetBySource[s][spTime].packetID + "-------------------------------");
-                // }
-                // else{
-                //     Debug.Log("ND = " + packetBySourcePtr[s] + " : " + packetByTargetPtr[s] + " : " + spTime + " : " + tpTime + " : " + packetBySource[s][spTime].source + " : " + packetBySource[s][spTime].target + " : " + packetBySource[s][spTime].packetID );
-                // }
                 
                 
                 PacketInfo info = packetBySource[s][spTime];
                 GameObject go = InstantiatePacket(info);
 
                 go.transform.position = info.sourcePos;
-                info.instantiationTime = RCtime();
                 info.Object = go;
+                info.color = go.GetComponent<MeshRenderer>().material.color;
+                info.tag = Global.PacketTag.N;
                 // packetBySource[s].Remove(spTime);
                 packetBySource[s][spTime] = info;
                 packetBySourcePtr[s] = packetBySourcePtr[s] + 1;
 
                 // put to the running queue
-                if(runningQueue.ContainsKey(info.packetTime)){
-                    // eXCEPTION HANDELING IN FAST MODE
-                    Destroy(runningQueue[info.packetTime].Object);
-                    runningQueue.Remove(info.packetTime);
+                // if(runningQueue.ContainsKey(info.packetTime)){
+                //     // eXCEPTION HANDELING IN FAST MODE
+                //     Destroy(runningQueue[info.packetTime].Object);
+                //     runningQueue.Remove(info.packetTime);
 
-                }
+                // }
                 runningQueue.Add(info.packetTime, info);
                 
                 doTerminate = false;
@@ -527,69 +565,71 @@ public class AnimControl : MonoBehaviour
         }
     }
 
+    void FollowForwardSequence(){
+        // Debug.Log("Forward Count = " + forwardSequence.Count);
+        if(forwardSequence.Count == 0){
+            return;
+        }
+        
+        PacketInfo info = forwardSequence[forwardSequence.Count-1];
+        Debug.Log("Forward = " + info.instantiationTime + " : " + RCtime());
+        if(info.instantiationTime <= RCtime()){
+            GameObject go = InstantiatePacket(info);
+            go.transform.position = info.sourcePos;
+            info.Object = go;
+            info.color = go.GetComponent<MeshRenderer>().material.color;
+            info.tag = Global.PacketTag.F;
+
+            // put to the running queue
+            // if(runningQueue.ContainsKey(info.packetTime)){
+            //     // eXCEPTION HANDELING IN FAST MODE
+            //     Destroy(runningQueue[info.packetTime].Object);
+            //     runningQueue.Remove(info.packetTime);
+
+            // }
+            runningQueue.Add(info.packetTime, info);
+            forwardSequence.RemoveAt(forwardSequence.Count-1);
+        }
+    }
+
 
     void DispatchRewindPacket(){
-        foreach(string t in packetByTarget.Keys){
-            if(packetBySourcePtr[t]==-1 && (packetBySource.ContainsKey(t)==false || packetByTargetPtr[t] == -1)){
-                continue;
-            }
+        FollowRewindSequence();
+    }
 
-            // Debug.Log("R = " + t + " : " + packetByTarget[t].Count + " : " + packetByTargetPtr[t] + " :: " + packetBySource[t].Count + " : " + packetBySourcePtr[t]);
-            
-            // Dispatch it and update instantiate time, object
-            float spTime = -1f, tpTime = -1f;
-            try{
-                spTime = packetBySource[t].ElementAt(packetBySourcePtr[t]).Key;
+    void FollowRewindSequence(){
+        if(rewindSequence.Count == 0){
+            if(runningQueue.Count == 0){
+                DisableUpdate();
             }
-            catch{
-                spTime = -1;
-                if(packetBySource.ContainsKey(t)){
-                    packetBySourcePtr[t] = -1;
-                }
-            }
-            try{
-                tpTime = packetByTarget[t].ElementAt(packetByTargetPtr[t]).Key;
-            }
-            catch{
-                tpTime = -1;
-                packetByTargetPtr[t] = -1;
-            }
+            return;
+        }
+        PacketInfo info = rewindSequence[rewindSequence.Count-1];
+        Debug.Log("Rewind = " + info.expirationTime + " : " + RCtime());
+        if(info.expirationTime >= RCtime()){
+            GameObject go = InstantiatePacket(info);
+            go.transform.position = info.targetPos;
+            info.Object = go;
+            info.color = go.GetComponent<MeshRenderer>().material.color;
+            info.tag = Global.PacketTag.R;
 
-            // Debug.Log("R = " + t + " : " + spTime + " : " + tpTime + " : " + RCtime());
-            if((packetBySource.ContainsKey(t)==false && tpTime!=-1f && tpTime <= RCtime()) 
-                || (packetBySource.ContainsKey(t)==true && spTime!=-1 && tpTime!=-1f && spTime < tpTime)
-                || (packetBySource.ContainsKey(t)==true && spTime==-1 && tpTime!=-1f)
-                || ( tpTime != -1
-                && packetByTarget[t][tpTime].packetType != Global.PacketType.Parity
-                && packetByID.ContainsKey(packetByTarget[t][tpTime].packetID)
-                && topo.IsSatellite(packetBySource[t][spTime].source) == false
-                && topo.IsSatellite(packetBySource[t][spTime].target) == false
-                && topo.IsSatellite(packetByTarget[t][tpTime].source) == false
-                && topo.IsSatellite(packetByTarget[t][tpTime].target) == false
-                && topo.IsSatellite(packetByID[packetByTarget[t][tpTime].packetID].Item1) == false
-                && topo.IsSatellite(packetByID[packetByTarget[t][tpTime].packetID].Item2) == false
-                && packetByID[packetByTarget[t][tpTime].packetID].Item3 == packetByTarget[t][tpTime].origin
-                && packetByID[packetByTarget[t][tpTime].packetID].Item4 == packetByTarget[t][tpTime].destination 
-                && packetByID[packetByTarget[t][tpTime].packetID].Item1 == packetByTarget[t][tpTime].target) ){
-                // Debug.Log("R ACCEPTED = " + t + " : " + spTime + " : " + tpTime + " : " + RCtime());
-                // Debug.Log("R = " + packetByTarget[t][tpTime].packetID + " : " + packetByID[packetByTarget[t][tpTime].packetID].Item1 + " - " + packetByID[packetByTarget[t][tpTime].packetID].Item2 + " : " + packetByTarget[t][tpTime].source);
-                PacketInfo info = packetByTarget[t][tpTime];
-                GameObject go = InstantiatePacket(info);
+            packetByTargetPtr[info.target] = packetByTargetPtr[info.target] - 1;
 
-                go.transform.position = info.targetPos;
-                info.instantiationTime = RCtime();
-                info.Object = go;
-                // packetBySource[s].Remove(spTime);
-                packetByTarget[t][tpTime] = info;
-                packetByTargetPtr[t] = packetByTargetPtr[t] - 1;
-                // put to the running queue
-                runningQueue.Add(info.packetTime, info);
-            }
+            // // put to the running queue
+            // if(runningQueue.ContainsKey(info.packetTime)){
+            //     // eXCEPTION HANDELING IN FAST MODE
+            //     Destroy(runningQueue[info.packetTime].Object);
+            //     runningQueue.Remove(info.packetTime);
+
+            // }
+            runningQueue.Add(info.packetTime, info);
+            rewindSequence.RemoveAt(rewindSequence.Count-1);
         }
     }
 
     GameObject InstantiatePacket(PacketInfo pInfo){
         // Debug.Log(RCtime() + " : " + Time.time + " : " + Time.fixedTime + " : " + Time.fixedUnscaledTime + " : " + Time.realtimeSinceStartup + " : " + Time.timeSinceLevelLoad + " : " + Time.unscaledTime);
+        Debug.Log(RCtime() + " : " + pInfo.packetTime + " : " + pInfo.packetID + " : " + pInfo.source + " : " + pInfo.target);
         GameObject packet_prefab = Resources.Load("Packet") as GameObject;
         GameObject go = Instantiate(packet_prefab) as GameObject;
         go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(pInfo.origin, pInfo.destination, pInfo.packetID, pInfo.packetType, go.GetComponent<MeshRenderer>().material.color);
@@ -597,13 +637,13 @@ public class AnimControl : MonoBehaviour
     }
 
     void MoveForwardPackets(){
-        List<float> allKeys = new List<float>();
-        foreach(float k in runningQueue.Keys){
+        List<int> allKeys = new List<int>();
+        foreach(int k in runningQueue.Keys){
             allKeys.Add(k);
         }
 
         
-        foreach(float k in allKeys){
+        foreach(int k in allKeys){
             PacketInfo info = runningQueue[k];
             GameObject go = info.Object;
             Vector3 endPos = info.targetPos;
@@ -618,13 +658,13 @@ public class AnimControl : MonoBehaviour
     }
 
     void MoveRewindPackets(){
-        List<float> allKeys = new List<float>();
-        foreach(float k in runningQueue.Keys){
+        List<int> allKeys = new List<int>();
+        foreach(int k in runningQueue.Keys){
             allKeys.Add(k);
         }
 
         
-        foreach(float k in allKeys){
+        foreach(int k in allKeys){
             PacketInfo info = runningQueue[k];
             GameObject go = info.Object;
             Vector3 endPos = info.sourcePos;
@@ -641,7 +681,7 @@ public class AnimControl : MonoBehaviour
         // Find expired objects
         List<PacketInfo> expPkt = new List<PacketInfo>();        
         GameObject go;
-        float pTime;
+        int pTime;
         PacketInfo pInfo;
 
         foreach(var k in runningQueue.Keys){
@@ -681,24 +721,26 @@ public class AnimControl : MonoBehaviour
         }
 
         // Remove expired objects
-        float pTime;
+        int pTime;
         string end;
         foreach(PacketInfo info in expPkt){
             pTime = info.packetTime;
             go = info.Object;
             end = info.target;
             // packetByTarget[end].Remove(pTime);
+            // if(info.tag == Global.PacketTag.N){
+            //     packetByTargetPtr[end] = packetByTargetPtr[end] + 1;
+            // }
             packetByTargetPtr[end] = packetByTargetPtr[end] + 1;
+            packetIDSequencePtr[info.packetID] = packetIDSequencePtr[info.packetID] + 1;
+            PacketInfo rInfo = info;
+            rInfo.expirationTime = RCtime();
+            rewindSequence.Add(rInfo);
     
             // Debug.Log("distroy = " + info.source + " : " + info.target + " : " + pTime + " : " +  info.packetID + " : " + packetByTargetPtr[end]);
             
             runningQueue.Remove(pTime);
-            if(packetByID.ContainsKey(info.packetID)){
-                packetByID[info.packetID] = new Tuple<string, string, string, string>(info.source, info.target, info.origin, info.destination);
-            }
-            else{
-                packetByID.Add(info.packetID, new Tuple<string, string, string, string>(info.source, info.target, info.origin, info.destination));
-            }
+            
             Destroy(go);
         }
         expPkt.Clear();
@@ -724,20 +766,15 @@ public class AnimControl : MonoBehaviour
         }
 
         // Remove expired objects
-        float pTime;
-        string end;
+        int pTime;
         foreach(PacketInfo info in expPkt){
             pTime = info.packetTime;
             go = info.Object;
-            end = info.source;
-            packetBySourcePtr[end] = packetBySourcePtr[end] - 1;
+            packetIDSequencePtr[info.packetID] = packetIDSequencePtr[info.packetID] - 1;
+            PacketInfo fInfo = info;
+            fInfo.instantiationTime = RCtime();
+            forwardSequence.Add(fInfo);
             runningQueue.Remove(pTime);
-            if(packetByID.ContainsKey(info.packetID)){
-                packetByID[info.packetID] = new Tuple<string, string, string, string>(info.source, info.target, info.origin, info.destination);
-            }
-            else{
-                packetByID.Add(info.packetID, new Tuple<string, string, string, string>(info.source, info.target, info.origin, info.destination));
-            }
             Destroy(go);
         }
         expPkt.Clear();
@@ -750,3 +787,9 @@ public class AnimControl : MonoBehaviour
         enabled = false;
     }
 }
+
+
+//packetBySource
+//packetByTarget
+//packetIDSequence
+// runningQueue

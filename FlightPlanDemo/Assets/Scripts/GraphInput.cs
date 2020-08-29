@@ -54,28 +54,22 @@ public class GraphInput : MonoBehaviour
             color = GetColors(new List<string>(){"#ff00ff", "#ffffff", "#0000ff", "#ffff00"});
         }
         else if(Global.chosanExperimentName == "complete_all_e2e"){
-            // animTime = 80f;
+            animTime = 80f;
             show = false;
             legendText = "MCD Request\nMCD Reply\nMCD Cached\nCompressed\nParity\nICMP Request\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
             color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ff00ff", "#ffffff", "#0000ff", "#ffff00", "#ff0000"});
         }
         else if(Global.chosanExperimentName == "complete_e2e_1_hl3new"){
-            // animTime = 200f;
+            animTime = 3954.756f;
             show = false;
             legendText = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nCompressed\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
             color = GetColors(new List<string>(){"#0000ff", "#ffff00", "#ff00ff","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000"});
         }
         else if(Global.chosanExperimentName == "complete_e2e_2_hl3new"){
-            // animTime = 200f;
+            animTime = 4783.464f;
             show = false;
             legendText = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
             color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#0000ff"});
-        }
-        else if(Global.chosanExperimentName == "complete_2_FW_positive"){
-            show = true;
-            colorControl.SetColorPattern(Global.ColorPattern.PathBased);
-            yield return StartCoroutine(GetGraphLogText("complete_2_FW_positive/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("complete_2_FW_positive/graph_log2.txt"));
         }
         else if(Global.chosanExperimentName == "complete_2_FW"){
             show = true;
@@ -91,6 +85,12 @@ public class GraphInput : MonoBehaviour
             yield return StartCoroutine(GetGraphLogText("split1/graph_log2.txt"));
             legendText = "ICMP Request\nICMP Reply";
             color = GetColors(new List<string>(){"#0000ff", "#ffff00"});
+        }
+        else if(Global.chosanExperimentName == "split2_all"){
+            animTime = 4783.464f;
+            show = false;
+            legendText = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
+            color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#0000ff"});
         }
         graph.ShowLegendColor(legendText, color);
     }
@@ -133,6 +133,7 @@ public class GraphInput : MonoBehaviour
     public void GraphInputInit(){
         if(show == false){
             graph.HideGraph();
+            sliderControl.SetSliderMaxValue(animTime);
             return;
         }
         graphLogReader.Clear();
@@ -158,6 +159,7 @@ public class GraphInput : MonoBehaviour
         if(nCurveMax > 2){
             graph.GraphInit(Global.GraphType.Type1, new Color(0f, 1f, 1f, 1f), new Color(0f, 1f, 1f, 0.5f), xMax, yMax );
         }
+        sliderControl.SetSliderMaxValue(animTime);
         UpdateEnable();
     }
 
@@ -168,7 +170,7 @@ public class GraphInput : MonoBehaviour
             legend = "<color=#ffff00>---- No FEC</color>\n <color=#00ff40>---- With FEC (k=5, h=1)</color>";
             title = "FEC Effectiveness";
             nCurveMax = 2;
-            // animTime = 515;
+            animTime = 515;
             targetNode = "p1h0";
             timeOffset[0] = 9515f;
             timeOffset[1] = 8618f;
@@ -180,7 +182,7 @@ public class GraphInput : MonoBehaviour
             legend = "<color=#ffff00>---- No MCD</color>\n <color=#00ff40>---- With MCD</color>";
             title = "MCD Effectiveness";
             nCurveMax = 2;
-            // animTime = 2400f;
+            animTime = 2400f;
             targetNode = "p1h0";
             GetCoordinates();
         }
@@ -190,19 +192,8 @@ public class GraphInput : MonoBehaviour
             legend = "<color=#ffff00>---- Before Header Compression</color>\n <color=#00ff40>---- After Header Compression</color>";
             title = "HC Effectiveness";
             nCurveMax = 2;
-            // animTime = 342f;
+            animTime = 342f;
             targetNode = "p0e0";
-            GetCoordinates();
-        }
-        else if(Global.chosanExperimentName == "complete_2_FW_positive"){
-            xLabel = "Number of packets";
-            yLabel = "% success rate";
-            legend = "<color=#ffff00>---- Positive Test</color>\n <color=#00ff40>---- Negative Test</color>";
-            title = "Firewall Effectiveness";
-            nCurveMax = 2;
-            // animTime = 65f;
-            targetNode = "p1e1";
-            isXtime = false;
             GetCoordinates();
         }
         else if(Global.chosanExperimentName == "complete_2_FW"){
@@ -211,7 +202,7 @@ public class GraphInput : MonoBehaviour
             legend = "<color=#ffff00>---- Positive Test</color>\n <color=#00ff40>---- Negative Test</color>";
             title = "Firewall Effectiveness";
             nCurveMax = 2;
-            // animTime = 68f;
+            animTime = 82.418f;
             targetNode = "p1e1";
             isXtime = false;
             GetCoordinates();
@@ -222,7 +213,7 @@ public class GraphInput : MonoBehaviour
             legend = "<color=#ffff00>---- FPoffload</color>\n <color=#00ff40>---- FPoffload2</color>";
             title = "Failover Mechanism";
             nCurveMax = 2;
-            // animTime = 121f;
+            animTime = 121.012f;
             targetNode = "p0e0";
             GetCoordinates();
             relative_scale[0] = 1;

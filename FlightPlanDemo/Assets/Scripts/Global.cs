@@ -37,6 +37,12 @@ public static class Global
         PathBased,
         None,
     }
+
+    public enum PacketTag{
+        N=0,
+        F,
+        R
+    }
     public static string chosanExperimentName;
     public static string experimentYaml;
     public static string experimentMetadata;

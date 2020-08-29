@@ -5,10 +5,7 @@ complete_all_e2e
 complete_fec_short
 complete_e2e_1_hl3new
 complete_e2e_2_hl3new
-complete_e2e_1_hl3new_concurrent
-complete_2_FW_positive
 complete_2_FW
-complete_2_hl3new
 split1
 split2_all
 split2_all_fec
