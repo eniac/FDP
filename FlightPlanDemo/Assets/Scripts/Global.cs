@@ -29,7 +29,8 @@ public static class Global
         MCDcache,
         HC,
         TCP,
-        ICMP
+        ICMP,
+        NAK
     }
     public enum ColorPattern{
         OriginBased=0,

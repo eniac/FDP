@@ -157,7 +157,8 @@ for pcap_file in "${PCAP_DIR}"/*; do
   # Formate of each row in temp file is as follows:
   # time_stamp source target packet_identifier
   is_sat="0"
-  if [[ " ${sat_array[@]} " =~ " ${nodes[0]} " ]] || [[ " ${sat_array[@]} " =~ " ${nodes[1]} " ]] 
+  # if [[ " ${sat_array[@]} " =~ " ${nodes[0]} " ]] || [[ " ${sat_array[@]} " =~ " ${nodes[1]} " ]] 
+  if [[ " ${sat_array[@]} " =~ " ${nodes[0]} " ]]
   then
     is_sat="1"
   else
@@ -281,6 +282,13 @@ for pcap_file in "${PCAP_DIR}"/*; do
       else{
         # Flightplan header
 
+        state = substr($9,3,2)
+        nak = 0
+        # Additional packet with ACK/NAK set in flightplan header 
+        if(args[2] == "1" && (state != "00")) {
+          nak = 1
+        }
+
         getline
         getline
         getline
@@ -311,19 +319,32 @@ for pcap_file in "${PCAP_DIR}"/*; do
           if(protocol == "06"){
             getline
             lastIDf = lID""$5
-            printf "%s %s %s TCP\n", lastIDf, src, dest
+            if(nak == 1){
+              printf "%s %s %s NAK\n", lastIDf, src, dest
+            }
+            else{
+              printf "%s %s %s TCP\n", lastIDf, src, dest
+            }
           }
 
           # ICMP protocol
           else if(protocol == "01"){
             lastIDf = lID
-            printf "%s %s %s ICMP\n", lastIDf, src, dest
+            if(nak == 1){
+              printf "%s %s %s NAK\n", lastIDf, src, dest
+            }
+            else{
+              printf "%s %s %s ICMP\n", lastIDf, src, dest
+            }
           }
 
           # UDP(MEMCACHE) header
           else if(protocol == "11"){
             lastID = lID
-            if($8=="0000"){
+            if(nak == 1){
+              printf "%s %s %s NAK\n", lastID, src, dest
+            }
+            else if($8=="0000"){
               printf "%s %s %s MCDC\n", lastID, src, dest
             }
             else{
@@ -355,7 +376,10 @@ for pcap_file in "${PCAP_DIR}"/*; do
             if(protocol == "11"){
               lastID = lID
               getline
-              if($3=="0000"){
+              if(nak == 1){
+                printf "%s %s %s NAK\n", lastID, src, dest
+              }
+              else if($3=="0000"){
                 printf "%s %s %s MCDC\n", lastID, src, dest
               }
               else{
@@ -366,14 +390,24 @@ for pcap_file in "${PCAP_DIR}"/*; do
             # ICMP header
             else if(protocol == "01"){
               lastID = lID
-              printf "%s %s %s ICMP\n", lastID, src, dest
+              if(nak == 1){
+                printf "%s %s %s NAK\n", lastID, src, dest
+              }
+              else{
+                printf "%s %s %s ICMP\n", lastID, src, dest
+              }
             }
 
             # TCP header
             else if(protocol == "06"){
               getline
               lastID = lID""$8
-              printf "%s %s %s TCP\n", lastID, src, dest
+              if(nak == 1){
+                printf "%s %s %s NAK\n", lastID, src, dest  
+              }
+              else{
+                printf "%s %s %s TCP\n", lastID, src, dest
+              }
             }
           }
 
@@ -382,12 +416,22 @@ for pcap_file in "${PCAP_DIR}"/*; do
             lID = $8
             getline
             lastID = lID""$3
-            printf "%s 00000000 00000000 HC\n", lastID
+            if(nak == 1){
+              printf "%s 00000000 00000000 NAK\n", lastID
+            }
+            else{
+              printf "%s 00000000 00000000 HC\n", lastID
+            }
           }
 
           # Parity
           else if($4 == "081c"){
-            printf "%s 00000000 00000000 PR\n", lastID
+            if(nak == 1){
+              printf "%s 00000000 00000000 NAK\n", lastID
+            }
+            else{
+              printf "%s 00000000 00000000 PR\n", lastID
+            }
           }
         }
       }

@@ -47,15 +47,19 @@ public class ColorControl : MonoBehaviour
             // Debug.Log("COLOR = " + color + " : " + pid);
             return color;
         }
+        // If packet is NAK
+        else if(pType == Global.PacketType.NAK){
+            return new Color(0.925f, 0.066f, 0.6156f);
+        }
 
         // If packet type is MCD cache
-        if(pType == Global.PacketType.MCDcache){
+        else if(pType == Global.PacketType.MCDcache){
             return mcdCacheColor;
         }
         else if(pType == Global.PacketType.Parity){
             return Color.white;
         }
-        // Packet type is other then mcd and normal
+        // Packet type is HC
         else if(pType == Global.PacketType.HC){
             return new Color(1f, 0, 1f);
         }

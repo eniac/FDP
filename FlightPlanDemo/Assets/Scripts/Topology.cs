@@ -98,13 +98,6 @@ public class Topology : MonoBehaviour
         Debug.Log("I am in Topology :)");
     }
 
-    // Find out dropper Node
-    bool IsDropper(string node){
-        if(dropper_names.Contains(node)){
-            return true;
-        }
-        return false;
-    }
 
     // Find positions of each node in the topology
     public void GetPosition(){
@@ -863,6 +856,14 @@ public class Topology : MonoBehaviour
 
     public bool IsSatellite(string name){
         if(sat_names.Contains(name)){
+            return true;
+        }
+        return false;
+    }
+
+    // Find out dropper Node
+    public bool IsDropper(string node){
+        if(dropper_names.Contains(node)){
             return true;
         }
         return false;

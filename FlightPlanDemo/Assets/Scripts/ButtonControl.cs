@@ -166,4 +166,14 @@ public class ButtonControl : MonoBehaviour
             showBlink = true;
         }
     }
+
+    public void Hyperlink(){
+        if( Application.platform==RuntimePlatform.WebGLPlayer )
+        {
+            Application.ExternalEval("window.open(\"https://flightplan.cis.upenn.edu/\")");
+        }
+        else{
+            Application.OpenURL("https://flightplan.cis.upenn.edu/");
+        }
+    }
 }

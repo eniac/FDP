@@ -83,14 +83,14 @@ public class GraphInput : MonoBehaviour
             show = true;
             yield return StartCoroutine(GetGraphLogText("split1/graph_log1.txt"));
             yield return StartCoroutine(GetGraphLogText("split1/graph_log2.txt"));
-            legendText = "ICMP Request\nICMP Reply";
-            color = GetColors(new List<string>(){"#0000ff", "#ffff00"});
+            legendText = "ICMP Request\nICMP Reply\nNAK";
+            color = GetColors(new List<string>(){"#0000ff", "#ffff00", "#EC119D"});
         }
         else if(Global.chosanExperimentName == "split2_all"){
             animTime = 4783.464f;
             show = false;
-            legendText = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
-            color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#0000ff"});
+            legendText = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request\nNAK";
+            color = GetColors(new List<string>(){"#0000ff", "#ffff00","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000", "#EC119D"});
         }
         graph.ShowLegendColor(legendText, color);
     }
