@@ -59,37 +59,37 @@ public class GraphInput : MonoBehaviour
             legendText = "MCD Request\nMCD Reply\nMCD Cached\nCompressed\nParity\nICMP Request\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
             color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ff00ff", "#ffffff", "#0000ff", "#ffff00", "#ff0000"});
         }
-        else if(Global.chosanExperimentName == "complete_e2e_1_hl3new"){
+        else if(Global.chosanExperimentName == "3_complete_e2e_1_hl3new"){
             animTime = 3954.756f;
             show = false;
             legendText = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nCompressed\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
             color = GetColors(new List<string>(){"#0000ff", "#ffff00", "#ff00ff","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000"});
         }
-        else if(Global.chosanExperimentName == "complete_e2e_2_hl3new"){
+        else if(Global.chosanExperimentName == "3_complete_e2e_2_hl3new"){
             animTime = 4783.464f;
             show = false;
             legendText = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
             color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#0000ff"});
         }
-        else if(Global.chosanExperimentName == "complete_2_FW"){
+        else if(Global.chosanExperimentName == "5_complete_2_FW"){
             show = true;
             colorControl.SetColorPattern(Global.ColorPattern.None);
-            yield return StartCoroutine(GetGraphLogText("complete_2_FW/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("complete_2_FW/graph_log2.txt"));
+            yield return StartCoroutine(GetGraphLogText("5_complete_2_FW/graph_log1.txt"));
+            yield return StartCoroutine(GetGraphLogText("5_complete_2_FW/graph_log2.txt"));
             legendText = "TCP Packets";
             color = GetColors(new List<string>(){"#ffff00"});
         }
-        else if(Global.chosanExperimentName == "split1"){
+        else if(Global.chosanExperimentName == "7_split1"){
             show = true;
-            yield return StartCoroutine(GetGraphLogText("split1/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("split1/graph_log2.txt"));
-            legendText = "ICMP Request\nICMP Reply\nNAK";
+            yield return StartCoroutine(GetGraphLogText("7_split1/graph_log1.txt"));
+            yield return StartCoroutine(GetGraphLogText("7_split1/graph_log2.txt"));
+            legendText = "ICMP Request\nICMP Reply\nFeedback";
             color = GetColors(new List<string>(){"#0000ff", "#ffff00", "#EC119D"});
         }
-        else if(Global.chosanExperimentName == "split2_all"){
+        else if(Global.chosanExperimentName == "6_split2_all"){
             animTime = 4783.464f;
             show = false;
-            legendText = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request\nNAK";
+            legendText = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request\nFeedback";
             color = GetColors(new List<string>(){"#0000ff", "#ffff00","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000", "#EC119D"});
         }
         graph.ShowLegendColor(legendText, color);
@@ -149,7 +149,7 @@ public class GraphInput : MonoBehaviour
             graph.GraphInit(Global.GraphType.Type0, new Color(1f, 1f, 0f, 1f), new Color(1f, 1f, 0f, 0.5f), xMax, yMax);
         }
         if(nCurveMax > 1){
-            if(Global.chosanExperimentName == "complete_2_FW"){
+            if(Global.chosanExperimentName == "5_complete_2_FW"){
                 graph.GraphInit(Global.GraphType.Type1, new Color(0f, 1f, 0.25f, 1f), new Color(0f, 1f, 0.25f, 0.5f), xMax, yMax, 4f );
             }
             else{
@@ -196,7 +196,7 @@ public class GraphInput : MonoBehaviour
             targetNode = "p0e0";
             GetCoordinates();
         }
-        else if(Global.chosanExperimentName == "complete_2_FW"){
+        else if(Global.chosanExperimentName == "5_complete_2_FW"){
             xLabel = "% test completed";
             yLabel = "% success rate";
             legend = "<color=#ffff00>---- Positive Test</color>\n <color=#00ff40>---- Negative Test</color>";
@@ -207,7 +207,7 @@ public class GraphInput : MonoBehaviour
             isXtime = false;
             GetCoordinates();
         }
-        else if(Global.chosanExperimentName == "split1"){
+        else if(Global.chosanExperimentName == "7_split1"){
             xLabel = "time (sec)";
             yLabel = "# bytes passing through the devices";
             legend = "<color=#ffff00>---- FPoffload</color>\n <color=#00ff40>---- FPoffload2</color>";
@@ -306,7 +306,7 @@ public class GraphInput : MonoBehaviour
             div = Global.U_SEC;
         }
 
-        if(Global.chosanExperimentName == "complete_2_FW"){
+        if(Global.chosanExperimentName == "5_complete_2_FW"){
             for(int i=0; i<graphLogText.Count; i++){
                 if(lastData.Count>0 && lastData[i] != null){
                     coord = lastData[i].Split(' ');

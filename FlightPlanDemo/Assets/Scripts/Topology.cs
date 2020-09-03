@@ -59,6 +59,7 @@ public class Topology : MonoBehaviour
     List<string> highlightedNodes;
     Dictionary<string, Color> colorDict;
     List<GameObject> DropperLinkObjects = new List<GameObject>();
+    List<GameObject> bubbleObject = new List<GameObject>();
 
     public enum BlendMode
     {
@@ -398,7 +399,7 @@ public class Topology : MonoBehaviour
             // Instantiate Object and set position
             GameObject go = Instantiate(h_prefab) as GameObject;
             go.transform.position = positions[h];
-
+            go.name = h;
             hostObjectDict.Add(h, go);
             
             go.transform.Find("CanvasFront/HostText").gameObject.GetComponent<Text>().text = h.ToString();
@@ -422,10 +423,11 @@ public class Topology : MonoBehaviour
 
         // Showing Switches
         GameObject s_prefab = Resources.Load("Switch") as GameObject;
+        // GameObject bubble_prefab = Resources.Load("ChatBubble") as GameObject;
         foreach (string s in s_names){
             GameObject go = Instantiate(s_prefab) as GameObject;
             go.transform.position = positions[s];
-            
+            go.name = s;
             goList.Add(go);
             switchObjectDict.Add(s, go);
             if(s.ToLower().Contains(Constants.DROPPER_STRING)){
@@ -445,6 +447,7 @@ public class Topology : MonoBehaviour
         foreach(string sat in sat_names){
             GameObject go = Instantiate(sat_prefab) as GameObject;
             go.transform.position = positions[sat];
+            go.name = sat;
             goList.Add(go);
             satObjectDict.Add(sat, go);
             DisplayLabels(ref go, sat, "Sat");

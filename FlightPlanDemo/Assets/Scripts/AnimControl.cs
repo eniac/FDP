@@ -75,6 +75,7 @@ public class AnimControl : MonoBehaviour
     List<PacketInfo> forwardSequence = new List<PacketInfo>();
     Dictionary<int, PacketInfo> runningQueue = new Dictionary<int, PacketInfo>();
     Dictionary<string, GameObject> HoldbackPackets = new Dictionary<string, GameObject>();  // Packetid : game object
+    Dictionary<string, GameObject> HoldBackParity = new Dictionary<string, GameObject>();
     HashSet<int> packetTime = new HashSet<int>();
 
     void Start(){
@@ -275,12 +276,24 @@ public class AnimControl : MonoBehaviour
         sliderControl.SetTimeSlider(0);
         topo.MakeLinksTransparent();
         topo.MakeNodesTransparent();
+        if(Time.timeScale == 0){
+            if(timeScaleBeforePause == 0){
+                AdjustSpeed(1f);
+            }
+            else{
+                AdjustSpeed(timeScaleBeforePause);
+            }
+        }
         EnableUpdate();
         InvokeRepeating("DispatchPacket", 0f, 0.1f); 
     }
 
     void SetAnimationStatus(Global.AnimStatus status){
         animStatus = status;
+    }
+
+    public Global.AnimStatus GetAnimStatus(){
+        return animStatus;
     }
     public void Pause(){
         Debug.Log("Pause start = " + Time.timeScale);
@@ -620,7 +633,7 @@ public class AnimControl : MonoBehaviour
         GameObject go = Instantiate(packet_prefab) as GameObject;
         go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(pInfo.origin, pInfo.destination, pInfo.packetID, pInfo.packetType, go.GetComponent<MeshRenderer>().material.color);
         Debug.Log(pInfo.packetID + " : " + pInfo.packetTime + " : " + pInfo.source + " : " + pInfo.target );
-        RemoveHoldBackPackets(pInfo.packetID);
+        RemoveHoldBackPackets(pInfo.packetID, pInfo.packetType);
 
         return go;
     }
@@ -687,6 +700,7 @@ public class AnimControl : MonoBehaviour
         runningQueue.Clear();
         expPkt.Clear();
         HoldbackPackets.Clear();
+        HoldBackParity.Clear();
     }
     void RemoveForwardExpiredPackets(){
         // Find expired objects
@@ -731,22 +745,51 @@ public class AnimControl : MonoBehaviour
             
             runningQueue.Remove(pTime);
             
+            
+            // if(packetIDSequencePtr[info.packetID] >= packetIDSequence[info.packetID].Count
+            //     || topo.IsDropper(info.target)
+            //     || info.packetType==Global.PacketType.Parity){
+            //     Destroy(go);
+            // }
+            // else{
+            //     if(HoldbackPackets.ContainsKey(info.packetID)){
+            //         Destroy(HoldbackPackets[info.packetID]);
+            //         // Destroy(go);
+            //         HoldbackPackets.Remove(info.packetID);
+            //     }
+            //     else{
+            //         HoldbackPackets.Add(info.packetID, go);
+            //     }
+            // }
+
+            bool drop=true;
+            if(topo.IsDropper(info.target)||info.packetType==Global.PacketType.Parity){
+                for(int i=packetIDSequencePtr[info.packetID]; i<packetIDSequence[info.packetID].Count; i++){
+                    Debug.Log("DROP = " + i + " : " + info.packetID + " : " + info.packetType + " : " + info.packetTime + " : " + packetIDSequence[info.packetID][i] + " : " + packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]));
+                    if(packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]) ){
+                        Debug.Log("DROP = " + i + " : " + info.packetID + " : " + info.packetType + " : " + info.packetTime + " : " + packetIDSequence[info.packetID][i] + " : " + packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]) + " : " + packetBySource[info.target][packetIDSequence[info.packetID][i]].packetType);
+                    }
+                    if(packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]) 
+                        && packetBySource[info.target][packetIDSequence[info.packetID][i]].packetType == info.packetType){
+                        drop = false;
+                        break;
+                    }
+                }
+            }
+
             if(packetIDSequencePtr[info.packetID] >= packetIDSequence[info.packetID].Count
-                || topo.IsDropper(rInfo.target)
-                || info.packetType==Global.PacketType.Parity){
-                Destroy(go);
+                || ((topo.IsDropper(info.target)||info.packetType==Global.PacketType.Parity)&& drop==true)){
+                    Destroy(go);
             }
             else{
-                // HoldbackPackets.Add(info.packetID, go);
-                if(HoldbackPackets.ContainsKey(info.packetID)){
-                    Destroy(HoldbackPackets[info.packetID]);
-                    Destroy(go);
-                    HoldbackPackets.Remove(info.packetID);
+                if(info.packetType==Global.PacketType.Parity){
+                    HoldBackParity.Add(info.packetID, go);
                 }
                 else{
                     HoldbackPackets.Add(info.packetID, go);
                 }
             }
+            
         }
         expPkt.Clear();
     }
@@ -780,17 +823,35 @@ public class AnimControl : MonoBehaviour
             forwardSequence.Add(fInfo);
             runningQueue.Remove(pTime);
 
-            if(packetIDSequencePtr[fInfo.packetID] < 0 
-                || fInfo.packetType==Global.PacketType.Parity 
-                || topo.IsDropper(fInfo.target)){
+            // if(packetIDSequencePtr[fInfo.packetID] < 0 
+            //     || fInfo.packetType==Global.PacketType.Parity 
+            //     || topo.IsDropper(fInfo.target)){
+            //     Destroy(go);
+            // }
+
+            // if(packetIDSequencePtr[fInfo.packetID] < 0
+            //     || fInfo.packetType==Global.PacketType.Parity ){
+            //     Destroy(go);
+            // }
+            // else{
+            //     // HoldbackPackets.Add(info.packetID, go);
+            //     if(HoldbackPackets.ContainsKey(info.packetID)){
+            //         Destroy(HoldbackPackets[info.packetID]);
+            //         // Destroy(go);
+            //         HoldbackPackets.Remove(info.packetID);
+            //     }
+            //     else{
+            //         HoldbackPackets.Add(info.packetID, go);
+            //     }
+            // }
+
+            if(packetIDSequencePtr[info.packetID] < 0
+                || info.packetType==Global.PacketType.Parity ){
                 Destroy(go);
             }
             else{
-                // HoldbackPackets.Add(info.packetID, go);
-                if(HoldbackPackets.ContainsKey(info.packetID)){
-                    Destroy(HoldbackPackets[info.packetID]);
-                    Destroy(go);
-                    HoldbackPackets.Remove(info.packetID);
+                if(info.packetType == Global.PacketType.Parity){
+                    HoldBackParity.Add(info.packetID, go);
                 }
                 else{
                     HoldbackPackets.Add(info.packetID, go);
@@ -800,10 +861,18 @@ public class AnimControl : MonoBehaviour
         expPkt.Clear();
     }
 
-    void RemoveHoldBackPackets(string pid){
-        if(HoldbackPackets.ContainsKey(pid)==true){
-            Destroy(HoldbackPackets[pid]);
-            HoldbackPackets.Remove(pid);
+    void RemoveHoldBackPackets(string pid, Global.PacketType pType){
+        if(pType==Global.PacketType.Parity){
+            if(HoldBackParity.ContainsKey(pid)==true){
+                Destroy(HoldBackParity[pid]);
+                HoldBackParity.Remove(pid);
+            }
+        }
+        else{
+            if(HoldbackPackets.ContainsKey(pid)==true){
+                Destroy(HoldbackPackets[pid]);
+                HoldbackPackets.Remove(pid);
+            }
         }
     }
 

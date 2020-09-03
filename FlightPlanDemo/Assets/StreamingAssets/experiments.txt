@@ -2,10 +2,9 @@ complete_fec_e2e
 complete_mcd_e2e
 complete_hc_e2e
 complete_all_e2e
-complete_fec_short
-complete_e2e_1_hl3new
+3_complete_e2e_1_hl3new
+3_complete_e2e_2_hl3new
+5_complete_2_FW
+6_split2_all
+7_split1
 complete_e2e_2_hl3new
-complete_2_FW
-split1
-split2_all
-split2_all_fec

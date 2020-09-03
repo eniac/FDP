@@ -7,8 +7,9 @@ public class DemoScript : MonoBehaviour
     public YamlParser yamlParser;
     public Topology topo;
     // public AnimationControl anim; 
-    [SerializeField] AnimControl anim;
+    [SerializeField] AnimControl anim = default;
     [SerializeField] GraphInput graphInput = default;
+    [SerializeField] BillBoardControl billBoard = default;
 
     // Start is called before the first frame update
     public IEnumerator Start(){
@@ -23,6 +24,7 @@ public class DemoScript : MonoBehaviour
         topo.Display();
         topo.GetPosition();
         topo.DisplayTopology();
+        billBoard.BillBoardInit();
 
         // yield return StartCoroutine(anim.GetElapsedTimeFile());
         
