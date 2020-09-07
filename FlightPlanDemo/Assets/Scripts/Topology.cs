@@ -639,7 +639,7 @@ public class Topology : MonoBehaviour
         }
         else if(obj_type=="Sat"){
             text.color = Color.black;
-            text.fontSize = 40;
+            text.fontSize = 35;
         }
         text.horizontalOverflow = HorizontalWrapMode.Wrap;
         text.verticalOverflow = VerticalWrapMode.Overflow;
@@ -870,5 +870,32 @@ public class Topology : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void SetHeloEffect(string node){
+        // if(switchObjectDict.ContainsKey(node)){
+        //     GameObject helo_switch_prefab = Resources.Load("HaloSwitch") as GameObject;
+        //     GameObject nodeObj = switchObjectDict[node];
+        //     GameObject halo = Instantiate(helo_switch_prefab) as GameObject;
+        //     halo.transform.SetParent (nodeObj.transform, false);
+        // }
+        // else if(satObjectDict.ContainsKey(node)){
+        //     GameObject helo_sat_prefab = Resources.Load("HaloSat") as GameObject;
+        //     GameObject nodeObj = satObjectDict[node];
+        //     GameObject halo = Instantiate(helo_sat_prefab) as GameObject;
+        //     halo.transform.SetParent (nodeObj.transform, false);
+        // }   
+        if(switchObjectDict.ContainsKey(node)){
+            GameObject mark_switch_prefab = Resources.Load("MarkSwitch") as GameObject;
+            GameObject nodeObj = switchObjectDict[node];
+            GameObject mark = Instantiate(mark_switch_prefab) as GameObject;
+            mark.transform.SetParent (nodeObj.transform, false);
+        }
+        else if(satObjectDict.ContainsKey(node)){
+            GameObject mark_sat_prefab = Resources.Load("MarkSat") as GameObject;
+            GameObject nodeObj = satObjectDict[node];
+            GameObject mark = Instantiate(mark_sat_prefab) as GameObject;
+            mark.transform.SetParent (nodeObj.transform, false);
+        }         
     }
 }

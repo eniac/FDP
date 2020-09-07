@@ -32,31 +32,31 @@ public class GraphInput : MonoBehaviour
         string legendText = "";
         List<Color> color = new List<Color>(){Color.black};
         UpdateDisable();
-        if(Global.chosanExperimentName == "complete_fec_e2e"){
+        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
             show = true;
-            yield return StartCoroutine(GetGraphLogText("complete_fec_e2e/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("complete_fec_e2e/graph_log2.txt"));
+            yield return StartCoroutine(GetGraphLogText("1_complete_fec_e2e/graph_log1.txt"));
+            yield return StartCoroutine(GetGraphLogText("1_complete_fec_e2e/graph_log2.txt"));
             legendText = "Parity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
             color = GetColors(new List<string>(){"#ffffff", "#0000ff", "#ffff00"});
         }
-        else if(Global.chosanExperimentName == "complete_mcd_e2e"){
+        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
             show = true;
-            yield return StartCoroutine(GetGraphLogText("complete_mcd_e2e/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("complete_mcd_e2e/graph_log2.txt"));
+            yield return StartCoroutine(GetGraphLogText("1_complete_mcd_e2e/graph_log1.txt"));
+            yield return StartCoroutine(GetGraphLogText("1_complete_mcd_e2e/graph_log2.txt"));
             legendText = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
             color = GetColors(new List<string>(){"#0EF3E1", "#61D612", "#FF8A00", "#ffffff", "#0000ff"});
         }
-        else if(Global.chosanExperimentName == "complete_hc_e2e"){
+        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
             show = true;
-            yield return StartCoroutine(GetGraphLogText("complete_hc_e2e/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("complete_hc_e2e/graph_log2.txt"));
+            yield return StartCoroutine(GetGraphLogText("1_complete_hc_e2e/graph_log1.txt"));
+            yield return StartCoroutine(GetGraphLogText("1_complete_hc_e2e/graph_log2.txt"));
             legendText = "Compressed\nParity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
             color = GetColors(new List<string>(){"#ff00ff", "#ffffff", "#0000ff", "#ffff00"});
         }
-        else if(Global.chosanExperimentName == "complete_all_e2e"){
-            animTime = 80f;
+        else if(Global.chosanExperimentName == "2_complete_all_e2e"){
+            animTime = 4000f;
             show = false;
-            legendText = "MCD Request\nMCD Reply\nMCD Cached\nCompressed\nParity\nICMP Request\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
+            legendText = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nCompressed\nParity\nICMP Request";
             color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ff00ff", "#ffffff", "#0000ff", "#ffff00", "#ff0000"});
         }
         else if(Global.chosanExperimentName == "3_complete_e2e_1_hl3new"){
@@ -164,7 +164,7 @@ public class GraphInput : MonoBehaviour
     }
 
     void GetGraphData(){
-        if(Global.chosanExperimentName == "complete_fec_e2e"){
+        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
             xLabel = "time (sec)";
             yLabel = "# packets received at receiver";
             legend = "<color=#ffff00>---- No FEC</color>\n <color=#00ff40>---- With FEC (k=5, h=1)</color>";
@@ -176,7 +176,7 @@ public class GraphInput : MonoBehaviour
             timeOffset[1] = 8618f;
             GetCoordinates();
         }
-        else if(Global.chosanExperimentName == "complete_mcd_e2e"){
+        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
             xLabel = "time (sec)";
             yLabel = "# packets received at receiver";
             legend = "<color=#ffff00>---- No MCD</color>\n <color=#00ff40>---- With MCD</color>";
@@ -186,7 +186,7 @@ public class GraphInput : MonoBehaviour
             targetNode = "p1h0";
             GetCoordinates();
         }
-        else if(Global.chosanExperimentName == "complete_hc_e2e"){
+        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
             xLabel = "time (sec)";
             yLabel = "# bytes";
             legend = "<color=#ffff00>---- Before Header Compression</color>\n <color=#00ff40>---- After Header Compression</color>";

@@ -279,9 +279,19 @@ for pcap_file in "${PCAP_DIR}"/*; do
           print "Unknown 00000000 00000000 NO"
         }
       }
-      else{
-        # Flightplan header
 
+      # Compressed Header ahead
+      else if($8 == "1234"){
+        printf "%s", head
+        getline
+
+        lID = $3
+        lastIDf = lID""$6
+        printf "%s 00000000 00000000 HC\n", lastIDf
+      }
+
+      # Flightplan header
+      else{
         state = substr($9,3,2)
         nak = 0
         # Additional packet with ACK/NAK set in flightplan header 

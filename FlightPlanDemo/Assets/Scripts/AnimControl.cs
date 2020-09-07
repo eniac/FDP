@@ -57,9 +57,11 @@ public class AnimControl : MonoBehaviour
     float referenceCounter=0;
     float timeScaleBeforePause = 1;
     bool prePlay = false;
+    int instantiatedPacketTime = 0;
     AnimationParameters animParamBeforeSliderJump = new AnimationParameters();
     Global.AnimStatus animStatusBeforeSliderJump = Global.AnimStatus.Forward;
     Global.AnimStatus animStatus = Global.AnimStatus.Forward;
+    Global.AnimStatus animationStatusBeforePause = Global.AnimStatus.Forward;
     List<GameObject> LossyLinkObjects = new List<GameObject>();
     Dictionary<string, Global.PacketType> PacketTypeInfo = new Dictionary<string, Global.PacketType>();
     Dictionary<string, Tuple<string, string>> OriginDestinationMap = new Dictionary<string, Tuple<string, string>>();
@@ -295,14 +297,26 @@ public class AnimControl : MonoBehaviour
     public Global.AnimStatus GetAnimStatus(){
         return animStatus;
     }
-    public void Pause(){
+    public Global.AnimStatus Pause(){
         Debug.Log("Pause start = " + Time.timeScale);
-        if(animStatus != Global.AnimStatus.Pause){
+        // if(animStatus != Global.AnimStatus.Pause){
+        //     timeScaleBeforePause = Time.timeScale;
+        //     AdjustSpeed(0f);
+        //     SetAnimationStatus(Global.AnimStatus.Pause);
+        //     Debug.Log("Pause in = " + Time.timeScale);
+        // }
+
+        if(animStatus == Global.AnimStatus.Pause){
+            Resume(animationStatusBeforePause);
+        }
+        else{
             timeScaleBeforePause = Time.timeScale;
+            animationStatusBeforePause = animStatus;
             AdjustSpeed(0f);
             SetAnimationStatus(Global.AnimStatus.Pause);
             Debug.Log("Pause in = " + Time.timeScale);
         }
+        return animStatus;
     }
 
     public void Forward(){
@@ -324,6 +338,18 @@ public class AnimControl : MonoBehaviour
         if(animStatus != Global.AnimStatus.Rewind){
             SetAnimationStatus(Global.AnimStatus.Rewind);
             Debug.Log("Rewind in = " + Time.timeScale);
+        }
+    }
+
+    public void Resume(Global.AnimStatus status){
+        if(status == Global.AnimStatus.Pause){
+            Pause();
+        }
+        else if(status == Global.AnimStatus.Forward){
+            Forward();
+        }
+        else if(status == Global.AnimStatus.Rewind){
+            Rewind();
         }
     }
 
@@ -634,8 +660,12 @@ public class AnimControl : MonoBehaviour
         go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(pInfo.origin, pInfo.destination, pInfo.packetID, pInfo.packetType, go.GetComponent<MeshRenderer>().material.color);
         Debug.Log(pInfo.packetID + " : " + pInfo.packetTime + " : " + pInfo.source + " : " + pInfo.target );
         RemoveHoldBackPackets(pInfo.packetID, pInfo.packetType);
-
+        instantiatedPacketTime = pInfo.packetTime;
         return go;
+    }
+
+    public int GetInstantiatedPacketTime(){
+        return instantiatedPacketTime;
     }
 
     void MoveForwardPackets(){
