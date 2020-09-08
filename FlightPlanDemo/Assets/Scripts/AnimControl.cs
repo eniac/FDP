@@ -53,11 +53,12 @@ public class AnimControl : MonoBehaviour
 
     const float speed = 20f;
     const float prePlayTimeScale = 30f;
+    bool updateStatus = false;
     string elapsedTimeString;
     float referenceCounter=0;
     float timeScaleBeforePause = 1;
     bool prePlay = false;
-    int instantiatedPacketTime = 0;
+    int instantiatedPacketTime = 0, lastPktTime=-1;
     AnimationParameters animParamBeforeSliderJump = new AnimationParameters();
     Global.AnimStatus animStatusBeforeSliderJump = Global.AnimStatus.Forward;
     Global.AnimStatus animStatus = Global.AnimStatus.Forward;
@@ -257,7 +258,25 @@ public class AnimControl : MonoBehaviour
         }
     }
 
-    public void StartAnimation(){
+    void SetAnimationStatus(Global.AnimStatus status){
+        animStatus = status;
+    }
+
+    public Global.AnimStatus GetAnimStatus(){
+        return animStatus;
+    }
+
+    void StartAnimation(){
+        Stop();
+        topo.MakeLinksTransparent();
+        topo.MakeNodesTransparent();
+        Forward();
+        EnableUpdate();
+        InvokeRepeating("DispatchPacket", 0f, 0.1f); 
+    }
+
+    public void Stop(){
+        DisableUpdate();
         timeScaleBeforePause = Time.timeScale;
         referenceCounter = 0;
         foreach(var k in packetBySource.Keys){
@@ -272,12 +291,11 @@ public class AnimControl : MonoBehaviour
             packetIDSequencePtr[k] = 0;
         }
         RemoveRunningPackets();
-        Forward();
         graphInput.ClearPlot();
         graphInput.GraphInputInit();
         sliderControl.SetTimeSlider(0);
-        topo.MakeLinksTransparent();
-        topo.MakeNodesTransparent();
+        topo.MakeLinksOpaque();
+        topo.MakeNodesOpaque();
         if(Time.timeScale == 0){
             if(timeScaleBeforePause == 0){
                 AdjustSpeed(1f);
@@ -286,16 +304,6 @@ public class AnimControl : MonoBehaviour
                 AdjustSpeed(timeScaleBeforePause);
             }
         }
-        EnableUpdate();
-        InvokeRepeating("DispatchPacket", 0f, 0.1f); 
-    }
-
-    void SetAnimationStatus(Global.AnimStatus status){
-        animStatus = status;
-    }
-
-    public Global.AnimStatus GetAnimStatus(){
-        return animStatus;
     }
     public Global.AnimStatus Pause(){
         Debug.Log("Pause start = " + Time.timeScale);
@@ -342,7 +350,10 @@ public class AnimControl : MonoBehaviour
     }
 
     public void Resume(Global.AnimStatus status){
-        if(status == Global.AnimStatus.Pause){
+        if(GetUpdateStatus() == false){
+            StartAnimation();
+        }
+        else if(status == Global.AnimStatus.Pause){
             Pause();
         }
         else if(status == Global.AnimStatus.Forward){
@@ -631,6 +642,9 @@ public class AnimControl : MonoBehaviour
     void FollowRewindSequence(){
         if(rewindSequence.Count == 0){
             if(runningQueue.Count == 0){
+                topo.MakeLinksOpaque();
+                topo.MakeNodesOpaque();
+                sliderControl.SetTimeSlider(0);
                 DisableUpdate();
             }
             return;
@@ -665,7 +679,12 @@ public class AnimControl : MonoBehaviour
     }
 
     public int GetInstantiatedPacketTime(){
-        return instantiatedPacketTime;
+        int pktTime = -1;
+        if(lastPktTime != instantiatedPacketTime && GetAnimStatus() == Global.AnimStatus.Forward){
+            pktTime = instantiatedPacketTime;
+        }
+        lastPktTime = instantiatedPacketTime;
+        return pktTime;
     }
 
     void MoveForwardPackets(){
@@ -716,20 +735,41 @@ public class AnimControl : MonoBehaviour
         int pTime;
         PacketInfo pInfo;
 
+        // Remove Packets from running queue
         foreach(var k in runningQueue.Keys){
             pInfo = runningQueue[k];
             expPkt.Add(pInfo);
         }
-
         foreach(PacketInfo info in expPkt){
             pTime = info.packetTime;
             go = info.Object;
-            runningQueue.Remove(pTime);
             Destroy(go);
+            runningQueue.Remove(pTime);
         }
         runningQueue.Clear();
         expPkt.Clear();
+
+        List<string> expHoldPkt = new List<string>();
+
+        // Remove packets from HoldBack queue
+        foreach(var k in HoldbackPackets.Keys){
+            expHoldPkt.Add(k);
+        }
+        foreach(var k in expHoldPkt){
+            Destroy(HoldbackPackets[k]);
+            HoldbackPackets.Remove(k);
+        }
         HoldbackPackets.Clear();
+        expHoldPkt.Clear();
+
+        // Remove parity packets from holdback queue
+        foreach(var k in HoldBackParity.Keys){
+            expHoldPkt.Add(k);
+        }
+        foreach(var k in expHoldPkt){
+            Destroy(HoldBackParity[k]);
+            HoldBackParity.Remove(k);
+        }
         HoldBackParity.Clear();
     }
     void RemoveForwardExpiredPackets(){
@@ -908,9 +948,16 @@ public class AnimControl : MonoBehaviour
 
     void EnableUpdate(){
         enabled = true;
+        updateStatus = true;
     }
     void DisableUpdate(){
+        SetAnimationStatus(Global.AnimStatus.Pause);
         enabled = false;
+        updateStatus = false;
+    }
+
+    public bool GetUpdateStatus(){
+        return updateStatus;
     }
 }
 

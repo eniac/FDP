@@ -6,8 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class ButtonControl : MonoBehaviour
 {
+    [SerializeField] private Camera cam = default;
+    [SerializeField] private GameObject panelFooter = default;
+    [SerializeField] private GameObject panelMenu = default;
     [SerializeField] private Topology topo = default;
-    [SerializeField] Button pauseResumeButton = default;
     [SerializeField] private Text messageText = default;
     [SerializeField] private Dropdown colorPatternDropdown = default;
     [SerializeField] private InputField searchField = default;
@@ -22,6 +24,8 @@ public class ButtonControl : MonoBehaviour
     bool showLinkOpaque;
     bool showNodeOpaque;
     bool showBlink = true;
+    bool showTagMarker = true;
+    bool showEventTag = true;
     List<GameObject> linkObject;
     List<GameObject> switchObject;
     List<GameObject> satObject;
@@ -40,8 +44,16 @@ public class ButtonControl : MonoBehaviour
         popup.PopUpInit(messageText);
     }
 
+    void Update(){
+        ProcessOpacityChange();
+        if(anim.GetUpdateStatus()==false){
+            ChangePauseResumeButtonText(Global.AnimStatus.Pause);
+        }
+    }
+
     public void ToggleLables(){
         if(showLable == true){
+            SetMenuButtonText("ToggleLabels", "Show Labels");
             foreach(var obj in textObj){
                 obj.SetActive(false);
             }
@@ -51,6 +63,7 @@ public class ButtonControl : MonoBehaviour
             showLable = false;
         }
         else{
+            SetMenuButtonText("ToggleLabels", "Hide Labels");
             foreach(var obj in textObj){
                 obj.SetActive(true);
             }
@@ -61,13 +74,36 @@ public class ButtonControl : MonoBehaviour
         } 
     }  
 
+    public void ProcessOpacityChange(){
+        if(showLinkOpaque != topo.GetLinkOpacity()){
+            showLinkOpaque = topo.GetLinkOpacity();
+            if(showLinkOpaque==true){
+                SetMenuButtonText("ToggleLinkOpacity", "Translucent Links");
+            }
+            else{
+                SetMenuButtonText("ToggleLinkOpacity", "Opaque Links");
+            }
+        }
+        if(showNodeOpaque != topo.GetNodeOpacity()){
+            showNodeOpaque = topo.GetNodeOpacity();
+            if(showNodeOpaque==true){
+                SetMenuButtonText("ToggleNodeOpacity", "Translucent Nodes");
+            }
+            else{
+                SetMenuButtonText("ToggleNodeOpacity", "Opaque Nodes");
+            }
+        }
+    }
+
     public void ToggleLinkTransparency(){
         if(showLinkOpaque == true){
             // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
+            SetMenuButtonText("ToggleLinkOpacity", "Opaque Links");
             topo.MakeLinksTransparent();
             showLinkOpaque = false;
         }
         else{
+            SetMenuButtonText("ToggleLinkOpacity", "Translucent Links");
             topo.MakeLinksOpaque();
             showLinkOpaque = true;
         }
@@ -76,10 +112,12 @@ public class ButtonControl : MonoBehaviour
     public void ToggleNodeTransparency(){
         if(showNodeOpaque == true){
             // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
+            SetMenuButtonText("ToggleNodeOpacity", "Opaque Nodes");
             topo.MakeNodesTransparent();
             showNodeOpaque = false;
         }
         else{
+            SetMenuButtonText("ToggleNodeOpacity", "Translucent Nodes");
             topo.MakeNodesOpaque();
             showNodeOpaque = true;
         }
@@ -113,14 +151,14 @@ public class ButtonControl : MonoBehaviour
     }
 
     public void StartAnimation(){
-        billBoard.ResetTimeInfo();
-        anim.StartAnimation();
-        ChangePauseResumeButtonText(Global.AnimStatus.Forward);
+        // billBoard.ResetTimeInfo();
+        // anim.StartAnimation();
+        // ChangePauseResumeButtonText(Global.AnimStatus.Forward);
     }
 
     public void ResetAnimation(){
         // anim.ResetAnimation();
-        // ChangePauseResumeButtonText(Global.AnimStatus.Forward);
+        anim.Stop();
     }
 
     public void PauseResumeAnimation(){
@@ -142,11 +180,11 @@ public class ButtonControl : MonoBehaviour
     void ChangePauseResumeButtonText(Global.AnimStatus status){
         if(status == Global.AnimStatus.Pause){
             // Show Resume Symbol on Button
-            pauseResumeButton.gameObject.GetComponentInChildren<Text>().text = ">";
+            panelFooter.transform.Find("P").GetComponentInChildren<Text>().text = ">";
         }
         else{
             // Show Pause sysmbol on button
-            pauseResumeButton.gameObject.GetComponentInChildren<Text>().text = "||";
+            panelFooter.transform.Find("P").GetComponentInChildren<Text>().text = "||";
         }
     }
 
@@ -159,12 +197,13 @@ public class ButtonControl : MonoBehaviour
 
     public void ToggleLossyLinkBlink(){
         if(showBlink == true){
-            // Here a = alpha = opacity (0.0 transparent, 1.0 opaque)
-            anim.ShowLossyBlink();
+            SetMenuButtonText("ToggleLossyLinkBlink", "Show Lossy Link Blink");
+            anim.StopLossyBlink();
             showBlink = false;
         }
         else{
-            anim.StopLossyBlink();
+            SetMenuButtonText("ToggleLossyLinkBlink", "Hide Lossy Link Blink");
+            anim.ShowLossyBlink();
             showBlink = true;
         }
     }
@@ -177,5 +216,58 @@ public class ButtonControl : MonoBehaviour
         else{
             Application.OpenURL("https://flightplan.cis.upenn.edu/");
         }
+    }
+
+    public void PointerEnterRewind(){
+        ToolTipControl.ShowToolTip_Static("Rewind");
+    }
+
+    public void PointerEnterForward(){
+        ToolTipControl.ShowToolTip_Static("Forward");
+    }
+
+    public void PointerEnterPause(){
+        ToolTipControl.ShowToolTip_Static("Play/Pause");
+    }
+    public void PointerEnterStop(){
+        ToolTipControl.ShowToolTip_Static("Stop");
+    }
+
+    public void PointerEnterSpeedSlider(){
+        ToolTipControl.ShowToolTip_Static("Speed Slider");
+    }
+
+    public void PointerExit(){
+        ToolTipControl.HideToolTip_Static();
+    }
+
+    public void ShowHideTagMarker(){
+        if(showTagMarker==true){
+            SetMenuButtonText("ShowHideTagMarker", "Show Tag Marker");
+            topo.HideTagMarker();
+            showTagMarker = false;
+        }
+        else{
+            SetMenuButtonText("ShowHideTagMarker", "Hide Tag Marker");
+            topo.ShowTagMarker();
+            showTagMarker = true;
+        }
+    }
+
+    public void ShowHideEventTags(){
+        if(showEventTag == true){
+            SetMenuButtonText("ShowHideEventTag", "Enable Event Tag");
+            billBoard.SetEventTagStatus(false);
+            showEventTag = false;
+        }
+        else{
+            SetMenuButtonText("ShowHideEventTag", "Disable Event Tag");
+            billBoard.SetEventTagStatus(true);
+            showEventTag = true;
+        }
+    }
+
+    void SetMenuButtonText(string buttonName, string buttonText){
+        panelMenu.transform.Find(buttonName).GetComponentInChildren<Text>().text = buttonText;
     }
 }

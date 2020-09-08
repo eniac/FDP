@@ -27,12 +27,13 @@ public class BillBoardControl : MonoBehaviour
     SortedDictionary<int, Tuple<BillBoardNodeInfo, bool>> timeInfo = new SortedDictionary<int, Tuple<BillBoardNodeInfo, bool>>(); // Time : <BillBoardNodeInfo : shown>
     Global.AnimStatus animStatusBeforeBoard = Global.AnimStatus.Forward;
     bool boardOn=false;
+    bool eventTagStatus = true;
 
     public void BillBoardInit(){
         UpdateDisable();
         GetBillBoardInfo();
         foreach(string node in boardInfo.Keys){
-            topo.SetHeloEffect(node);
+            topo.AddTagMarker(node);
         }
         UpdateEnable();
     }
@@ -87,7 +88,9 @@ public class BillBoardControl : MonoBehaviour
     {
         BillBoardFollowCam();
         DetectMouseClick();
-        DetectTime();
+        if(eventTagStatus==true){
+            DetectTime();
+        }
     }
 
     void BillBoardFollowCam(){
@@ -115,7 +118,7 @@ public class BillBoardControl : MonoBehaviour
 
     void DetectTime(){
         int time = anim.GetInstantiatedPacketTime();
-        if(timeInfo.ContainsKey(time) && timeInfo[time].Item2==false){
+        if(time!=-1 && timeInfo.ContainsKey(time)){
             if(ShowBillBoard(timeInfo[time].Item1.boardObject)){
                 timeInfo[time] = new Tuple<BillBoardNodeInfo, bool>( timeInfo[time].Item1, true);
             }
@@ -163,6 +166,10 @@ public class BillBoardControl : MonoBehaviour
             Debug.Log("In HyperlinkButtonHandler OpenURL");
             Application.OpenURL(link);
         }
+    }
+
+    public void SetEventTagStatus(bool status){
+        eventTagStatus = status;
     }
     void UpdateEnable(){
         enabled = true;

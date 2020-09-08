@@ -60,6 +60,8 @@ public class Topology : MonoBehaviour
     Dictionary<string, Color> colorDict;
     List<GameObject> DropperLinkObjects = new List<GameObject>();
     List<GameObject> bubbleObject = new List<GameObject>();
+    List<GameObject> tagMarkObject = new List<GameObject>();
+    bool linkOpacity = true, nodeOpacity = true;
 
     public enum BlendMode
     {
@@ -786,6 +788,7 @@ public class Topology : MonoBehaviour
             color.a = 0.05f;
             obj.GetComponent<MeshRenderer>().material.color = color;
         }
+        linkOpacity = false;
     }
     // Make links opaque
     public void MakeLinksOpaque(){
@@ -794,6 +797,7 @@ public class Topology : MonoBehaviour
             color.a = 1.0f;
             obj.GetComponent<MeshRenderer>().material.color = color;
         }
+        linkOpacity = true;
     }
 
     // Make Nodes transparent
@@ -802,15 +806,16 @@ public class Topology : MonoBehaviour
         foreach(var obj in switchObjectDict.Values){
             ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Transparent);
             Color color = obj.GetComponent<MeshRenderer>().material.color;
-            color.a = 0.4f;
+            color.a = 0.1f;
             obj.GetComponent<MeshRenderer>().material.color = color;
         }
         foreach(var obj in satObjectDict.Values){
             ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Transparent);
             Color color = obj.GetComponent<MeshRenderer>().material.color;
-            color.a = 0.4f;
+            color.a = 0.1f;
             obj.GetComponent<MeshRenderer>().material.color = color;
         }
+        nodeOpacity = false;
     }
 
     // Make Nodes Opaque
@@ -823,6 +828,7 @@ public class Topology : MonoBehaviour
             // Change the blend mode itself to opaque
             ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Opaque);
         }
+        nodeOpacity = true;
     }
 
     // Get canvas objects of hosts
@@ -872,7 +878,7 @@ public class Topology : MonoBehaviour
         return false;
     }
 
-    public void SetHeloEffect(string node){
+    public void AddTagMarker(string node){
         // if(switchObjectDict.ContainsKey(node)){
         //     GameObject helo_switch_prefab = Resources.Load("HaloSwitch") as GameObject;
         //     GameObject nodeObj = switchObjectDict[node];
@@ -890,12 +896,34 @@ public class Topology : MonoBehaviour
             GameObject nodeObj = switchObjectDict[node];
             GameObject mark = Instantiate(mark_switch_prefab) as GameObject;
             mark.transform.SetParent (nodeObj.transform, false);
+            tagMarkObject.Add(mark);
         }
         else if(satObjectDict.ContainsKey(node)){
             GameObject mark_sat_prefab = Resources.Load("MarkSat") as GameObject;
             GameObject nodeObj = satObjectDict[node];
             GameObject mark = Instantiate(mark_sat_prefab) as GameObject;
             mark.transform.SetParent (nodeObj.transform, false);
+            tagMarkObject.Add(mark);
         }         
+    }
+
+    public void ShowTagMarker(){
+        foreach(var go in tagMarkObject){
+            go.SetActive(true);
+        }
+    }
+
+    public void HideTagMarker(){
+        foreach(var go in tagMarkObject){
+            go.SetActive(false);
+        }
+    }
+
+    public bool GetLinkOpacity(){
+        return linkOpacity;
+    }
+
+    public bool GetNodeOpacity(){
+        return nodeOpacity;
     }
 }

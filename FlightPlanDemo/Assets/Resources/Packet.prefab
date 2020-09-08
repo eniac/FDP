@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1474819406249929747}
   - component: {fileID: 3751324845893546142}
   - component: {fileID: 4947359803438604469}
+  - component: {fileID: 5081376565588481995}
   m_Layer: 0
   m_Name: Packet
   m_TagString: Untagged
@@ -93,3 +94,15 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!122 &5081376565588481995
+Halo:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1978047453754821091}
+  m_Enabled: 1
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_Size: 0.6
