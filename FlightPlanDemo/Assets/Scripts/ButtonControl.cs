@@ -9,6 +9,7 @@ public class ButtonControl : MonoBehaviour
     [SerializeField] private Camera cam = default;
     [SerializeField] private GameObject panelFooter = default;
     [SerializeField] private GameObject panelMenu = default;
+    [SerializeField] private Animator SettingAnimator = default;
     [SerializeField] private Topology topo = default;
     [SerializeField] private Text messageText = default;
     [SerializeField] private Dropdown colorPatternDropdown = default;
@@ -18,6 +19,7 @@ public class ButtonControl : MonoBehaviour
     // [SerializeField] private AnimationControl anim = default;
     [SerializeField] private AnimControl anim = default;
     [SerializeField] private ColorControl colorControl = default;
+    bool slideIn = false;
     bool showLable;
     List<GameObject> hostTextObject;
     List<GameObject> textObj;
@@ -51,6 +53,18 @@ public class ButtonControl : MonoBehaviour
         }
     }
 
+    public void Settings(){
+        if(slideIn == false){
+            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = "                     MENU                 <size=25>v</size>";
+            SettingAnimator.SetBool("Slidein", true);
+            slideIn = true;
+        }
+        else{
+            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = "                     MENU                 <size=25>></size>";
+            SettingAnimator.SetBool("Slidein", false);
+            slideIn = false;
+        }
+    }
     public void ToggleLables(){
         if(showLable == true){
             SetMenuButtonText("ToggleLabels", "Show Labels");

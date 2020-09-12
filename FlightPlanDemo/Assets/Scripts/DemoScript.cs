@@ -10,6 +10,7 @@ public class DemoScript : MonoBehaviour
     [SerializeField] AnimControl anim = default;
     [SerializeField] GraphInput graphInput = default;
     [SerializeField] BillBoardControl billBoard = default;
+    [SerializeField] IntroTagControl introTag = default;
 
     // Start is called before the first frame update
     public IEnumerator Start(){
@@ -25,6 +26,8 @@ public class DemoScript : MonoBehaviour
         topo.GetPosition();
         topo.DisplayTopology();
         billBoard.BillBoardInit();
+
+        introTag.IntroTagInit(topo.GetNodePosition("p0e0"));
 
         // yield return StartCoroutine(anim.GetElapsedTimeFile());
         

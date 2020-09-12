@@ -34,7 +34,8 @@ public class PopUpControl : MonoBehaviour
     }
     // Set default message
     private void ShowDefaultMessage(){
-        messageText.text = Global.chosanExperimentName + "\n" + "<size=12><color=#00ff00>Click on nodes with red box for more information...</color></size>";
+        // messageText.text = Global.chosanExperimentName + "\n" + "<size=12><color=#00ff00>Click on nodes with red box for more information...</color></size>";
+        messageText.text = Global.chosanExperimentName;
         messageText.fontSize = 20;
         messageText.fontStyle = FontStyle.Bold;
         messageText.color = Color.white;

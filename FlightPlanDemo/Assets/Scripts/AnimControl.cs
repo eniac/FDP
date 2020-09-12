@@ -222,7 +222,7 @@ public class AnimControl : MonoBehaviour
             InvokeRepeating("LossyLinkBlink", 0, 0.05f);
         } 
 
-        prePlay = true;
+        // prePlay = true;
 
         // AdjustSpeed(prePlayTimeScale);
         AdjustSpeed(1f);
@@ -290,6 +290,8 @@ public class AnimControl : MonoBehaviour
         foreach(var k in packetIDSequence.Keys){
             packetIDSequencePtr[k] = 0;
         }
+        forwardSequence.Clear();
+        rewindSequence.Clear();
         RemoveRunningPackets();
         graphInput.ClearPlot();
         graphInput.GraphInputInit();
@@ -456,9 +458,6 @@ public class AnimControl : MonoBehaviour
         if(animStatus == Global.AnimStatus.Forward){
             DispatchForwardPacket();
         }
-        // else if(animStatus == Global.AnimStatus.Rewind){
-        //     DispatchRewindPacket();
-        // }
     }
 
     bool DispatchHostNodePacket(string hostNode, int time){
@@ -468,9 +467,6 @@ public class AnimControl : MonoBehaviour
             try{
                 spTime = packetBySource[s].ElementAt(packetBySourcePtr[s]+1).Key;
                 if(spTime < time){
-                    if(time == 17071057f){
-                        Debug.Log("host waiting for spTime = " + spTime);
-                    }
                     doDispatch = false;
                     break;
                 }
@@ -484,9 +480,6 @@ public class AnimControl : MonoBehaviour
             try{
                 tpTime = packetByTarget[t].ElementAt(packetByTargetPtr[t]+1).Key;
                 if(tpTime < time){
-                    if(time == 17071057f){
-                        Debug.Log("host waiting for tpTime = " + tpTime);
-                    }
                     doDispatch = false;
                     break;
                 }
@@ -599,6 +592,7 @@ public class AnimControl : MonoBehaviour
             }
         }
         if(doTerminate==true && runningQueue.Count==0){
+            Debug.Log("##### END #### " + referenceCounter);
             topo.MakeLinksOpaque();
             topo.MakeNodesOpaque();
             sliderControl.SetTimeSlider(0);
@@ -621,7 +615,7 @@ public class AnimControl : MonoBehaviour
         }
         
         PacketInfo info = forwardSequence[forwardSequence.Count-1];
-        Debug.Log("Forward = " + info.instantiationTime + " : " + RCtime());
+        // Debug.Log("Forward = " + info.instantiationTime + " : " + RCtime());
         if(info.instantiationTime <= RCtime()){
             GameObject go = InstantiatePacket(info);
             go.transform.position = info.sourcePos;
@@ -634,14 +628,11 @@ public class AnimControl : MonoBehaviour
         }
     }
 
-
-    void DispatchRewindPacket(){
-        FollowRewindSequence();
-    }
-
     void FollowRewindSequence(){
         if(rewindSequence.Count == 0){
             if(runningQueue.Count == 0){
+                forwardSequence.Clear();
+                rewindSequence.Clear();
                 topo.MakeLinksOpaque();
                 topo.MakeNodesOpaque();
                 sliderControl.SetTimeSlider(0);
@@ -650,7 +641,7 @@ public class AnimControl : MonoBehaviour
             return;
         }
         PacketInfo info = rewindSequence[rewindSequence.Count-1];
-        Debug.Log("Rewind = " + info.expirationTime + " : " + RCtime());
+        // Debug.Log("Rewind = " + info.expirationTime + " : " + RCtime());
         if(info.expirationTime >= RCtime()){
             GameObject go = InstantiatePacket(info);
             go.transform.position = info.targetPos;
@@ -672,9 +663,10 @@ public class AnimControl : MonoBehaviour
         GameObject packet_prefab = Resources.Load("Packet") as GameObject;
         GameObject go = Instantiate(packet_prefab) as GameObject;
         go.GetComponent<MeshRenderer>().material.color = colorControl.GetPacketColor(pInfo.origin, pInfo.destination, pInfo.packetID, pInfo.packetType, go.GetComponent<MeshRenderer>().material.color);
-        Debug.Log(pInfo.packetID + " : " + pInfo.packetTime + " : " + pInfo.source + " : " + pInfo.target );
+        // Debug.Log(pInfo.packetID + " : " + pInfo.packetTime + " : " + pInfo.source + " : " + pInfo.target );
         RemoveHoldBackPackets(pInfo.packetID, pInfo.packetType);
         instantiatedPacketTime = pInfo.packetTime;
+        
         return go;
     }
 
@@ -789,7 +781,7 @@ public class AnimControl : MonoBehaviour
 
                 // Debug.Log("Expired = " + Vector3.Distance(endPos, go.transform.position));
                 go.transform.position = endPos;
-                graphInput.ExpiredPacketTargetNode(pInfo.target);
+                graphInput.ExpiredPacketTargetNode(pInfo.packetTime, pInfo.target);
                 expPkt.Add(pInfo);
             }
         }
@@ -835,9 +827,9 @@ public class AnimControl : MonoBehaviour
             bool drop=true;
             if(topo.IsDropper(info.target)||info.packetType==Global.PacketType.Parity){
                 for(int i=packetIDSequencePtr[info.packetID]; i<packetIDSequence[info.packetID].Count; i++){
-                    Debug.Log("DROP = " + i + " : " + info.packetID + " : " + info.packetType + " : " + info.packetTime + " : " + packetIDSequence[info.packetID][i] + " : " + packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]));
+                    // Debug.Log("DROP = " + i + " : " + info.packetID + " : " + info.packetType + " : " + info.packetTime + " : " + packetIDSequence[info.packetID][i] + " : " + packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]));
                     if(packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]) ){
-                        Debug.Log("DROP = " + i + " : " + info.packetID + " : " + info.packetType + " : " + info.packetTime + " : " + packetIDSequence[info.packetID][i] + " : " + packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]) + " : " + packetBySource[info.target][packetIDSequence[info.packetID][i]].packetType);
+                        // Debug.Log("DROP = " + i + " : " + info.packetID + " : " + info.packetType + " : " + info.packetTime + " : " + packetIDSequence[info.packetID][i] + " : " + packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]) + " : " + packetBySource[info.target][packetIDSequence[info.packetID][i]].packetType);
                     }
                     if(packetBySource[info.target].ContainsKey(packetIDSequence[info.packetID][i]) 
                         && packetBySource[info.target][packetIDSequence[info.packetID][i]].packetType == info.packetType){

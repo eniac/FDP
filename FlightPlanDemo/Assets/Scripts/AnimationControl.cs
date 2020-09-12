@@ -464,7 +464,7 @@ public class AnimationControl : MonoBehaviour
                     rewindList.Add(oInfo);
                     if(oInfo.origin!="00000000"){
                         // Avoiding broadcast packet
-                        graphInput.ExpiredPacketTargetNode(oInfo.target);
+                        graphInput.ExpiredPacketTargetNode((int)oInfo.packetTime, oInfo.target);
                     }
                 }
             }

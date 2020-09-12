@@ -9,108 +9,56 @@ using UnityEngine.Networking;
 
 public class GraphInput : MonoBehaviour
 {
+    struct GraphInfo{
+        public bool show;
+        public int nCurves;
+        public List<string> graphLogText;
+        public List<StringReader> graphLogReader;
+        public string packetLegend;
+        public List<Color> color;
+        public string xLabel;
+        public string yLabel;
+        public string graphLegend;
+        public string title;
+        public List<float> segmentWidth;
+        public float xMax;
+        public float yMax;
+        public List<float> relative_scale;
+        public List<float> relative_offset;
+        public List<string> packetTarget;
+        public float animTime;
+        public float xDiv;
+    }
     [SerializeField] GraphControl graph = default;
     [SerializeField] SliderControl sliderControl = default;
     [SerializeField] private ColorControl colorControl = default;
-    string xLabel, yLabel, legend, title;
-    float xMax=0, yMax=0, xMaxToScale=0;
-    float nCurveMax;
-    List<string> graphLogText = new List<string>();
-    List<StringReader> graphLogReader = new List<StringReader>();
     List<string> lastData = new List<string>();
-    List<float> relative_scale = new List<float>();
-    List<float> timeOffset = new List<float>(){0, 0};
-    List<float> comparisonOffset = new List<float>(){0,0};
-    float animTime=0f, scale=1, rc=0;
-    string expPktTargetNode=null, targetNode=null;
-    bool show=true;
-    float graphStartTime=-1f;
-    bool isXtime=true;
-    float packetTime=0;
-
+    int expPktTime = -1;
+    string expPktTargetNode = null;
+    // TODO Assuming maximum 3 graphs
+    List<string> graphLogNames = new List<string>(){"graph_log1.txt", "graph_log2.txt", "graph_log3.txt"};
+    List<Color> pointColor = new List<Color>(){new Color(1f, 1f, 0f, 1f), new Color(0f, 1f, 0.25f, 1f), new Color(0f, 1f, 1f, 1f)};
+    List<Color> segmentColor = new List<Color>(){new Color(1f, 1f, 0f, 0.5f), new Color(0f, 1f, 0.25f, 0.5f), new Color(0f, 1f, 1f, 0.5f)};
+    float rc=0;
+    GraphInfo gInfo = new GraphInfo();
     public IEnumerator Start(){
-        string legendText = "";
-        List<Color> color = new List<Color>(){Color.black};
         UpdateDisable();
-        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
-            show = true;
-            yield return StartCoroutine(GetGraphLogText("1_complete_fec_e2e/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("1_complete_fec_e2e/graph_log2.txt"));
-            legendText = "Parity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
-            color = GetColors(new List<string>(){"#ffffff", "#0000ff", "#ffff00"});
+        Parser();
+        graph.ShowLegendColor(gInfo.packetLegend, gInfo.color);
+        if(gInfo.nCurves==0){
+            yield break;
         }
-        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
-            show = true;
-            yield return StartCoroutine(GetGraphLogText("1_complete_mcd_e2e/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("1_complete_mcd_e2e/graph_log2.txt"));
-            legendText = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
-            color = GetColors(new List<string>(){"#0EF3E1", "#61D612", "#FF8A00", "#ffffff", "#0000ff"});
+        for(int i=0; i<gInfo.nCurves; i++){
+            yield return StartCoroutine(GetGraphLogText(Global.chosanExperimentName + "/" + graphLogNames[i]));
         }
-        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
-            show = true;
-            yield return StartCoroutine(GetGraphLogText("1_complete_hc_e2e/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("1_complete_hc_e2e/graph_log2.txt"));
-            legendText = "Compressed\nParity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
-            color = GetColors(new List<string>(){"#ff00ff", "#ffffff", "#0000ff", "#ffff00"});
+        GetMaxCoordinates();
+        for(int i=0; i<gInfo.nCurves; i++){
+            Debug.Log("gInfo.relative_scale = " + gInfo.relative_scale[i]);
         }
-        else if(Global.chosanExperimentName == "2_complete_all_e2e"){
-            animTime = 4000f;
-            show = false;
-            legendText = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nCompressed\nParity\nICMP Request";
-            color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ff00ff", "#ffffff", "#0000ff", "#ffff00", "#ff0000"});
-        }
-        else if(Global.chosanExperimentName == "3_complete_e2e_1_hl3new"){
-            animTime = 3954.756f;
-            show = false;
-            legendText = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nCompressed\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
-            color = GetColors(new List<string>(){"#0000ff", "#ffff00", "#ff00ff","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000"});
-        }
-        else if(Global.chosanExperimentName == "3_complete_e2e_2_hl3new"){
-            animTime = 4783.464f;
-            show = false;
-            legendText = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
-            color = GetColors(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#0000ff"});
-        }
-        else if(Global.chosanExperimentName == "5_complete_2_FW"){
-            show = true;
-            colorControl.SetColorPattern(Global.ColorPattern.None);
-            yield return StartCoroutine(GetGraphLogText("5_complete_2_FW/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("5_complete_2_FW/graph_log2.txt"));
-            legendText = "TCP Packets";
-            color = GetColors(new List<string>(){"#ffff00"});
-        }
-        else if(Global.chosanExperimentName == "7_split1"){
-            show = true;
-            yield return StartCoroutine(GetGraphLogText("7_split1/graph_log1.txt"));
-            yield return StartCoroutine(GetGraphLogText("7_split1/graph_log2.txt"));
-            legendText = "ICMP Request\nICMP Reply\nFeedback";
-            color = GetColors(new List<string>(){"#0000ff", "#ffff00", "#EC119D"});
-        }
-        else if(Global.chosanExperimentName == "6_split2_all"){
-            animTime = 4783.464f;
-            show = false;
-            legendText = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request\nFeedback";
-            color = GetColors(new List<string>(){"#0000ff", "#ffff00","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000", "#EC119D"});
-        }
-        graph.ShowLegendColor(legendText, color);
-    }
-
-    List<Color> GetColors(List<string> hexColor){
-        List<Color> color = new List<Color>();
-        Color outColor;
-        foreach(var c in hexColor){
-            if ( ColorUtility.TryParseHtmlString(c, out outColor)){
-                color.Add(outColor);
-            }
-            else{
-                color.Add(Color.black);
-            }
-        }
-        return color;
     }
 
     IEnumerator GetGraphLogText(string fileName){
-        if(show ==false){
+        if(gInfo.show ==false){
             yield break;
         }
         string graphText="";
@@ -127,217 +75,279 @@ public class GraphInput : MonoBehaviour
         else{
             graphText = File.ReadAllText(filePath);
         }
-        graphLogText.Add(graphText);
+        gInfo.graphLogText.Add(graphText);
     }
 
     public void GraphInputInit(){
-        if(show == false){
+        if(gInfo.show == false){
             graph.HideGraph();
-            sliderControl.SetSliderMaxValue(animTime);
+            sliderControl.SetSliderMaxValue(gInfo.animTime);
             return;
         }
-        graphLogReader.Clear();
-        for(int i=0; i<graphLogText.Count; i++){
-            var reader = new StringReader(graphLogText[i]);
-            graphLogReader.Add(reader);
+        gInfo.graphLogReader.Clear();
+        lastData.Clear();
+        for(int i=0; i<gInfo.graphLogText.Count; i++){
+            var reader = new StringReader(gInfo.graphLogText[i]);
+            gInfo.graphLogReader.Add(reader);
+            lastData.Add(reader.ReadLine());
         }
-        GetGraphData();
-        Debug.Log(xLabel + " - " + yLabel + " - " + legend + " - " + title + " - " + xMax + " - " + yMax + " - " + scale);
-
-        graph.GraphParamInit(xLabel, yLabel, legend, title);
-        if(nCurveMax > 0){
-            graph.GraphInit(Global.GraphType.Type0, new Color(1f, 1f, 0f, 1f), new Color(1f, 1f, 0f, 0.5f), xMax, yMax);
+        graph.GraphParamInit(gInfo.xLabel, gInfo.yLabel, gInfo.graphLegend, gInfo.title);
+        for(int i=0; i<gInfo.nCurves; i++){
+            graph.GraphInit((Global.GraphType)i, pointColor[i], segmentColor[i], gInfo.xMax, gInfo.yMax, gInfo.segmentWidth[i] );
         }
-        if(nCurveMax > 1){
-            if(Global.chosanExperimentName == "5_complete_2_FW"){
-                graph.GraphInit(Global.GraphType.Type1, new Color(0f, 1f, 0.25f, 1f), new Color(0f, 1f, 0.25f, 0.5f), xMax, yMax, 4f );
-            }
-            else{
-                graph.GraphInit(Global.GraphType.Type1, new Color(0f, 1f, 0.25f, 1f), new Color(0f, 1f, 0.25f, 0.5f), xMax, yMax );
-            }
-        }
-        if(nCurveMax > 2){
-            graph.GraphInit(Global.GraphType.Type1, new Color(0f, 1f, 1f, 1f), new Color(0f, 1f, 1f, 0.5f), xMax, yMax );
-        }
-        sliderControl.SetSliderMaxValue(animTime);
         UpdateEnable();
     }
 
-    void GetGraphData(){
-        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
-            xLabel = "time (sec)";
-            yLabel = "# packets received at receiver";
-            legend = "<color=#ffff00>---- No FEC</color>\n <color=#00ff40>---- With FEC (k=5, h=1)</color>";
-            title = "FEC Effectiveness";
-            nCurveMax = 2;
-            animTime = 515;
-            targetNode = "p1h0";
-            timeOffset[0] = 9515f;
-            timeOffset[1] = 8618f;
-            GetCoordinates();
-        }
-        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
-            xLabel = "time (sec)";
-            yLabel = "# packets received at receiver";
-            legend = "<color=#ffff00>---- No MCD</color>\n <color=#00ff40>---- With MCD</color>";
-            title = "MCD Effectiveness";
-            nCurveMax = 2;
-            animTime = 2400f;
-            targetNode = "p1h0";
-            GetCoordinates();
-        }
-        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
-            xLabel = "time (sec)";
-            yLabel = "# bytes";
-            legend = "<color=#ffff00>---- Before Header Compression</color>\n <color=#00ff40>---- After Header Compression</color>";
-            title = "HC Effectiveness";
-            nCurveMax = 2;
-            animTime = 342f;
-            targetNode = "p0e0";
-            GetCoordinates();
-        }
-        else if(Global.chosanExperimentName == "5_complete_2_FW"){
-            xLabel = "% test completed";
-            yLabel = "% success rate";
-            legend = "<color=#ffff00>---- Positive Test</color>\n <color=#00ff40>---- Negative Test</color>";
-            title = "Firewall Effectiveness";
-            nCurveMax = 2;
-            animTime = 82.418f;
-            targetNode = "p1e1";
-            isXtime = false;
-            GetCoordinates();
-        }
-        else if(Global.chosanExperimentName == "7_split1"){
-            xLabel = "time (sec)";
-            yLabel = "# bytes passing through the devices";
-            legend = "<color=#ffff00>---- FPoffload</color>\n <color=#00ff40>---- FPoffload2</color>";
-            title = "Failover Mechanism";
-            nCurveMax = 2;
-            animTime = 121.012f;
-            targetNode = "p0e0";
-            GetCoordinates();
-            relative_scale[0] = 1;
-            relative_scale[1] = 1;
-        }
-    }
-
-    void GetCoordinates(){
-        float xmax=0f, ymax=0f, div=1f;
-        if(isXtime){
-            div = Global.U_SEC;
-        }
-        for(int i=0; i<graphLogText.Count; i++){
-            string[] lines = graphLogText[i].Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            // Debug.Log("last Line = " + lines[lines.Length - 1].ToString() + " - " + lines.Length + " - " + lines.GetType());
-            
-            string[] data = lines[lines.Length - 1].Split(' ');
-            relative_scale.Add(float.Parse(data[0])/div);
-            if(xmax<float.Parse(data[0])){
-                xmax = float.Parse(data[0]);
+    void FixedUpdate(){
+        string[] coord;
+        float x=0, y=0;
+        for(int i=0; i<gInfo.nCurves; i++){
+                // Debug.Log("o--[" + i + "] " + lastData[i] + " : " + expPktTime + " : " + expPktTargetNode + " : " + gInfo.packetTarget[i]);
+                if(lastData.Count>0 && lastData[i] != null && expPktTime > -1 && expPktTargetNode == gInfo.packetTarget[i]){
+                    coord = lastData[i].Split(' ');
+                    var xVal = (float.Parse(coord[0]) * gInfo.relative_scale[i]) + gInfo.relative_offset[i];
+                    // Debug.Log("i--[" + i + "] " + xVal + " : " + expPktTime + " : " + expPktTargetNode + " : " + gInfo.packetTarget[i]);
+                    if(xVal <= expPktTime){
+                        x = float.Parse(coord[0])/gInfo.xDiv*1f;
+                        y = float.Parse(coord[1]);
+                        // Debug.Log("IN = " + x + " : " + y);
+                        graph.ShowPlot((Global.GraphType)i, x, y);
+                        lastData[i] = gInfo.graphLogReader[i].ReadLine();
+                    }
+                }
             }
-            if(ymax<float.Parse(data[1])){
-                ymax = float.Parse(data[1]);
-            }
-            lastData.Add(null);
-        }
-        xmax = xmax/div;
-        
-        
-        for(int i=0; i<graphLogText.Count; i++){
-                relative_scale[i] = xmax/relative_scale[i];
-                // relative_scale[i] = relative_scale[0]/relative_scale[i];
-        }
-
-        xMax = xmax;
-        xMaxToScale = xmax;
-        yMax = ymax;
-        // scale = animTime/xMax;
-        for(int i=0; i<graphLogText.Count; i++){
-            lastData[i] = graphLogReader[i].ReadLine();
-        }
-    }
-    
-    public void ClearPlot(){
-        for(int i=0; i<graphLogText.Count; i++){
-            graph.ClearPlot((Global.GraphType)i);
-        }
-        graphLogReader.Clear();
-        lastData.Clear();
-        relative_scale.Clear();
-        expPktTargetNode = null;
-        targetNode = null;
-        graphStartTime = -1f;
-    }
-
-    public void ExpiredPacketTargetNode(string expPktTargetNode){
-        this.expPktTargetNode = expPktTargetNode;
     }
 
     public void ReferenceCounterValue(float rc){
         this.rc = rc;
     }
 
-    public void SetAnimTime(float t){
-        animTime = t - 1f;
+    public void ExpiredPacketTargetNode(int pktTime, string expPktTargetNode){
+        this.expPktTime = pktTime;
+        this.expPktTargetNode = expPktTargetNode;
     }
 
-    void FixedUpdate(){
-        if(graphStartTime==-1f){
-            // Debug.Log("GRAPH = " + graphStartTime + " : " + targetNode + " : " + expPktTargetNode);
-            if(targetNode==null || expPktTargetNode==null || targetNode != expPktTargetNode || animTime == 0f){
-                return;
+    public void SetAnimTime(float t){
+        // animTime = t - 1f;
+    }
+
+    void Parser(){
+        gInfo.relative_scale = new List<float>();
+        gInfo.relative_offset = new List<float>();
+        
+        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
+            gInfo.animTime = 716f;
+            gInfo.show = true;
+            gInfo.nCurves = 2;
+            gInfo.packetLegend = "Parity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#ffffff", "#0000ff", "#ffff00"});
+            gInfo.xLabel = "time (sec)";
+            gInfo.yLabel = "# packets received at receiver";
+            gInfo.graphLegend = "<color=#ffff00>---- No FEC</color>\n <color=#00ff40>---- With FEC (k=5, h=1)</color>";
+            gInfo.title = "FEC Effectiveness";
+            gInfo.xDiv = Global.U_SEC;
+            gInfo.segmentWidth = new List<float>(){1f, 1f};
+            gInfo.packetTarget = new List<string>(){"p1h0", "p1h0"};
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_scale.Add(1f);
+            }
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_offset.Add(0f);
+            }
+        }
+        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
+            gInfo.animTime = 2704f;
+            gInfo.show = true;
+            gInfo.nCurves = 2;
+            gInfo.packetLegend = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0EF3E1", "#61D612", "#FF8A00", "#ffffff", "#0000ff"});
+            gInfo.xLabel = "time (sec)";
+            gInfo.yLabel = "# packets received at receiver";
+            gInfo.graphLegend = "<color=#ffff00>---- No MCD</color>\n <color=#00ff40>---- With MCD</color>";
+            gInfo.title = "MCD Effectiveness";
+            gInfo.xDiv = Global.U_SEC;
+            gInfo.segmentWidth = new List<float>(){1f, 1f};
+            gInfo.packetTarget = new List<string>(){"p0e0", "p1h0"};
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_scale.Add(1f);
+            }
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_offset.Add(0f);
+            }
+        }
+        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
+            gInfo.animTime = 726f;
+            gInfo.show = true;
+            gInfo.nCurves = 2;
+            gInfo.packetLegend = "Compressed\nParity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#ff00ff", "#ffffff", "#0000ff", "#ffff00"});
+            gInfo.xLabel = "time (sec)";
+            gInfo.yLabel = "# bytes";
+            gInfo.graphLegend = "<color=#ffff00>---- Before Header Compression</color>\n <color=#00ff40>---- After Header Compression</color>";
+            gInfo.title = "HC Effectiveness";
+            gInfo.xDiv = Global.U_SEC;
+            gInfo.segmentWidth = new List<float>(){1f, 1f};
+            gInfo.packetTarget = new List<string>(){"p0e0", "dropper"};
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_scale.Add(1f);
+            }
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_offset.Add(0f);
+            }
+        }
+        else if(Global.chosanExperimentName == "2_complete_all_e2e"){
+            gInfo.animTime = 3447f;
+            gInfo.show = false;
+            gInfo.nCurves = 0;
+            gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nCompressed\nParity\nICMP Request";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ff00ff", "#ffffff", "#0000ff", "#ffff00", "#ff0000"});
+        }
+        else if(Global.chosanExperimentName == "3_complete_e2e_1_hl3new"){
+            gInfo.animTime = 3912f;
+            gInfo.show = false;
+            gInfo.nCurves = 0;
+            gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nCompressed\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#ff00ff","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000"});
+        }
+        else if(Global.chosanExperimentName == "3_complete_e2e_2_hl3new"){
+            gInfo.animTime = 4882f;
+            gInfo.show = false;
+            gInfo.nCurves = 0;
+            gInfo.packetLegend = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#0000ff"});
+        }
+        else if(Global.chosanExperimentName == "5_complete_2_FW"){
+            gInfo.animTime = 83f;
+            gInfo.show = true;
+            gInfo.nCurves = 2;
+            colorControl.SetColorPattern(Global.ColorPattern.None);
+            gInfo.packetLegend = "TCP Packets";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#ffff00"});
+            gInfo.xLabel = "% test completed";
+            gInfo.yLabel = "% success rate";
+            gInfo.graphLegend = "<color=#ffff00>---- Positive Test</color>\n <color=#00ff40>---- Negative Test</color>";
+            gInfo.title = "Firewall Effectiveness";
+            gInfo.xDiv = 1f;
+            gInfo.segmentWidth = new List<float>(){1f, 4f};
+            gInfo.packetTarget = new List<string>(){"D_FW_1", "D_FW_1"};
+            float scale = 642823f/100f;
+            gInfo.relative_scale.Add(scale);
+            scale = (6074785f-642823f)/100f;
+            gInfo.relative_scale.Add(scale);
+            gInfo.relative_offset.Add(0f);
+            gInfo.relative_offset.Add(642823f);
+        }
+        else if(Global.chosanExperimentName == "7_split1"){
+            gInfo.animTime = 121f;
+            gInfo.show = true;
+            gInfo.nCurves = 2;
+            gInfo.packetLegend = "ICMP Request\nICMP Reply\nFeedback";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#EC119D"});
+            gInfo.xLabel = "time (sec)";
+            gInfo.yLabel = "# bytes passing through the devices";
+            gInfo.graphLegend = "<color=#ffff00>---- SA_1</color>\n <color=#00ff40>---- SA_2</color>";
+            gInfo.title = "Failover Mechanism";
+            gInfo.xDiv = Global.U_SEC;
+            gInfo.segmentWidth = new List<float>(){1f, 1f};
+            gInfo.packetTarget = new List<string>(){"SA_1", "SA_2"};
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_scale.Add(1f);
+            }
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_offset.Add(0f);
+            }
+        }
+        else if(Global.chosanExperimentName == "Introduction"){
+            gInfo.animTime = 121f;
+            gInfo.show = true;
+            gInfo.nCurves = 2;
+            gInfo.packetLegend = "ICMP Request\nICMP Reply\nFeedback";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#EC119D"});
+            gInfo.xLabel = "time (sec)";
+            gInfo.yLabel = "# bytes passing through the devices";
+            gInfo.graphLegend = "<color=#ffff00>---- SA_1</color>\n <color=#00ff40>---- SA_2</color>";
+            gInfo.title = "Failover Mechanism"; 
+            gInfo.xDiv = Global.U_SEC; 
+            gInfo.segmentWidth = new List<float>(){1f, 1f};   
+            gInfo.packetTarget = new List<string>(){"SA_1", "SA_2"}; 
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_scale.Add(1f);
+            }
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_offset.Add(0f);
+            }     
+        }
+        else if(Global.chosanExperimentName == "6_split2_all"){
+            gInfo.animTime = 5555f;
+            gInfo.show = false;
+            gInfo.nCurves = 0;
+            gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request\nFeedback";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000", "#EC119D"});
+        }
+        if(gInfo.nCurves>0){
+            gInfo.graphLogText = new List<string>();
+            gInfo.graphLogReader = new List<StringReader>();
+        }
+    }
+
+    void GetMaxCoordinates(){
+        if(gInfo.nCurves==0){
+            return;
+        }
+        float xmax=0f, ymax=0f, div=1f;
+
+        List<float> minX = new List<float>();
+        List<float> maxX = new List<float>();
+        for(int i=0; i<gInfo.graphLogText.Count; i++){
+            string[] lines = gInfo.graphLogText[i].Split(new[] { Environment.NewLine }, StringSplitOptions.None);   
+            string[] minData = lines[0].Split(' ');
+            string[] maxData = lines[lines.Length - 1].Split(' ');
+
+            minX.Add(float.Parse(minData[0]));
+            maxX.Add(float.Parse(maxData[0]));
+            if(xmax<float.Parse(maxData[0])){
+                xmax = float.Parse(maxData[0]);
+            }
+            if(ymax<float.Parse(maxData[1])){
+                ymax = float.Parse(maxData[1]);
+            }
+        }
+        
+        // TODO no check for more then 2 curves
+        // if(gInfo.nCurves==1 || (gInfo.nCurves==2 && minX[1] >= maxX[0]) || (gInfo.nCurves==2 && minX[0] >= maxX[1])){
+        //     for(int i=0; i<gInfo.nCurves; i++){
+        //         gInfo.relative_scale.Add(1f);
+        //     }
+        // }
+        // else{
+        //     for(int i=0; i<gInfo.nCurves; i++){
+        //         gInfo.relative_scale.Add(xmax/maxX[i]);
+        //     }
+        // }
+
+        gInfo.xMax = xmax/gInfo.xDiv;
+        gInfo.yMax = ymax;
+    }
+
+    List<Color> ColorHexToRGB(List<string> hexColor){
+        List<Color> color = new List<Color>();
+        Color outColor;
+        foreach(var c in hexColor){
+            if ( ColorUtility.TryParseHtmlString(c, out outColor)){
+                color.Add(outColor);
             }
             else{
-                scale = (animTime-rc)/xMaxToScale;
-                graphStartTime = rc;
-            }
-        }   
-        UpdateGraph();     
-    }
-
-    void DispatchedPacketTime(float time){
-        packetTime = time;
-    }
-
-    void UpdateGraph(){
-        string[] coord;
-        float div=1;
-        if(isXtime){
-            div = Global.U_SEC;
-        }
-
-        if(Global.chosanExperimentName == "5_complete_2_FW"){
-            for(int i=0; i<graphLogText.Count; i++){
-                if(lastData.Count>0 && lastData[i] != null){
-                    coord = lastData[i].Split(' ');
-                    var xVal = (( float.Parse(coord[0]) / 2f) + 50f * i) * scale;
-                    if(xVal <= rc){
-                        float x = ( float.Parse(coord[0]) ) ;
-                        graph.ShowPlot((Global.GraphType)i, x, float.Parse(coord[1]));
-                        lastData[i] = graphLogReader[i].ReadLine();
-                    }
-                }
+                color.Add(Color.black);
             }
         }
-        else{
-            for(int i=0; i<graphLogText.Count; i++){
-                // Debug.Log("[" + i + "] " + lastData[i] + rc);
-                if(lastData.Count>0 && lastData[i] != null){
-                    coord = lastData[i].Split(' ');
-                    var xVal = ( float.Parse(coord[0]) - timeOffset[i]) * scale * relative_scale[i] / div;
-                    if(xVal+graphStartTime <= rc){
-                        float x = ( float.Parse(coord[0]) - timeOffset[i]) / div * relative_scale[i];
-                        graph.ShowPlot((Global.GraphType)i, x, float.Parse(coord[1]));
-                        lastData[i] = graphLogReader[i].ReadLine();
-                    }
-                }
-            }
-        }
+        return color;
     }
 
-    // UpdateGraph(){
-
-    // }
+    public void ClearPlot(){
+        for(int i=0; i<gInfo.nCurves; i++){
+            graph.ClearPlot((Global.GraphType)i);
+        }
+    }
 
     void UpdateEnable(){
         enabled = true;

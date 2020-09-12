@@ -5,11 +5,16 @@ using UnityEngine;
 public class SliderMenuAnim : MonoBehaviour
 {
     public GameObject PanelMenu;
-    public void SHowHideMenu(){
+    public void ShowHideMenu(){
         if(PanelMenu != null){
             Animator animator = PanelMenu.GetComponent<Animator>();
+            if(animator == null){
+                Debug.Log("Animator is NULL");
+            }
             if(animator != null){
+                Debug.Log("Animator is not NULL");
                 bool isOpen = animator.GetBool("show");
+                Debug.Log("isOpen = " + isOpen);
                 animator.SetBool("show", !isOpen);
             }
         }
