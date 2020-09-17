@@ -79,9 +79,9 @@ public class GraphInput : MonoBehaviour
     }
 
     public void GraphInputInit(){
+        sliderControl.SetSliderMaxValue(gInfo.animTime);
         if(gInfo.show == false){
-            graph.HideGraph();
-            sliderControl.SetSliderMaxValue(gInfo.animTime);
+            graph.HideGraph(); 
             return;
         }
         gInfo.graphLogReader.Clear();
@@ -258,24 +258,43 @@ public class GraphInput : MonoBehaviour
             }
         }
         else if(Global.chosanExperimentName == "Introduction"){
-            gInfo.animTime = 121f;
+            // gInfo.animTime = 121f;
+            // gInfo.show = true;
+            // gInfo.nCurves = 2;
+            // gInfo.packetLegend = "ICMP Request\nICMP Reply\nFeedback";
+            // gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#EC119D"});
+            // gInfo.xLabel = "time (sec)";
+            // gInfo.yLabel = "# bytes passing through the devices";
+            // gInfo.graphLegend = "<color=#ffff00>---- SA_1</color>\n <color=#00ff40>---- SA_2</color>";
+            // gInfo.title = "Failover Mechanism"; 
+            // gInfo.xDiv = Global.U_SEC; 
+            // gInfo.segmentWidth = new List<float>(){1f, 1f};   
+            // gInfo.packetTarget = new List<string>(){"SA_1", "SA_2"}; 
+            // for(int i=0; i<gInfo.nCurves; i++){
+            //     gInfo.relative_scale.Add(1f);
+            // }
+            // for(int i=0; i<gInfo.nCurves; i++){
+            //     gInfo.relative_offset.Add(0f);
+            // }     
+            gInfo.animTime = 83f;
             gInfo.show = true;
             gInfo.nCurves = 2;
-            gInfo.packetLegend = "ICMP Request\nICMP Reply\nFeedback";
-            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#EC119D"});
-            gInfo.xLabel = "time (sec)";
-            gInfo.yLabel = "# bytes passing through the devices";
-            gInfo.graphLegend = "<color=#ffff00>---- SA_1</color>\n <color=#00ff40>---- SA_2</color>";
-            gInfo.title = "Failover Mechanism"; 
-            gInfo.xDiv = Global.U_SEC; 
-            gInfo.segmentWidth = new List<float>(){1f, 1f};   
-            gInfo.packetTarget = new List<string>(){"SA_1", "SA_2"}; 
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_scale.Add(1f);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_offset.Add(0f);
-            }     
+            colorControl.SetColorPattern(Global.ColorPattern.None);
+            gInfo.packetLegend = "TCP Packets";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#ffff00"});
+            gInfo.xLabel = "% test completed";
+            gInfo.yLabel = "% success rate";
+            gInfo.graphLegend = "<color=#ffff00>---- Positive Test</color>\n <color=#00ff40>---- Negative Test</color>";
+            gInfo.title = "Firewall Effectiveness";
+            gInfo.xDiv = 1f;
+            gInfo.segmentWidth = new List<float>(){1f, 4f};
+            gInfo.packetTarget = new List<string>(){"D_FW_1", "D_FW_1"};
+            float scale = 642823f/100f;
+            gInfo.relative_scale.Add(scale);
+            scale = (6074785f-642823f)/100f;
+            gInfo.relative_scale.Add(scale);
+            gInfo.relative_offset.Add(0f);
+            gInfo.relative_offset.Add(642823f);
         }
         else if(Global.chosanExperimentName == "6_split2_all"){
             gInfo.animTime = 5555f;

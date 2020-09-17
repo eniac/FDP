@@ -55,12 +55,12 @@ public class ButtonControl : MonoBehaviour
 
     public void Settings(){
         if(slideIn == false){
-            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = "                     MENU                 <size=25>v</size>";
+            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = "             MENU                 <size=25>v</size>";
             SettingAnimator.SetBool("Slidein", true);
             slideIn = true;
         }
         else{
-            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = "                     MENU                 <size=25>></size>";
+            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = "             MENU                 <size=25>></size>";
             SettingAnimator.SetBool("Slidein", false);
             slideIn = false;
         }

@@ -18,20 +18,35 @@ public class CamMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // main camera Init
+        targetPos = target.position;
+        // camInitPos = new Vector3(0,9,-55);
         camInitPos = new Vector3(0,9,-55);
-        cam.transform.position = new Vector3(0,0,0);
-        cam.transform.Rotate(new Vector3(1,0,0));
-        cam.transform.Rotate(new Vector3(0,1,0));
-        cam.transform.Translate(camInitPos);
+
+        // main camera Init
+        // cam.transform.position = new Vector3(0,0,0);
+        // cam.transform.Rotate(new Vector3(1,0,0));
+        // cam.transform.Rotate(new Vector3(0,1,0));
+        // cam.transform.Translate(camInitPos);
+
+        // cam.transform.position = new Vector3(30.3f, 9.0f,-45.9f);
+        // cam.transform.rotation = new Quaternion(0, -0.3f, 0, 1f);
+        cam.transform.position = new Vector3(0f, 9.0f,-55f);
+        cam.transform.rotation = new Quaternion(0, 0, 0, 1.0f);
+        cam.fieldOfView = 60;
+
         // directional light init
-        light.transform.position = new Vector3(0,0,0);
-        light.transform.Rotate(new Vector3(1,0,0));
-        light.transform.Rotate(new Vector3(0,1,0));
-        light.transform.Translate(camInitPos);
+        // light.transform.position = new Vector3(0,0,0);
+        // light.transform.Rotate(new Vector3(1,0,0));
+        // light.transform.Rotate(new Vector3(0,1,0));
+        // light.transform.Translate(camInitPos);
+
+        // light.transform.position = new Vector3(30.3f, 9.0f,-45.9f);
+        // light.transform.rotation = new Quaternion(0, -0.3f, 0, 1f);
+        light.transform.position = new Vector3(0f, 9.0f,-55f);
+        light.transform.rotation = new Quaternion(0, 0, 0, 1.0f);
+
         // exposed nodes are false initially
         exposedNode = false;
-        targetPos = target.position;
     }
 
     // Update is called once per frame
@@ -64,6 +79,7 @@ public class CamMovement : MonoBehaviour
             light.transform.Translate(camInitPos);
 
             previousPosition = cam.ScreenToViewportPoint(Input.mousePosition);
+            // Debug.Log("Cam Pos = " + cam.transform.position + " : " + cam.transform.rotation);
         }
 
         

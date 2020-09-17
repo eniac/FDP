@@ -806,13 +806,13 @@ public class Topology : MonoBehaviour
         foreach(var obj in switchObjectDict.Values){
             ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Transparent);
             Color color = obj.GetComponent<MeshRenderer>().material.color;
-            color.a = 0.1f;
+            color.a = 0.3f;
             obj.GetComponent<MeshRenderer>().material.color = color;
         }
         foreach(var obj in satObjectDict.Values){
             ChangeRenderMode(obj.GetComponent<MeshRenderer>().material, BlendMode.Transparent);
             Color color = obj.GetComponent<MeshRenderer>().material.color;
-            color.a = 0.1f;
+            color.a = 0.3f;
             obj.GetComponent<MeshRenderer>().material.color = color;
         }
         nodeOpacity = false;
