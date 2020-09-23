@@ -55,12 +55,12 @@ public class ButtonControl : MonoBehaviour
 
     public void Settings(){
         if(slideIn == false){
-            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = "             MENU                 <size=25>v</size>";
+            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = "v";
             SettingAnimator.SetBool("Slidein", true);
             slideIn = true;
         }
         else{
-            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = "             MENU                 <size=25>></size>";
+            SettingAnimator.gameObject.transform.GetComponentInChildren<Text>().text = ">";
             SettingAnimator.SetBool("Slidein", false);
             slideIn = false;
         }
@@ -257,12 +257,14 @@ public class ButtonControl : MonoBehaviour
 
     public void ShowHideTagMarker(){
         if(showTagMarker==true){
-            SetMenuButtonText("ShowHideTagMarker", "Show Tag Marker");
+            SetMenuButtonText("ShowHideTagMarker", "Enable Switch Tag");
+            billBoard.SetSwitchTagStatus(false);
             topo.HideTagMarker();
             showTagMarker = false;
         }
         else{
-            SetMenuButtonText("ShowHideTagMarker", "Hide Tag Marker");
+            SetMenuButtonText("ShowHideTagMarker", "Disable switch Tag");
+            billBoard.SetSwitchTagStatus(true);
             topo.ShowTagMarker();
             showTagMarker = true;
         }

@@ -12,10 +12,12 @@ public class ColorControl : MonoBehaviour
     Color colorRequest = Color.red;
     Color colorReply = Color.blue;
     Dictionary<string, Color> ColorsByOrigin = new Dictionary<string, Color>();
+    List<Color> qosColor = new List<Color>(){ new Color(0.925f, 0.066f, 0.6156f), new Color(0.055f, 0.95f, 1f) };
     List<Color> mcdColor = new List<Color>(){ new Color(0.055f, 0.95f, 1f), new Color(0.454f, 0.953f, 0.059f) };
     Color mcdCacheColor = new Color(1f, 0.54f, 0f);
     List<Color> originColor = new List<Color>(){new Color(0f, 0f, 1f), new Color(1f, 1f, 0f), new Color(1f, 0f, 0f), new Color(0.5f, 0f, 0.5f), new Color(0f, 1f, 1f) };
     int mcdColorIndex=0;
+    int qosColorIndex=0;
     int originColorIndex=0;
     Global.ColorPattern colorPatternIndex = Global.ColorPattern.OriginBased; 
 
@@ -24,6 +26,7 @@ public class ColorControl : MonoBehaviour
         ColorsByOrigin.Clear();
         paths.Clear();
         mcdColorIndex=0;
+        qosColorIndex=0;
         originColorIndex=0;
     }
     public void SetColorPattern(Global.ColorPattern index){
@@ -62,6 +65,21 @@ public class ColorControl : MonoBehaviour
         // Packet type is HC
         else if(pType == Global.PacketType.HC){
             return new Color(1f, 0, 1f);
+        }
+
+        // Packet type is qos
+        if(pType == Global.PacketType.Qos){
+            string org = "QOS"+origin;
+            if(ColorsByOrigin.ContainsKey(org) == true){
+                color = ColorsByOrigin[org];
+            }
+            else{
+                ColorsByOrigin.Add(org, qosColor[qosColorIndex]);
+                color = ColorsByOrigin[org];
+                qosColorIndex++;
+            }
+            // Debug.Log("COLOR = " + color + " : " + pid);
+            return color;
         }
         // FOr all normal packets
         switch(colorPatternIndex){

@@ -21,10 +21,6 @@ public class SliderControl : MonoBehaviour
     void Start(){
         timeSlider.minValue = lastTimeSliderPos;  
         timeSlider.maxValue = 121.0f;
-        // timeSlider.maxValue = 47240005/Global.U_SEC;                    // split1_demo1
-        // timeSlider.maxValue = 27891602f/Global.U_SEC;                // split1_autotest1
-        // timeSlider.maxValue = 3350946/Global.U_SEC + 15f - 0.989f;   // split1_autotest3B
-        // timeSlider.maxValue = 0;
         timeSlider.value = lastTimeSliderPos;
         RectTransform rect= timeSlider.GetComponent<RectTransform>();
         // Debug.Log("Slider size = " + rect.sizeDelta.ToString() + rect.rect.width + " - " + rect.rect.height + " : " + rect.offsetMax + " - " + rect.offsetMin);

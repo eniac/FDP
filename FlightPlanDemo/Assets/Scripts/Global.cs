@@ -30,7 +30,9 @@ public static class Global
         HC,
         TCP,
         ICMP,
-        NAK
+        NAK,
+        Tunnel,
+        Qos
     }
     public enum ColorPattern{
         OriginBased=0,
@@ -49,4 +51,5 @@ public static class Global
     public static string experimentMetadata;
     public static float gVar = 10;
     public const float U_SEC = 1000000f;
+    public const bool PRE_PLAY = false;
 }

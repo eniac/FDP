@@ -57,7 +57,7 @@ public class AnimControl : MonoBehaviour
     string elapsedTimeString;
     float referenceCounter=0;
     float timeScaleBeforePause = 1;
-    bool prePlay = false;
+    bool prePlay = Global.PRE_PLAY;
     int instantiatedPacketTime = 0, lastPktTime=-1;
     AnimationParameters animParamBeforeSliderJump = new AnimationParameters();
     Global.AnimStatus animStatusBeforeSliderJump = Global.AnimStatus.Forward;
@@ -112,6 +112,8 @@ public class AnimControl : MonoBehaviour
         PacketTypeInfo.Add("TCP", Global.PacketType.TCP);
         PacketTypeInfo.Add("ICMP", Global.PacketType.ICMP);
         PacketTypeInfo.Add("NAK", Global.PacketType.NAK);
+        PacketTypeInfo.Add("TUNNEL", Global.PacketType.Tunnel);
+        PacketTypeInfo.Add("QOS", Global.PacketType.Qos);
         
         line = packetInfoString.ReadLine();
         while(line!=null){
@@ -222,13 +224,12 @@ public class AnimControl : MonoBehaviour
             InvokeRepeating("LossyLinkBlink", 0, 0.05f);
         } 
 
-        // prePlay = true;
-
-        // AdjustSpeed(prePlayTimeScale);
         AdjustSpeed(1f);
-
-        // StartAnimation();
-
+        if(prePlay==true){
+            AdjustSpeed(prePlayTimeScale);
+            StartAnimation();
+        }
+        
     }
 
     public void ShowLossyBlink(){
@@ -431,7 +432,7 @@ public class AnimControl : MonoBehaviour
         graphInput.ReferenceCounterValue(referenceCounter);
     }
 
-    float RCtime(){
+    public float RCtime(){
         return referenceCounter * Global.U_SEC;
     }
     void FixedUpdate()
@@ -599,9 +600,9 @@ public class AnimControl : MonoBehaviour
             if(prePlay == true){
                 loadingPanel.SetActive(false);
                 AdjustSpeed(1f);
-                sliderControl.SetSliderMaxValue(RCtime()/Global.U_SEC);
+                // sliderControl.SetSliderMaxValue(RCtime()/Global.U_SEC);
                 graphInput.ClearPlot();
-                graphInput.SetAnimTime(RCtime()/Global.U_SEC);
+                // graphInput.SetAnimTime(RCtime()/Global.U_SEC);
                 prePlay = false;
             }
             DisableUpdate();
@@ -950,6 +951,10 @@ public class AnimControl : MonoBehaviour
 
     public bool GetUpdateStatus(){
         return updateStatus;
+    }
+
+    public bool GetPrePlayStatus(){
+        return prePlay;
     }
 }
 

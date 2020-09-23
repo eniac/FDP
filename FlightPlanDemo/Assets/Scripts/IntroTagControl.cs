@@ -12,6 +12,7 @@ public class IntroTagControl : MonoBehaviour
     [SerializeField] GameObject introTag2Dru = default;
     [SerializeField] GameObject introTag2Dld = default;
     [SerializeField] GameObject introTag2Dlu = default;
+    [SerializeField] GameObject infoBox = default;
     [SerializeField] GameObject panelMenu = default;
     [SerializeField] GameObject footer = default; 
     [SerializeField] GameObject graph = default;
@@ -26,7 +27,8 @@ public class IntroTagControl : MonoBehaviour
         T3Drd,
         T3Dru,
         T3Dld,
-        T3Dlu
+        T3Dlu,
+        Info
     }
 
     struct TagInfo{
@@ -48,35 +50,23 @@ public class IntroTagControl : MonoBehaviour
 
         // Intro Screen 
         introScreen.SetActive(false);
-        introScreen.transform.Find("Background").transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate{OkButtonHandler();});
+        introScreen.transform.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate{OkButtonHandler();});
         introScreen.SetActive(true);
 
         // 2D Tags
-        // introTag2D.SetActive(false);
-        // introTag2D.transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate{OkButtonHandler();});
         Tag2DInit(introTag2Drd, TagType.T2Drd);
         Tag2DInit(introTag2Dru, TagType.T2Dru);
         Tag2DInit(introTag2Dld, TagType.T2Dld);
         Tag2DInit(introTag2Dlu, TagType.T2Dlu);
 
         // 3D Tags
-        // GameObject prefabTag3D = Resources.Load("IntroTag3D") as GameObject;
-        // introTag3D = Instantiate(prefabTag3D) as GameObject;
-        // introTag3D.SetActive(false);
-        // introTag3DText = introTag3D.transform.Find("Text").transform.GetComponent<TextMeshPro>();
-        // introTag3D.transform.Find("Canvas").transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate{OkButtonHandler();});
-        
-        // GameObject prefabTag3Drd = Resources.Load("IntroTag3Drd") as GameObject;
-        // introTag3Drd = Instantiate(prefabTag3Drd) as GameObject;
-        // introTag3Drd.SetActive(false);
-        // introTag3DText = introTag3D.transform.Find("Text").transform.GetComponent<TextMeshPro>();
-        // introTag3Drd.transform.Find("Background").transform.Find("Canvas").transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate{OkButtonHandler();});
-        
         introTag3Drd = Tag3DInit("IntroTag3Drd", TagType.T3Drd);
         introTag3Dru = Tag3DInit("IntroTag3Dru", TagType.T3Dru);
         introTag3Dld = Tag3DInit("IntroTag3Dld", TagType.T3Dld);
         introTag3Dlu = Tag3DInit("IntroTag3Dlu", TagType.T3Dlu);
 
+        // Info box
+        InfoBoxInit(infoBox, TagType.Info);
 
         EnableUpdate();
     }
@@ -102,6 +92,15 @@ public class IntroTagControl : MonoBehaviour
         return tag3D;
     }
 
+    void InfoBoxInit(GameObject infoBox, TagType type){
+        TagInfo info = new TagInfo();
+        infoBox.SetActive(false);
+        infoBox.transform.Find("Background").transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate{OkButtonHandler();});
+        info.headText = null;
+        info.detailText = infoBox.transform.Find("Background").transform.Find("Text").GetComponent<Text>();
+        tInfo.Add(type, info);
+    }
+
     void Update(){
         if(Global.chosanExperimentName != "Introduction"){
             return;
@@ -117,29 +116,27 @@ public class IntroTagControl : MonoBehaviour
             case 0:
                 isInState = true;
                 break;
+
             case 1:
                 introScreen.SetActive(false);
-                // introTag2D.SetActive(true);
-                // introTag2D.transform.position = panelMenu.transform.position;
                 pos = panelMenu.transform.position;
                 head = "Menu";
-                detail = "All the menu button can be expand and collaps by clicking on this button";
+                detail = "The menu can be expanded and collaped by clicking this button.";
                 TagUpdate(introTag2Drd, TagType.T2Drd, pos, head, detail);
                 break;
 
             case 2:
-                // introTag2D.transform.position = footer.transform.Find("TimeSlider").transform.position;
                 introTag2Drd.SetActive(false);
                 pos = footer.transform.Find("TimeSlider").transform.position;
                 head = "Time Slider";
-                detail = "Slider to see the different part of animation any time";
+                detail = "The slider shows the progress of experiment across time.";
                 TagUpdate(introTag2Dru, TagType.T2Dru, pos, head, detail);
                 break;
 
             case 3:
                 pos = footer.transform.Find("ElapsedTime").transform.position;
                 head = "Elapsed Time";
-                detail = "This shows the elapsed animation time since start";
+                detail = "This shows the elapsed animation time since the animation start.";
                 TagUpdate(introTag2Dru, TagType.T2Dru, pos, head, detail);
                 break;
 
@@ -147,7 +144,7 @@ public class IntroTagControl : MonoBehaviour
                 introTag2Dru.SetActive(false);
                 pos = footer.transform.Find("RemainingTime").transform.position;
                 head = "Remaining Time";
-                detail = "This shows the remaining time of animation";
+                detail = "This shows the remaining time of animation.";
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
@@ -155,52 +152,66 @@ public class IntroTagControl : MonoBehaviour
                 introTag2Dru.SetActive(false);
                 pos = footer.transform.Find("SpeedSlider").transform.position;
                 head = "Speed Slider";
-                detail = "Speed of animation can be governed by this";
+                detail = "Speed of animation can be governed by this.";
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
             case 6:
                 pos = graph.transform.position;
                 head = "Graph";
-                detail = "This is run time graph. Graph progresses as the animation progresses";
+                detail = "This shows relevant quantitative information from experiment on which the animation is based.";
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
             case 7:
-                introTag2Dlu.SetActive(false);
-                pos = topo.GetNodePosition("c3") + new Vector3(0, 1.5f, 0);
-                head = "Switch";
-                detail = "Switch breif description is here.";
-                TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
+                pos = graph.transform.Find("PacketLegendText").transform.position + new Vector3(0f, 100f, 0);
+                head = "Packet Legend";
+                detail = "Packet color legend to identify the packets in animation";
+                TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
             case 8:
-                introTag3Dru.SetActive(false);
-                pos = topo.GetNodePosition("D_V2_1") + new Vector3(0, 1f, 0);
-                head = "Satellite";
-                detail = "Switch breif description is here.";
+                introTag2Dlu.SetActive(false);
+                pos = topo.GetNodePosition("c3") + new Vector3(0, 1.5f, 0);
+                head = "Switch";
+                detail = "A switch forwards and transforms packet under the guidance of P4 program.";
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 break;
 
             case 9:
                 introTag3Dru.SetActive(false);
-                pos = ((topo.GetNodePosition("c3") - topo.GetNodePosition("p0a1"))/2.0f) + topo.GetNodePosition("p0a1"); 
-                head = "Link";
-                detail = "Link breif description is here.";
+                pos = topo.GetNodePosition("D_V2_1") + new Vector3(0, 1f, 0);
+                head = "<size=60>Supporting Device</size>";
+                detail = "Switch may offload part of their program to supporting devices.";
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 break;
 
             case 10:
                 introTag3Dru.SetActive(false);
+                pos = ((topo.GetNodePosition("c3") - topo.GetNodePosition("p0a1"))/2.0f) + topo.GetNodePosition("p0a1"); 
+                head = "Link";
+                detail = "Links connect switches and host together.";
+                TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
+                break;
+
+            case 11:
+                introTag3Dru.SetActive(false);
                 pos = ((topo.GetNodePosition("p0a0") - topo.GetNodePosition("p0e0"))/4.0f) + topo.GetNodePosition("p0e0"); 
                 head = "Lossy Link";
-                detail = "Lossy Link breif description is here.";
+                detail = "Lossy Link may drop packet at random because of hardware fault.";
                 TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
                 break;
 
+            case 12:
+                introTag3Dlu.SetActive(false);
+                pos = infoBox.transform.position; 
+                head = null;
+                detail = "3D model can be zoomed in and out using mouse scroll.";
+                TagUpdate(infoBox, TagType.Info, pos, head, detail);
+                break;
 
             default:
-                introTag3Dlu.SetActive(false);
+                infoBox.SetActive(false);
                 DisableUpdate();
                 break;
         }
@@ -209,7 +220,9 @@ public class IntroTagControl : MonoBehaviour
     void TagUpdate(GameObject tag2D, TagType type, Vector3 pos, string head, string detail){
         tag2D.SetActive(true);
         tag2D.transform.position = pos;
-        tInfo[type].headText.text = head;
+        if(tInfo[type].headText != null){
+            tInfo[type].headText.text = head;
+        }
         tInfo[type].detailText.text = detail;
         isInState = true;
     }

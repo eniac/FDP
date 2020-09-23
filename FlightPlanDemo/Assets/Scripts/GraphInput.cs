@@ -303,6 +303,28 @@ public class GraphInput : MonoBehaviour
             gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request\nFeedback";
             gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000", "#EC119D"});
         }
+        else if(Global.chosanExperimentName == "8_tunnel_base"){
+            gInfo.animTime = 316f;
+            gInfo.show = false;
+            gInfo.nCurves = 0;
+            gInfo.packetLegend = "TCP p0h3->p3h2\nTCP p3h2->p0h3";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00"});
+        }
+        else if(Global.chosanExperimentName == "9_tunnel_encapsulated"){
+            gInfo.animTime = 168f;
+            gInfo.show = false;
+            gInfo.nCurves = 0;
+            gInfo.packetLegend = "TUNNEL p0h3->p3h2";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff"});
+        }
+        else if(Global.chosanExperimentName == "10_qos"){
+            gInfo.animTime = 1576f;
+            gInfo.show = false;
+            gInfo.nCurves = 0;
+            gInfo.packetLegend = "TCP p0h3->p3h2\nTCP p3h2->p0h3\nQOS p0e1->p0a1\nQOS p0e1->p0h3";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#EC119D", "#0EF3E1"});
+        }
+
         if(gInfo.nCurves>0){
             gInfo.graphLogText = new List<string>();
             gInfo.graphLogReader = new List<StringReader>();
