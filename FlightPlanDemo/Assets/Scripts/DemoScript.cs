@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class DemoScript : MonoBehaviour
 {
-    public YamlParser yamlParser;
-    public Topology topo;
-    // public AnimationControl anim; 
+    [SerializeField]  YamlParser yamlParser = default;
+    [SerializeField]  Topology topo = default;
     [SerializeField] AnimControl anim = default;
-    [SerializeField] GraphInput graphInput = default;
     [SerializeField] BillBoardControl billBoard = default;
     [SerializeField] IntroTagControl introTag = default;
 

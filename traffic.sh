@@ -176,43 +176,84 @@ for pcap_file in "${PCAP_DIR}"/*; do
       }
       else if($8 == "0800"){
         printf "%s", head
-        # Full IP header
-        getline;
 
-        # ID from IP header
-        lID = $3
+        # QOS Packet
+        if(substr($9,3,1) != "0"){
+          # Full IP header
+          getline;
 
-        # Higher level protocol header (TCP/UDP/ICMP)
-        protocol = substr($5,3,2)
+          # ID from IP header
+          lID = $3
 
-        # Origin and destination
-        src=$7$8
-        d=$9
-        getline
-        dest=d""$2
+          # Higher level protocol header (TCP/UDP/ICMP)
+          protocol = substr($5,3,2)
 
-        # UDP(MEMCACHE) header
-        if(protocol == "11"){
-          lastIDf = lID
-          if($6=="0000"){
-            printf "%s %s %s MCDC\n", lastIDf, src, dest  
-          }
-          else{
-            printf "%s %s %s MCD\n", lastIDf, src, dest
-          }
-        }
-
-        # ICMP header
-        else if(protocol == "01"){
-          lastIDf = lID
-          printf "%s %s %s ICMP\n", lastIDf, src, dest
-        }
-
-        # TCP header
-        else{
+          # Origin and destination
+          src=$7$8
+          d=$9
           getline
-          lastIDf = lID""$3
-          printf "%s %s %s TCP\n", lastIDf, src, dest
+          dest=d""$2
+
+          # UDP(MEMCACHE) header
+          if(protocol == "11"){
+            lastIDf = lID
+          }
+
+          # ICMP header
+          else if(protocol == "01"){
+            lastIDf = lID
+          }
+
+          # TCP header
+          else{
+            getline
+            lastIDf = lID""$3
+          }
+
+          printf "%s %s %s QOS\n", lastIDf, src, dest  
+
+        }
+
+        # non QOS Packet
+        else{
+          # Full IP header
+          getline;
+
+          # ID from IP header
+          lID = $3
+
+          # Higher level protocol header (TCP/UDP/ICMP)
+          protocol = substr($5,3,2)
+
+          # Origin and destination
+          src=$7$8
+          d=$9
+          getline
+          dest=d""$2
+
+          # UDP(MEMCACHE) header
+          if(protocol == "11"){
+            lastIDf = lID
+            if($6=="0000"){
+              printf "%s %s %s MCDC\n", lastIDf, src, dest  
+            }
+            else{
+              printf "%s %s %s MCD\n", lastIDf, src, dest
+            }
+          }
+
+          # ICMP header
+          else if(protocol == "01"){
+            lastIDf = lID
+            printf "%s %s %s ICMP\n", lastIDf, src, dest
+          }
+
+          # TCP header
+          else{
+            getline
+            lastIDf = lID""$3
+            printf "%s %s %s TCP\n", lastIDf, src, dest
+          }
         }
       }
 
@@ -288,6 +329,26 @@ for pcap_file in "${PCAP_DIR}"/*; do
         lID = $3
         lastIDf = lID""$6
         printf "%s 00000000 00000000 HC\n", lastIDf
+      }
+
+      # Tunnel Header
+      else if($8 == "1212"){
+        printf "%s", head
+        getline
+
+        lID = $5
+
+        # Source and destination
+        sr = $9
+        getline
+        src = sr""$2
+        dest = $3$4
+
+        # ID from HOPOPT
+        getline
+        lastIDf = lID""$5
+
+        printf "%s %s %s TUNNEL\n", lastIDf, src, dest
       }
 
       # Flightplan header

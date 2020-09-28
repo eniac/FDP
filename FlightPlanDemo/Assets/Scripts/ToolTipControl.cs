@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class ToolTipControl : MonoBehaviour
 {
     private static ToolTipControl instance;
-    [SerializeField] private Camera cam = default;
     Text toolTipText;
     RectTransform backgroundRectTransform;
 

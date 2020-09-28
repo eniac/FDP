@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class ButtonControl : MonoBehaviour
 {
-    [SerializeField] private Camera cam = default;
     [SerializeField] private GameObject panelFooter = default;
     [SerializeField] private GameObject panelMenu = default;
     [SerializeField] private Animator SettingAnimator = default;
@@ -223,13 +222,56 @@ public class ButtonControl : MonoBehaviour
     }
 
     public void Hyperlink(){
+        string link = ParseCodeLink();
         if( Application.platform==RuntimePlatform.WebGLPlayer )
         {
-            Application.ExternalEval("window.open(\"https://flightplan.cis.upenn.edu/\")");
+            // Application.ExternalEval("window.open(\"https://flightplan.cis.upenn.edu/\")");
+            Application.ExternalEval("window.open(\"" + link + "\")");
         }
         else{
-            Application.OpenURL("https://flightplan.cis.upenn.edu/");
+            Application.OpenURL(link);
         }
+    }
+
+    string ParseCodeLink(){
+        string codeLink = "https://flightplan.cis.upenn.edu/";
+        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
+           codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits/ALV_Complete/";
+        }
+        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
+            codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits/ALV_Complete/";
+        }
+        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
+            codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits/ALV_Complete/";
+        }
+        else if(Global.chosanExperimentName == "2_complete_all_e2e"){
+           codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits/ALV_Complete/";
+        }
+        else if(Global.chosanExperimentName == "3_complete_e2e_1_hl3new"){
+           codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits2/ALV_Complete_1_hl3new/";
+        }
+        else if(Global.chosanExperimentName == "3_complete_e2e_2_hl3new"){
+            codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits2/ALV_Complete_2_hl3new/";
+        }
+        else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
+            codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits/ALV_Complete_2_FW/";
+        }
+        else if(Global.chosanExperimentName == "6_split2_all"){
+            codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits/ALV_split2/";
+        }
+        else if(Global.chosanExperimentName == "7_split1"){
+            codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits/ALV_split1/";
+        }
+        else if(Global.chosanExperimentName == "8_tunnel_base"){
+            codeLink = "https://www.github.com/eniac/FlightplanWharf/splits3/ALV_bt/";
+        }
+        else if(Global.chosanExperimentName == "9_tunnel_encapsulated"){
+            codeLink = "https://www.github.com/eniac/FlightplanWharf/splits3/ALV_bt/";
+        }
+        else if(Global.chosanExperimentName == "10_qos"){
+            codeLink = "https://www.github.com/eniac/Flightplan/Wharf/splits3/ALV_qos/";
+        }
+        return codeLink;
     }
 
     public void PointerEnterRewind(){
@@ -257,13 +299,13 @@ public class ButtonControl : MonoBehaviour
 
     public void ShowHideTagMarker(){
         if(showTagMarker==true){
-            SetMenuButtonText("ShowHideTagMarker", "Enable Switch Tag");
+            SetMenuButtonText("ShowHideTagMarker", "Enable Info Tag");
             billBoard.SetSwitchTagStatus(false);
             topo.HideTagMarker();
             showTagMarker = false;
         }
         else{
-            SetMenuButtonText("ShowHideTagMarker", "Disable switch Tag");
+            SetMenuButtonText("ShowHideTagMarker", "Disable Info Tag");
             billBoard.SetSwitchTagStatus(true);
             topo.ShowTagMarker();
             showTagMarker = true;

@@ -42,8 +42,11 @@ public class CamMovement : MonoBehaviour
 
         // light.transform.position = new Vector3(30.3f, 9.0f,-45.9f);
         // light.transform.rotation = new Quaternion(0, -0.3f, 0, 1f);
-        light.transform.position = new Vector3(0f, 9.0f,-55f);
-        light.transform.rotation = new Quaternion(0, 0, 0, 1.0f);
+        light.transform.position = cam.transform.position;
+        light.transform.rotation = cam.transform.rotation;
+
+        Debug.Log("init CAMERA pos = " + cam.transform.position);
+        Debug.Log("init CAMERA rot = " + cam.transform.rotation);
 
         // exposed nodes are false initially
         exposedNode = false;

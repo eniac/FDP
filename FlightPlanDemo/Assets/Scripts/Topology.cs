@@ -891,20 +891,25 @@ public class Topology : MonoBehaviour
         //     GameObject halo = Instantiate(helo_sat_prefab) as GameObject;
         //     halo.transform.SetParent (nodeObj.transform, false);
         // }   
+        GameObject prefab = null;
+        GameObject nodeObj = null;
         if(switchObjectDict.ContainsKey(node)){
-            GameObject mark_switch_prefab = Resources.Load("MarkSwitch") as GameObject;
-            GameObject nodeObj = switchObjectDict[node];
-            GameObject mark = Instantiate(mark_switch_prefab) as GameObject;
-            mark.transform.SetParent (nodeObj.transform, false);
-            tagMarkObject.Add(mark);
+            prefab = Resources.Load("MarkSwitch") as GameObject;
+            nodeObj = switchObjectDict[node];
         }
         else if(satObjectDict.ContainsKey(node)){
-            GameObject mark_sat_prefab = Resources.Load("MarkSat") as GameObject;
-            GameObject nodeObj = satObjectDict[node];
-            GameObject mark = Instantiate(mark_sat_prefab) as GameObject;
+            prefab = Resources.Load("MarkSat") as GameObject;
+            nodeObj = satObjectDict[node];
+        } 
+        else if(hostObjectDict.ContainsKey(node)){
+            prefab = Resources.Load("MarkHost") as GameObject;
+            nodeObj = hostObjectDict[node];
+        }  
+        if(prefab!=null){
+            GameObject mark = Instantiate(prefab) as GameObject;
             mark.transform.SetParent (nodeObj.transform, false);
             tagMarkObject.Add(mark);
-        }         
+        }      
     }
 
     public void ShowTagMarker(){

@@ -39,6 +39,7 @@ public class AnimControl : MonoBehaviour
     [SerializeField] ColorControl colorControl = default;
     [SerializeField] GraphInput graphInput = default;
     [SerializeField] SliderControl sliderControl = default;
+    [SerializeField] BillBoardControl billBoard = default;
     [SerializeField] GameObject loadingPanel = default;
 
     public enum PacketInfoIdx{
@@ -60,7 +61,6 @@ public class AnimControl : MonoBehaviour
     bool prePlay = Global.PRE_PLAY;
     int instantiatedPacketTime = 0, lastPktTime=-1;
     AnimationParameters animParamBeforeSliderJump = new AnimationParameters();
-    Global.AnimStatus animStatusBeforeSliderJump = Global.AnimStatus.Forward;
     Global.AnimStatus animStatus = Global.AnimStatus.Forward;
     Global.AnimStatus animationStatusBeforePause = Global.AnimStatus.Forward;
     List<GameObject> LossyLinkObjects = new List<GameObject>();
@@ -223,7 +223,7 @@ public class AnimControl : MonoBehaviour
         if(LossyLinkObjects.Count > 0){
             InvokeRepeating("LossyLinkBlink", 0, 0.05f);
         } 
-
+        loadingPanel.SetActive(false);
         AdjustSpeed(1f);
         if(prePlay==true){
             AdjustSpeed(prePlayTimeScale);
@@ -667,7 +667,7 @@ public class AnimControl : MonoBehaviour
         // Debug.Log(pInfo.packetID + " : " + pInfo.packetTime + " : " + pInfo.source + " : " + pInfo.target );
         RemoveHoldBackPackets(pInfo.packetID, pInfo.packetType);
         instantiatedPacketTime = pInfo.packetTime;
-        
+        GetInstantiatedPacketTime();
         return go;
     }
 
@@ -677,6 +677,7 @@ public class AnimControl : MonoBehaviour
             pktTime = instantiatedPacketTime;
         }
         lastPktTime = instantiatedPacketTime;
+        billBoard.DetectEventTag(pktTime);
         return pktTime;
     }
 

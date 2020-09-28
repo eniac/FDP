@@ -7,7 +7,6 @@ using TMPro;
 public class IntroTagControl : MonoBehaviour
 {
     [SerializeField] GameObject introScreen = default;
-    [SerializeField] GameObject introTag2D = default;
     [SerializeField] GameObject introTag2Drd = default;
     [SerializeField] GameObject introTag2Dru = default;
     [SerializeField] GameObject introTag2Dld = default;
@@ -18,6 +17,7 @@ public class IntroTagControl : MonoBehaviour
     [SerializeField] GameObject graph = default;
     [SerializeField] private Camera cam = default;
     [SerializeField] private Topology topo = default;
+    [SerializeField] private CameraRotate cameraRotate = default;
 
     enum TagType{
         T2Drd=0,
@@ -129,7 +129,7 @@ public class IntroTagControl : MonoBehaviour
                 introTag2Drd.SetActive(false);
                 pos = footer.transform.Find("TimeSlider").transform.position;
                 head = "Time Slider";
-                detail = "The slider shows the progress of experiment across time.";
+                detail = "The slider shows the progress of the experiment across time.";
                 TagUpdate(introTag2Dru, TagType.T2Dru, pos, head, detail);
                 break;
 
@@ -152,35 +152,36 @@ public class IntroTagControl : MonoBehaviour
                 introTag2Dru.SetActive(false);
                 pos = footer.transform.Find("SpeedSlider").transform.position;
                 head = "Speed Slider";
-                detail = "Speed of animation can be governed by this.";
+                detail = "Speed of animation can be changed here.";
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
             case 6:
                 pos = graph.transform.position;
                 head = "Graph";
-                detail = "This shows relevant quantitative information from experiment on which the animation is based.";
+                detail = "This shows relevant quantitative information from the experiment on which the animation is based.";
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
             case 7:
-                pos = graph.transform.Find("PacketLegendText").transform.position + new Vector3(0f, 100f, 0);
+                introTag2Dlu.SetActive(false);
+                pos = graph.transform.Find("PacketLegendText").transform.position + new Vector3(70f, 80f, 0);
                 head = "Packet Legend";
                 detail = "Packet color legend to identify the packets in animation";
-                TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
+                TagUpdate(introTag2Dld, TagType.T2Dld, pos, head, detail);
                 break;
 
             case 8:
-                introTag2Dlu.SetActive(false);
+                introTag2Dld.SetActive(false);
                 pos = topo.GetNodePosition("c3") + new Vector3(0, 1.5f, 0);
                 head = "Switch";
-                detail = "A switch forwards and transforms packet under the guidance of P4 program.";
+                detail = "A switch forwards and transforms packets under the guidance of P4 program.";
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 break;
 
             case 9:
                 introTag3Dru.SetActive(false);
-                pos = topo.GetNodePosition("D_V2_1") + new Vector3(0, 1f, 0);
+                pos = topo.GetNodePosition("D_V2_1") + new Vector3(0, 0.5f, -1f);
                 head = "<size=60>Supporting Device</size>";
                 detail = "Switch may offload part of their program to supporting devices.";
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
@@ -198,15 +199,38 @@ public class IntroTagControl : MonoBehaviour
                 introTag3Dru.SetActive(false);
                 pos = ((topo.GetNodePosition("p0a0") - topo.GetNodePosition("p0e0"))/4.0f) + topo.GetNodePosition("p0e0"); 
                 head = "Lossy Link";
-                detail = "Lossy Link may drop packet at random because of hardware fault.";
+                detail = "Lossy Link may drop packets at random because of hardware fault.";
                 TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
                 break;
 
             case 12:
                 introTag3Dlu.SetActive(false);
+                pos = topo.GetNodePosition("D_FW_1") + new Vector3(0, 0.5f, -1f); 
+                head = "Info Tags";
+                detail = "Additional information can be seen by clicking on those nodes with a red color square.";
+                TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
+                cameraRotate.DoRotate(new Quaternion(0,-0.3f,0,1.0f));
+                break;
+
+            case 13:
+                introTag3Dru.SetActive(false);
                 pos = infoBox.transform.position; 
                 head = null;
                 detail = "3D model can be zoomed in and out using mouse scroll.";
+                TagUpdate(infoBox, TagType.Info, pos, head, detail);
+                break;
+
+            case 14:
+                pos = infoBox.transform.position + new Vector3(10f, 10f, 0f); 
+                head = null;
+                detail = "Model can be rotated on its axis using mouse click and drag.";
+                TagUpdate(infoBox, TagType.Info, pos, head, detail);
+                break;
+
+            case 15:
+                pos = infoBox.transform.position  + new Vector3(-10f, -10f, -0f); 
+                head = null;
+                detail = "The 'Introduction' is over. Please click on the 'play' button in the bottom-left corner of the screen to start the animation.";
                 TagUpdate(infoBox, TagType.Info, pos, head, detail);
                 break;
 
