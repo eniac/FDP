@@ -40,6 +40,7 @@ public class AnimControl : MonoBehaviour
     [SerializeField] GraphInput graphInput = default;
     [SerializeField] SliderControl sliderControl = default;
     [SerializeField] BillBoardControl billBoard = default;
+    [SerializeField] IntroTagControl introTag = default;
     [SerializeField] GameObject loadingPanel = default;
 
     public enum PacketInfoIdx{
@@ -678,6 +679,7 @@ public class AnimControl : MonoBehaviour
         }
         lastPktTime = instantiatedPacketTime;
         billBoard.DetectEventTag(pktTime);
+        introTag.DetectEventTag(pktTime);
         return pktTime;
     }
 

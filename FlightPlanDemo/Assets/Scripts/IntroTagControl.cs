@@ -12,9 +12,11 @@ public class IntroTagControl : MonoBehaviour
     [SerializeField] GameObject introTag2Dld = default;
     [SerializeField] GameObject introTag2Dlu = default;
     [SerializeField] GameObject infoBox = default;
+    [SerializeField] GameObject infoBoxDetail = default;
     [SerializeField] GameObject panelMenu = default;
     [SerializeField] GameObject footer = default; 
     [SerializeField] GameObject graph = default;
+    [SerializeField] GameObject clickForCode = default;
     [SerializeField] private Camera cam = default;
     [SerializeField] private Topology topo = default;
     [SerializeField] private CameraRotate cameraRotate = default;
@@ -28,7 +30,8 @@ public class IntroTagControl : MonoBehaviour
         T3Dru,
         T3Dld,
         T3Dlu,
-        Info
+        Info,
+        InfoDetail
     }
 
     struct TagInfo{
@@ -41,6 +44,7 @@ public class IntroTagControl : MonoBehaviour
     TextMeshPro introTag3DText;
     int state = 0;  
     bool isInState = false;
+    GameObject tagHideOnOK = null;
     public void IntroTagInit(Vector3 nodePos)
     {   
         DisableUpdate();
@@ -67,6 +71,7 @@ public class IntroTagControl : MonoBehaviour
 
         // Info box
         InfoBoxInit(infoBox, TagType.Info);
+        InfoBoxInit(infoBoxDetail, TagType.InfoDetail);
 
         EnableUpdate();
     }
@@ -109,6 +114,7 @@ public class IntroTagControl : MonoBehaviour
         string head = null, detail=null;
 
         IntroTag3DFollowCam();
+
         if(isInState){
             return;
         }
@@ -167,27 +173,51 @@ public class IntroTagControl : MonoBehaviour
                 introTag2Dlu.SetActive(false);
                 pos = graph.transform.Find("PacketLegendText").transform.position + new Vector3(70f, 80f, 0);
                 head = "Packet Legend";
-                detail = "Packet color legend to identify the packets in animation";
+                detail = "Packet color legend to identify the packets in animation.";
                 TagUpdate(introTag2Dld, TagType.T2Dld, pos, head, detail);
                 break;
 
             case 8:
                 introTag2Dld.SetActive(false);
-                pos = topo.GetNodePosition("c3") + new Vector3(0, 1.5f, 0);
-                head = "Switch";
-                detail = "A switch forwards and transforms packets under the guidance of P4 program.";
-                TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
+                pos = clickForCode.transform.position;
+                head = "Code";
+                detail = "Get more details about each experiment by clicking here.";
+                TagUpdate(introTag2Dld, TagType.T2Dld, pos, head, detail);
                 break;
 
             case 9:
-                introTag3Dru.SetActive(false);
+                introTag2Dld.SetActive(false);
+                pos = topo.GetNodePosition("p0e0") + new Vector3(0, 1.0f, -1.5f);
+                head = "Edge Switch";
+                detail = "(p_e_) The Switch that is directly connected to the host is called edge switch.";
+                TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
+                break;
+
+            case 10:
+                introTag3Dlu.SetActive(false);
+                pos = topo.GetNodePosition("p0a1") + new Vector3(0, 1.0f, -1.5f);
+                head = "Aggregation Switch";
+                detail = "(p_a_) These switches interconnect edge and core switches.";
+                TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
+                break;
+
+            case 11:
+                introTag3Dlu.SetActive(false);
+                pos = topo.GetNodePosition("c2") + new Vector3(0, 1.0f, -1.5f);
+                head = "Core Switch";
+                detail = "(c_) Core switches interconnect aggregation switches.";
+                TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
+                break;
+
+            case 12:
+                introTag3Dlu.SetActive(false);
                 pos = topo.GetNodePosition("D_V2_1") + new Vector3(0, 0.5f, -1f);
                 head = "<size=60>Supporting Device</size>";
                 detail = "Switch may offload part of their program to supporting devices.";
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 break;
 
-            case 10:
+            case 13:
                 introTag3Dru.SetActive(false);
                 pos = ((topo.GetNodePosition("c3") - topo.GetNodePosition("p0a1"))/2.0f) + topo.GetNodePosition("p0a1"); 
                 head = "Link";
@@ -195,7 +225,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 break;
 
-            case 11:
+            case 14:
                 introTag3Dru.SetActive(false);
                 pos = ((topo.GetNodePosition("p0a0") - topo.GetNodePosition("p0e0"))/4.0f) + topo.GetNodePosition("p0e0"); 
                 head = "Lossy Link";
@@ -203,16 +233,16 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
                 break;
 
-            case 12:
+            case 15:
                 introTag3Dlu.SetActive(false);
                 pos = topo.GetNodePosition("D_FW_1") + new Vector3(0, 0.5f, -1f); 
                 head = "Info Tags";
-                detail = "Additional information can be seen by clicking on those nodes with a red color square.";
+                detail = "Additional information can be obtained by clicking on red squares such as this.";
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 cameraRotate.DoRotate(new Quaternion(0,-0.3f,0,1.0f));
                 break;
 
-            case 13:
+            case 16:
                 introTag3Dru.SetActive(false);
                 pos = infoBox.transform.position; 
                 head = null;
@@ -220,14 +250,23 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(infoBox, TagType.Info, pos, head, detail);
                 break;
 
-            case 14:
+            case 17:
                 pos = infoBox.transform.position + new Vector3(10f, 10f, 0f); 
                 head = null;
                 detail = "Model can be rotated on its axis using mouse click and drag.";
                 TagUpdate(infoBox, TagType.Info, pos, head, detail);
                 break;
 
-            case 15:
+            case 18:
+                infoBox.SetActive(false);
+                pos = infoBoxDetail.transform.position; 
+                head = null;
+                detail = "This experiment is to show the firewall effectiveness, Device D_FW_1 acts as a firewall. The experiment starts with series of positive test where Firewall allowed packets to pass through it, followed by series of negative tests where Firewall blocks the packets.";
+                TagUpdate(infoBoxDetail, TagType.InfoDetail, pos, head, detail);
+                break;
+
+            case 19:
+                infoBoxDetail.SetActive(false);
                 pos = infoBox.transform.position  + new Vector3(-10f, -10f, -0f); 
                 head = null;
                 detail = "The 'Introduction' is over. Please click on the 'play' button in the bottom-left corner of the screen to start the animation.";
@@ -236,6 +275,7 @@ public class IntroTagControl : MonoBehaviour
 
             default:
                 infoBox.SetActive(false);
+                // isInState = true;
                 DisableUpdate();
                 break;
         }
@@ -254,6 +294,10 @@ public class IntroTagControl : MonoBehaviour
     void OkButtonHandler(){
         state++;
         isInState = false;
+        if(tagHideOnOK != null){
+            tagHideOnOK.SetActive(false);
+            tagHideOnOK = null;
+        }
     }
 
     void IntroTag3DFollowCam(){
@@ -268,6 +312,26 @@ public class IntroTagControl : MonoBehaviour
 
         targetPos = new Vector3(cam.gameObject.transform.position.x, introTag3Dlu.transform.position.y, cam.gameObject.transform.position.z);
         introTag3Dlu.transform.LookAt(targetPos);
+    }
+
+
+    public void DetectEventTag(int time){
+        // Vector3 pos;
+        // string head = null, detail=null;
+        // if(time == 413491){
+        //     pos = graph.transform.position; 
+        //     head = "Yellow Curve";
+        //     detail = "curve is showing something";
+        //     TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
+        //     tagHideOnOK = introTag2Dlu;
+        // }
+        // else if(time == 4997492){
+        //     pos = graph.transform.position; 
+        //     head = "Green Curve";
+        //     detail = "curve is showing something";
+        //     TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
+        //     tagHideOnOK = introTag2Dlu;
+        // }
     }
 
     void EnableUpdate(){

@@ -212,8 +212,8 @@ public class GraphInput : MonoBehaviour
             gInfo.animTime = 4882f;
             gInfo.show = false;
             gInfo.nCurves = 0;
-            gInfo.packetLegend = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
-            gInfo.color = ColorHexToRGB(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#0000ff"});
+            gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nCompressed\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
+            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#ff00ff","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000"});
         }
         else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
             gInfo.animTime = 83f;
