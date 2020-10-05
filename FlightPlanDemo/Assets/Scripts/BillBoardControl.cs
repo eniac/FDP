@@ -790,25 +790,25 @@ public class BillBoardControl : MonoBehaviour
         else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
             time = 8256;
             nodeName = "D_FW_1";
-            nodeText = "The packets are allowed by Firewall to continue their journey.";
+            nodeText = "The packets are allowed to continue their journey.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
             time = 716224;
             nodeName = "D_FW_1";
-            nodeText = "This packet is not allowed to pass through the Firewall. It is going to be dropped at p1e1 switch";
+            nodeText = "This packet is not allowed through. It will be dropped at p1e1 switch";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
             time = 413491;
             nodeName = "Yellow Curve";
-            nodeText = "Straight line of yellow curve at 100% shows that all the positive tests are passed.";
+            nodeText = "We see that all the positive tests are passed.";
             hyperlink = null;
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
             time = 4997492;
             nodeName = "Green Curve";
-            nodeText = "Straight line of green curve at 100% shows that all the negative tests are passed.";
+            nodeText = "All the negative tests have passed too.";
             hyperlink = null;
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }

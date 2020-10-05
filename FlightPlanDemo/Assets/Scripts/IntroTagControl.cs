@@ -135,14 +135,14 @@ public class IntroTagControl : MonoBehaviour
                 introTag2Drd.SetActive(false);
                 pos = footer.transform.Find("TimeSlider").transform.position;
                 head = "Time Slider";
-                detail = "The slider shows the progress of the experiment across time.";
+                detail = "The slider shows the progress of the experiment over time.";
                 TagUpdate(introTag2Dru, TagType.T2Dru, pos, head, detail);
                 break;
 
             case 3:
                 pos = footer.transform.Find("ElapsedTime").transform.position;
                 head = "Elapsed Time";
-                detail = "This shows the elapsed animation time since the animation start.";
+                detail = "This shows the elapsed time since the experiment's start.";
                 TagUpdate(introTag2Dru, TagType.T2Dru, pos, head, detail);
                 break;
 
@@ -150,7 +150,7 @@ public class IntroTagControl : MonoBehaviour
                 introTag2Dru.SetActive(false);
                 pos = footer.transform.Find("RemainingTime").transform.position;
                 head = "Remaining Time";
-                detail = "This shows the remaining time of animation.";
+                detail = "This shows the remaining time for the experiment.";
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
@@ -158,14 +158,14 @@ public class IntroTagControl : MonoBehaviour
                 introTag2Dru.SetActive(false);
                 pos = footer.transform.Find("SpeedSlider").transform.position;
                 head = "Speed Slider";
-                detail = "Speed of animation can be changed here.";
+                detail = "Use this to change the display speed of the experiment's visualisation.";
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
             case 6:
                 pos = graph.transform.position;
                 head = "Graph";
-                detail = "This shows relevant quantitative information from the experiment on which the animation is based.";
+                detail = "This shows relevant quantitative information from the experiment.";
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
@@ -173,7 +173,7 @@ public class IntroTagControl : MonoBehaviour
                 introTag2Dlu.SetActive(false);
                 pos = graph.transform.Find("PacketLegendText").transform.position + new Vector3(70f, 80f, 0);
                 head = "Packet Legend";
-                detail = "Packet color legend to identify the packets in animation.";
+                detail = "Packet color legend to identify packets in the visualisation.";
                 TagUpdate(introTag2Dld, TagType.T2Dld, pos, head, detail);
                 break;
 
@@ -213,7 +213,7 @@ public class IntroTagControl : MonoBehaviour
                 introTag3Dlu.SetActive(false);
                 pos = topo.GetNodePosition("D_V2_1") + new Vector3(0, 0.5f, -1f);
                 head = "<size=60>Supporting Device</size>";
-                detail = "Switch may offload part of their program to supporting devices.";
+                detail = "A switch may offload part of its program to a supporting device such as this.";
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 break;
 
@@ -229,7 +229,7 @@ public class IntroTagControl : MonoBehaviour
                 introTag3Dru.SetActive(false);
                 pos = ((topo.GetNodePosition("p0a0") - topo.GetNodePosition("p0e0"))/4.0f) + topo.GetNodePosition("p0e0"); 
                 head = "Lossy Link";
-                detail = "Lossy Link may drop packets at random because of hardware fault.";
+                detail = "Lossy Link may drop packets at random because of a hardware fault.";
                 TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
                 break;
 
@@ -237,7 +237,7 @@ public class IntroTagControl : MonoBehaviour
                 introTag3Dlu.SetActive(false);
                 pos = topo.GetNodePosition("D_FW_1") + new Vector3(0, 0.5f, -1f); 
                 head = "Info Tags";
-                detail = "Additional information can be obtained by clicking on red squares such as this.";
+                detail = "Additional information can be obtained by clicking on red beacons such as this.";
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 cameraRotate.DoRotate(new Quaternion(0,-0.3f,0,1.0f));
                 break;
@@ -261,7 +261,7 @@ public class IntroTagControl : MonoBehaviour
                 infoBox.SetActive(false);
                 pos = infoBoxDetail.transform.position; 
                 head = null;
-                detail = "This experiment is to show the firewall effectiveness, Device D_FW_1 acts as a firewall. The experiment starts with series of positive test where Firewall allowed packets to pass through it, followed by series of negative tests where Firewall blocks the packets.";
+                detail = "This experiment tests the firewall's effectiveness. The firewall part of the P4 program has been offloaded to Device D_FW_1. The experiment consists of both positive and negative tests. It starts with a series of positive tests -- i.e., involving packets that we expect the firewall to let through. This is followed by negative tests, where we expect the firewall to block packets.";
                 TagUpdate(infoBoxDetail, TagType.InfoDetail, pos, head, detail);
                 break;
 
@@ -269,7 +269,7 @@ public class IntroTagControl : MonoBehaviour
                 infoBoxDetail.SetActive(false);
                 pos = infoBox.transform.position  + new Vector3(-10f, -10f, -0f); 
                 head = null;
-                detail = "The 'Introduction' is over. Please click on the 'play' button in the bottom-left corner of the screen to start the animation.";
+                detail = "The 'Introduction' is over. Please click on the 'play' button in the bottom-left corner of the screen to start the visualisation.";
                 TagUpdate(infoBox, TagType.Info, pos, head, detail);
                 break;
 
