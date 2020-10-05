@@ -180,8 +180,8 @@ public class IntroTagControl : MonoBehaviour
             case 8:
                 introTag2Dld.SetActive(false);
                 pos = clickForCode.transform.position;
-                head = "Code";
-                detail = "Get more details about each experiment by clicking here.";
+                head = "Info + Code";
+                detail = "For any experiment, click on 'Info + Code' to access background info and code.";
                 TagUpdate(introTag2Dld, TagType.T2Dld, pos, head, detail);
                 break;
 
@@ -196,7 +196,7 @@ public class IntroTagControl : MonoBehaviour
             case 10:
                 introTag3Dlu.SetActive(false);
                 pos = topo.GetNodePosition("p0a1") + new Vector3(0, 1.0f, -1.5f);
-                head = "Aggregation Switch";
+                head = "<size=60>Aggregation Switch</size>";
                 detail = "(p_a_) These switches interconnect edge and core switches.";
                 TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
                 break;
