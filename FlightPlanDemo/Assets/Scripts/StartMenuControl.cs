@@ -50,7 +50,11 @@ public class StartMenuControl : MonoBehaviour
     } 
     // Populate experiment name in drop down menu
     void PopulateExperimentDropdown(){
-        experimentDropdown.AddOptions(experimentNames);
+        List<string> listNames = new List<string>();
+        foreach(string name in experimentNames){
+            listNames.Add(name.Replace('_',' '));
+        }
+        experimentDropdown.AddOptions(listNames);
     }
 
     public void ExperimentDropdownIndexChanged(int index){
