@@ -235,40 +235,40 @@ public class ButtonControl : MonoBehaviour
 
     string ParseCodeLink(){
         string codeLink = "https://flightplan.cis.upenn.edu/";
-        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
+        if(Global.chosanExperimentName == "FEC_booster"){
            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
         }
-        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
+        else if(Global.chosanExperimentName == "MCD_booster"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
         }
-        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
+        else if(Global.chosanExperimentName == "HC_booster"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
         }
-        else if(Global.chosanExperimentName == "2_complete_all_e2e"){
+        else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
         }
-        else if(Global.chosanExperimentName == "3_complete_e2e_1_hl3new"){
+        else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/";
         }
-        else if(Global.chosanExperimentName == "3_complete_e2e_2_hl3new"){
+        else if(Global.chosanExperimentName == "Split_Crosspod_into_6"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/";
         }
         else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/";
         }
-        else if(Global.chosanExperimentName == "6_split2_all"){
+        else if(Global.chosanExperimentName == "Figure_7"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_All/";
         }
-        else if(Global.chosanExperimentName == "7_split1"){
+        else if(Global.chosanExperimentName == "Failover_mechanism"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/";
         }
-        else if(Global.chosanExperimentName == "8_tunnel_base"){
+        else if(Global.chosanExperimentName == "Untunneled_traffic"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/";
         }
-        else if(Global.chosanExperimentName == "9_tunnel_encapsulated"){
+        else if(Global.chosanExperimentName == "Tunneled_traffic"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/";
         }
-        else if(Global.chosanExperimentName == "10_qos"){
+        else if(Global.chosanExperimentName == "QoS"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/";
         }
         return codeLink;

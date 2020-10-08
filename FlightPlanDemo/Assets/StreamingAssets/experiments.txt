@@ -1,13 +1,12 @@
 Introduction
-1_complete_fec_e2e
-1_complete_mcd_e2e
-1_complete_hc_e2e
-2_complete_all_e2e
-3_complete_e2e_1_hl3new
-3_complete_e2e_2_hl3new
-6_split2_all
-7_split1
-8_tunnel_base
-9_tunnel_encapsulated
-10_qos
-forward error correction
+FEC_booster
+HC_booster
+MCD_booster
+Crosspod:_FEC,_HC,_and_MCD_boosters
+Split_Crosspod_into_3
+Split_Crosspod_into_6
+Figure_7
+Failover_mechanism
+Untunneled_traffic
+Tunneled_traffic
+QoS

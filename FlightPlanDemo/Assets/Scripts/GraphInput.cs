@@ -134,7 +134,7 @@ public class GraphInput : MonoBehaviour
         gInfo.relative_scale = new List<float>();
         gInfo.relative_offset = new List<float>();
         
-        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
+        if(Global.chosanExperimentName == "FEC_booster"){
             gInfo.animTime = 716f;
             gInfo.show = true;
             gInfo.nCurves = 2;
@@ -154,7 +154,7 @@ public class GraphInput : MonoBehaviour
                 gInfo.relative_offset.Add(0f);
             }
         }
-        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
+        else if(Global.chosanExperimentName == "MCD_booster"){
             gInfo.animTime = 2704f;
             gInfo.show = true;
             gInfo.nCurves = 2;
@@ -174,7 +174,7 @@ public class GraphInput : MonoBehaviour
                 gInfo.relative_offset.Add(0f);
             }
         }
-        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
+        else if(Global.chosanExperimentName == "HC_booster"){
             gInfo.animTime = 726f;
             gInfo.show = true;
             gInfo.nCurves = 2;
@@ -194,21 +194,21 @@ public class GraphInput : MonoBehaviour
                 gInfo.relative_offset.Add(0f);
             }
         }
-        else if(Global.chosanExperimentName == "2_complete_all_e2e"){
+        else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
             gInfo.animTime = 3447f;
             gInfo.show = false;
             gInfo.nCurves = 0;
             gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nCompressed\nParity\nICMP Request";
             gInfo.color = ColorHexToRGB(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ff00ff", "#ffffff", "#0000ff", "#ffff00", "#ff0000"});
         }
-        else if(Global.chosanExperimentName == "3_complete_e2e_1_hl3new"){
+        else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
             gInfo.animTime = 3912f;
             gInfo.show = false;
             gInfo.nCurves = 0;
             gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nCompressed\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
             gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#ff00ff","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000"});
         }
-        else if(Global.chosanExperimentName == "3_complete_e2e_2_hl3new"){
+        else if(Global.chosanExperimentName == "Split_Crosspod_into_6"){
             gInfo.animTime = 4882f;
             gInfo.show = false;
             gInfo.nCurves = 0;
@@ -236,7 +236,7 @@ public class GraphInput : MonoBehaviour
             gInfo.relative_offset.Add(0f);
             gInfo.relative_offset.Add(642823f);
         }
-        else if(Global.chosanExperimentName == "7_split1"){
+        else if(Global.chosanExperimentName == "Failover_mechanism"){
             gInfo.animTime = 121f;
             gInfo.show = true;
             gInfo.nCurves = 2;
@@ -256,28 +256,28 @@ public class GraphInput : MonoBehaviour
                 gInfo.relative_offset.Add(0f);
             }
         }
-        else if(Global.chosanExperimentName == "6_split2_all"){
+        else if(Global.chosanExperimentName == "Figure_7"){
             gInfo.animTime = 5555f;
             gInfo.show = false;
             gInfo.nCurves = 0;
             gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request\nFeedback";
             gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000", "#EC119D"});
         }
-        else if(Global.chosanExperimentName == "8_tunnel_base"){
+        else if(Global.chosanExperimentName == "Untunneled_traffic"){
             gInfo.animTime = 316f;
             gInfo.show = false;
             gInfo.nCurves = 0;
             gInfo.packetLegend = "TCP p0h3->p3h2\nTCP p3h2->p0h3";
             gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00"});
         }
-        else if(Global.chosanExperimentName == "9_tunnel_encapsulated"){
+        else if(Global.chosanExperimentName == "Tunneled_traffic"){
             gInfo.animTime = 168f;
             gInfo.show = false;
             gInfo.nCurves = 0;
             gInfo.packetLegend = "TUNNEL p0h3->p3h2";
             gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff"});
         }
-        else if(Global.chosanExperimentName == "10_qos"){
+        else if(Global.chosanExperimentName == "QoS"){
             gInfo.animTime = 1576f;
             gInfo.show = false;
             gInfo.nCurves = 0;

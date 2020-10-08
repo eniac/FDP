@@ -126,7 +126,10 @@ public class BillBoardControl : MonoBehaviour
             info.boardObject = tag2DGreen;
         }
         info.boardObject.SetActive(false);
-        info.boardObject.transform.position = graph.transform.position + new Vector3(70f, 270f, 0);
+        // info.boardObject.transform.position = graph.transform.position + new Vector3(70f, 200f, 0); // 70 270 0
+        info.boardObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(420f, 240f);
+        // info.boardObject.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
+        // info.boardObject.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
         info.boardObject.transform.Find("Background").transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate{OkButtonHandler(info.boardObject);});
         info.boardObject.transform.Find("Background").transform.Find("HeadingText").GetComponent<Text>().text = head;
         info.boardObject.transform.Find("Background").transform.Find("TextBackground").transform.Find("Text").GetComponent<Text>().text = detail;
@@ -268,7 +271,7 @@ public class BillBoardControl : MonoBehaviour
         Dictionary<string, Tuple<string, string>> info = new Dictionary<string, Tuple<string, string>>();
         string nodeName, nodeText, hyperlink;
         
-        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
+        if(Global.chosanExperimentName == "FEC_booster"){
             nodeName = "p0e0";
             nodeText = "FEC Booster - Parity packets are generated at this node.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
@@ -289,7 +292,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = null;
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
+        else if(Global.chosanExperimentName == "MCD_booster"){
             nodeName = "p0a0";
             nodeText = "MCD Booster - provides in-network caching of memcached entries.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
@@ -305,7 +308,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = null;
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
+        else if(Global.chosanExperimentName == "HC_booster"){
             nodeName = "p0e0";
             nodeText = "HC Booster - Header is compressed here.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
@@ -326,7 +329,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = null;
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "2_complete_all_e2e"){
+        else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
             nodeName = "p0e0";
             nodeText = "All the three boosters are active - Forward Error Correction (FEC), Memcached (MCD), Header Compression (HC).";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
@@ -347,7 +350,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = null;
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "3_complete_e2e_1_hl3new"){
+        else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
             nodeName = "p0e0";
             nodeText = "All the three boosters are active - Forward Error Correction (FEC), Memcached (MCD), Header Compression (HC). ";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
@@ -373,7 +376,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = null;
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "3_complete_e2e_2_hl3new"){
+        else if(Global.chosanExperimentName == "Split_Crosspod_into_6"){
             nodeName = "p0e0";
             nodeText = "All the three boosters are active - Forward Error Correction (FEC), Memcached (MCD), Header Compression (HC). ";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
@@ -431,7 +434,7 @@ public class BillBoardControl : MonoBehaviour
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
             nodeName = "D_V3_1";
-            nodeText = "FEC (Forward Error Correction) encoder.";
+            nodeText = "If heading out on a lossy link, then FEC encode..";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split2.p4";
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
@@ -440,7 +443,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split3.p4";
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "6_split2_all"){
+        else if(Global.chosanExperimentName == "Figure_7"){
             nodeName = "p0e0";
             nodeText = "FEC encoder and decoder. Header compressor and decompressor. MCD Booster - provides in-network caching of memcached entries.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
@@ -457,7 +460,7 @@ public class BillBoardControl : MonoBehaviour
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
             nodeName = "S2";
-            nodeText = "FEC (Forward Error Correction) encoder and decoder.";
+            nodeText = "FEC (Forward Error Correction) decoder. Header decompressor. MCD Booster - provides in-network caching of memcached entries.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4";
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
@@ -482,7 +485,7 @@ public class BillBoardControl : MonoBehaviour
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
             nodeName = "D_V3_3";
-            nodeText = "Header Compressor.";
+            nodeText = "Header decompressor, If multiplexed link.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split4.p4";
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
@@ -492,7 +495,7 @@ public class BillBoardControl : MonoBehaviour
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
             nodeName = "D_V3_5";
-            nodeText = "Header Decompressor.";
+            nodeText = "Header Decompressor, if heading out on a multiplexed link.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split6.p4";
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
@@ -536,7 +539,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = null;
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "7_split1"){
+        else if(Global.chosanExperimentName == "Failover_mechanism"){
             nodeName = "SA_1";
             nodeText = "Supporting device to offload p0e0";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4";
@@ -558,7 +561,7 @@ public class BillBoardControl : MonoBehaviour
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
         }
-        else if(Global.chosanExperimentName == "8_tunnel_base"){
+        else if(Global.chosanExperimentName == "Untunneled_traffic"){
             nodeName = "p0h3";
             nodeText = "This is the source host";
             hyperlink = null;
@@ -569,7 +572,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = null;
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "9_tunnel_encapsulated"){
+        else if(Global.chosanExperimentName == "Tunneled_traffic"){
             nodeName = "c0";
             nodeText = "processes tunneled packets.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
@@ -635,7 +638,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = null;
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "10_qos"){
+        else if(Global.chosanExperimentName == "QoS"){
             nodeName = "p0e1";
             nodeText = "Diffserv field is set to 44 here, to enable higher priority service in the network.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4";
@@ -661,7 +664,7 @@ public class BillBoardControl : MonoBehaviour
         int time;
         string nodeName, nodeText, hyperlink;
 
-        if(Global.chosanExperimentName == "1_complete_fec_e2e"){
+        if(Global.chosanExperimentName == "FEC_booster"){
             time = 3008916;
             nodeName = "p0e0";
             nodeText = "Now silver colored FEC packet will travel from p0e0 to p0a0.";
@@ -674,7 +677,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "1_complete_hc_e2e"){
+        else if(Global.chosanExperimentName == "HC_booster"){
             time = 3962;
             nodeName = "p0e0";
             nodeText = "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet.";
@@ -687,14 +690,14 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "1_complete_mcd_e2e"){
+        else if(Global.chosanExperimentName == "MCD_booster"){
             time = 105300;
             nodeName = "p0a0";
             nodeText = "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested.";
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "2_complete_all_e2e"){
+        else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
             time = 4318;
             nodeName = "p0e0";
             nodeText = "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet.";
@@ -725,7 +728,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "3_complete_e2e_1_hl3new"){
+        else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
             time = 101832;
             nodeName = "p0e0";
             nodeText = "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet.";
@@ -756,7 +759,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "3_complete_e2e_2_hl3new"){
+        else if(Global.chosanExperimentName == "Split_Crosspod_into_6"){
             time = 6348;
             nodeName = "p0e0";
             nodeText = "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet.";
@@ -794,6 +797,12 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
+            time = 120885;
+            nodeName = "p1e0";
+            nodeText = "It implements some other functions, not important in this demo, but for others. You will see packets bouncing around the supporting devices.";
+            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split1.p4";
+            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
             time = 716224;
             nodeName = "D_FW_1";
             nodeText = "This packet is not allowed through. It will be dropped at p1e1 switch";
@@ -802,17 +811,17 @@ public class BillBoardControl : MonoBehaviour
 
             time = 413491;
             nodeName = "Yellow Curve";
-            nodeText = "We see that all the positive tests are passed.";
+            nodeText = "This curve shows the progress of positive test and their success rate so far.";
             hyperlink = null;
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
             time = 4997492;
             nodeName = "Green Curve";
-            nodeText = "All the negative tests have passed too.";
+            nodeText = "This curve shows the progress of negative test and their success rate so far.";
             hyperlink = null;
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "6_split2_all"){
+        else if(Global.chosanExperimentName == "Figure_7"){
             time = 8019053;
             nodeName = "p0e0";
             nodeText = "Now silver colored FEC packet will travel from p0e0 to p0a0.";
@@ -892,7 +901,7 @@ public class BillBoardControl : MonoBehaviour
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
         }
-        else if(Global.chosanExperimentName == "7_split1"){
+        else if(Global.chosanExperimentName == "Failover_mechanism"){
             time = 1971;
             nodeName = "p0e0";
             nodeText = "This packet from p0e0 travels to SA_1 for processing [Supporting device SA_1 offloads p0e0]";
@@ -917,10 +926,10 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "8_tunnel_base"){
+        else if(Global.chosanExperimentName == "Untunneled_traffic"){
             
         }
-        else if(Global.chosanExperimentName == "9_tunnel_encapsulated"){
+        else if(Global.chosanExperimentName == "Tunneled_traffic"){
             time = 3418;
             nodeName = "c0";
             nodeText = "Tunneling happens here. Packet is supposed to go towards p3a0 directly, but due to tunneling it goes towards p1a0.";
@@ -933,7 +942,7 @@ public class BillBoardControl : MonoBehaviour
             hyperlink = "https://www.github.com/eniac/FlightplanWharf/splits3/ALV_bt/ALV_bt.p4";
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
-        else if(Global.chosanExperimentName == "10_qos"){
+        else if(Global.chosanExperimentName == "QoS"){
             time = 1528;
             nodeName = "p0e1";
             nodeText = "Diffserv field is set to 44 here, to enable higher priority service in the network. Packet turns from blue to pink.";

@@ -1,0 +1,66 @@
+# input configuration file to the animation
+
+experiment_info:
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
+
+static_tags:
+  - node: p0e0
+    text: "FEC Booster - Parity packets are generated at this node."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - node: p0a0
+    text: "Lost packets are recovered with the help of parity packets here."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - node: p0h0
+    text: "This is the source host."
+    hyperlink: null
+
+  - node: p1h0
+    text: "This is the destination host."
+    hyperlink: null
+
+event_tags:
+  - node: 3008916
+    time: p0e0
+    text: "Now silver colored FEC packet will travel from p0e0 to p0a0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - node: 13032597
+    time: p0a0
+    text: "p0a0 receives the FEC packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0"
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+graph:
+  show: True
+  x_div: 1000000
+  x_label: "time (sec)"
+  y_label: "# packets received at receiver"
+  title: "FEC Effectiveness"
+  curves: 2
+
+  - file_name: "graph_log1.txt"
+    curve_color: "#ffff00"
+    legend_text: "No FEC"
+    curve_width: 1
+    packet_target: p1h0
+
+  - file_name: "graph_log2.txt"
+    curve_color: "#00ff40"
+    legend_text: "With FEC (k=5, h=1)"
+    curve_width: 1
+    packet_target: p1h0
+
+
+packet_legend:
+  - type: "Parity"
+    color: "#ffffff"
+
+  - type: "TCP p0h0->p1h0"
+    color: "#0000ff"
+
+  - type: "TCP p1h0->p0h0"
+    color: "#ffff00"
+
+
+
