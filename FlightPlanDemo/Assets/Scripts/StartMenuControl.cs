@@ -75,6 +75,7 @@ public class StartMenuControl : MonoBehaviour
 
     void SetFileNames(){
         Global.experimentYaml = chosenExperiment + "/topology.yml";
+        Global.configYaml = chosenExperiment + "/config.yml";
         Global.experimentMetadata = chosenExperiment + "/metadata.txt";
     }
 

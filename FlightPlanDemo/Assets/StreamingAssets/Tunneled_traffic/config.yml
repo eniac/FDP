@@ -1,0 +1,87 @@
+# input configuration file to the animation
+
+experiment_info:
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/"
+
+static_tags:
+  - node: c0
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+  - node: c1
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+  - node: c3
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+  - node: p0a0
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+  - node: p0e1
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+  - node: p1a0
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+  - node: p2a1
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+  
+  - node: p3a0
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+  - node: p3a1
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+  
+  - node: p3e0
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+  - node: p3e1
+    text: "processes tunneled packets."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+  - node: p0h3
+    text: "This is the source host."
+    hyperlink: null
+
+  - node: p3h2
+    text: "This is the destination host."
+    hyperlink: null
+
+event_tags:
+  - time: 1194
+    node: p0e1
+    text: "Due to tunneling effect, this packet will follow the tunneled path p0e1->p0a0->c0->p1a0->c1->p3a0->p3e0->p3e0->p3a1 to reach to p3h2."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+
+graph:
+  show: "n"
+  x_div: 1000000
+  x_label: "time (sec)"
+  y_label: "# packets received at receiver"
+  title: ""
+  curve_info:
+    - file_name: "graph_log1.txt"
+      curve_color: "#ffff00"
+      legend_text: ""
+      curve_width: 1
+      packet_target: 
+
+    - file_name: "graph_log2.txt"
+      curve_color: "#00ff40"
+      legend_text: ""
+      curve_width: 1
+      packet_target: 
+
+
+packet_legend:
+  - type: "TUNNEL p0h3->p3h2"
+    color: "#0000ff"

@@ -1,0 +1,66 @@
+# input configuration file to the animation
+
+experiment_info:
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/"
+
+static_tags:
+  - node: p0e1
+    text: "Diffserv field is set to 44 here, to enable higher priority service in the network."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4"
+
+  - node: p0h3
+    text: "This is the source host."
+    hyperlink: null
+
+  - node: p3h2
+    text: "This is the destination host."
+    hyperlink: null
+
+event_tags:
+  - time: 1528
+    node: p0e1
+    text: "Diffserv field is set to 44 here, to enable higher priority service in the network. Packet turns from blue to pink."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4"
+
+  - time: 12885
+    node: p0e1
+    text: "Enables higher priority service again in return journey of the packet. Packet turns from yellow to light blue."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4"
+
+  - time: 12901
+    node: p0h3
+    text: "Now p0h3 is going to dispatch pink colored reset packet, with Diffserv field set to 44."
+    hyperlink: null
+
+graph:
+  show: "n"
+  x_div: 1000000
+  x_label: "time (sec)"
+  y_label: "# packets received at receiver"
+  title: ""
+  curve_info:
+    - file_name: "graph_log1.txt"
+      curve_color: "#ffff00"
+      legend_text: ""
+      curve_width: 1
+      packet_target: 
+
+    - file_name: "graph_log2.txt"
+      curve_color: "#00ff40"
+      legend_text: ""
+      curve_width: 1
+      packet_target: 
+
+
+packet_legend:
+  - type: "TCP p0h3->p3h2"
+    color: "#0000ff"
+
+  - type: "TCP p3h2->p0h3"
+    color: "#ffff00"
+
+  - type: "High-Priority TCP p0e1->p0a1"
+    color: "#EC119D"
+
+  - type: "High-Priority TCP p0e1->p0h3"
+    color: "#0EF3E1"

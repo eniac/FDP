@@ -34,6 +34,7 @@ public class BillBoardControl : MonoBehaviour
     bool boardOn=false;
     bool eventTagStatus = true, switchTagStatus = true;
     GameObject timeSliderHandle;
+    ConfigRoot configObject;
 
     public void BillBoardInit(){
         timeSliderHandle = timeSlider.gameObject.transform.Find("Handle Slide Area").transform.Find("Handle").gameObject;
@@ -43,6 +44,10 @@ public class BillBoardControl : MonoBehaviour
             topo.AddTagMarker(node);
         }
         UpdateEnable();
+    }
+
+    public void SetConfigObject(ConfigRoot configObject){
+        this.configObject = configObject;
     }
 
     public void ResetTimeInfo(){
@@ -272,83 +277,111 @@ public class BillBoardControl : MonoBehaviour
         string nodeName, nodeText, hyperlink;
         
         if(Global.chosanExperimentName == "FEC_booster"){
-            nodeName = "p0e0";
-            nodeText = "FEC Booster - Parity packets are generated at this node.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            foreach(var attr in configObject.StaticTags){
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            }
 
-            nodeName = "p0a0";
-            nodeText = "Lost packets are recovered with the help of parity packets here.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0e0";
+            // nodeText = "FEC Booster - Parity packets are generated at this node.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p0h0";
-            nodeText = "This is the source host.";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0a0";
+            // nodeText = "Lost packets are recovered with the help of parity packets here.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p1h0";
-            nodeText = "This is the destination host.";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0h0";
+            // nodeText = "This is the source host.";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+
+            // nodeName = "p1h0";
+            // nodeText = "This is the destination host.";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "MCD_booster"){
-            nodeName = "p0a0";
-            nodeText = "MCD Booster - provides in-network caching of memcached entries.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            foreach(var attr in configObject.StaticTags){
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            }
 
-            nodeName = "p0h0";
-            nodeText = "This is the client host.";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0a0";
+            // nodeText = "MCD Booster - provides in-network caching of memcached entries.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p1h0";
-            nodeText = "This is the server host.";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0h0";
+            // nodeText = "This is the client host.";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+
+            // nodeName = "p1h0";
+            // nodeText = "This is the server host.";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "HC_booster"){
-            nodeName = "p0e0";
-            nodeText = "HC Booster - Header is compressed here.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            foreach(var attr in configObject.StaticTags){
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            }
 
-            nodeName = "p0a0";
-            nodeText = "Header is decompressed here.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0e0";
+            // nodeText = "HC Booster - Header is compressed here.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p0h0";
-            nodeText = "This is the source host.";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0a0";
+            // nodeText = "Header is decompressed here.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p1h0";
-            nodeText = "This is the destination host.";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0h0";
+            // nodeText = "This is the source host.";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+
+            // nodeName = "p1h0";
+            // nodeText = "This is the destination host.";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
-            nodeName = "p0e0";
-            nodeText = "All the three boosters are active - Forward Error Correction (FEC), Memcached (MCD), Header Compression (HC).";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            foreach(var attr in configObject.StaticTags){
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            }
 
-            nodeName = "p0a0";
-            nodeText = "Lost packets are recovered. MCD Booster - Provides in-network caching of memcached entries. Header is decompressed.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0e0";
+            // nodeText = "All the three boosters are active - Forward Error Correction (FEC), Memcached (MCD), Header Compression (HC).";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p0h0";
-            nodeText = "This is the source host.";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0a0";
+            // nodeText = "Lost packets are recovered. MCD Booster - Provides in-network caching of memcached entries. Header is decompressed.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p1h0";
-            nodeText = "This is the destination host.";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0h0";
+            // nodeText = "This is the source host.";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+
+            // nodeName = "p1h0";
+            // nodeText = "This is the destination host.";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
             nodeName = "p0e0";
@@ -418,30 +451,37 @@ public class BillBoardControl : MonoBehaviour
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
-            nodeName = "D_FW_1";
-            nodeText = "This is the firewall. It resides on the supporting device connected to the switch p1e1.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            foreach(var attr in configObject.StaticTags){
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            }
 
-            nodeName = "D_V2_1";
-            nodeText = "FEC (Forward Error Correction) encoder and decoder.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "D_FW_1";
+            // nodeText = "This is the firewall. It resides on the supporting device connected to the switch p1e1.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "D_V2_2";
-            nodeText = "FEC (Forward Error Correction) encoder and decoder.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "D_V2_1";
+            // nodeText = "FEC (Forward Error Correction) encoder and decoder.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "D_V3_1";
-            nodeText = "If heading out on a lossy link, then FEC encode..";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split2.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "D_V2_2";
+            // nodeText = "FEC (Forward Error Correction) encoder and decoder.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "D_V3_2";
-            nodeText = "FEC (Forward Error Correction) decoder.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split3.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "D_V3_1";
+            // nodeText = "If heading out on a lossy link, then FEC encode..";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split2.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+
+            // nodeName = "D_V3_2";
+            // nodeText = "FEC (Forward Error Correction) decoder.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split3.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "Figure_7"){
             nodeName = "p0e0";
@@ -562,97 +602,118 @@ public class BillBoardControl : MonoBehaviour
 
         }
         else if(Global.chosanExperimentName == "Untunneled_traffic"){
-            nodeName = "p0h3";
-            nodeText = "This is the source host";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            foreach(var attr in configObject.StaticTags){
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            }
 
-            nodeName = "p3h2";
-            nodeText = "This is the destination host";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0h3";
+            // nodeText = "This is the source host";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+
+            // nodeName = "p3h2";
+            // nodeText = "This is the destination host";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "Tunneled_traffic"){
-            nodeName = "c0";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            foreach(var attr in configObject.StaticTags){
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            }
 
-            nodeName = "c1";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "c0";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "c3";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "c1";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p0a0";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "c3";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p0e1";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0a0";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p1a0";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0e1";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p2a1";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p1a0";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p3a0";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p2a1";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p3a1";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p3a0";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p3e0";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p3a1";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p3e1";
-            nodeText = "processes tunneled packets.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p3e0";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p0h3";
-            nodeText = "This is the source host";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p3e1";
+            // nodeText = "processes tunneled packets.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p3h2";
-            nodeText = "This is the destination host";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0h3";
+            // nodeText = "This is the source host";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+
+            // nodeName = "p3h2";
+            // nodeText = "This is the destination host";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "QoS"){
-            nodeName = "p0e1";
-            nodeText = "Diffserv field is set to 44 here, to enable higher priority service in the network.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4";
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            foreach(var attr in configObject.StaticTags){
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            }
 
-            nodeName = "p0h3";
-            nodeText = "This is the source host";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0e1";
+            // nodeText = "Diffserv field is set to 44 here, to enable higher priority service in the network.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4";
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
 
-            nodeName = "p3h2";
-            nodeText = "This is the destination host";
-            hyperlink = null;
-            info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+            // nodeName = "p0h3";
+            // nodeText = "This is the source host";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+
+            // nodeName = "p3h2";
+            // nodeText = "This is the destination host";
+            // hyperlink = null;
+            // info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
 
         
@@ -665,68 +726,102 @@ public class BillBoardControl : MonoBehaviour
         string nodeName, nodeText, hyperlink;
 
         if(Global.chosanExperimentName == "FEC_booster"){
-            time = 3008916;
-            nodeName = "p0e0";
-            nodeText = "Now silver colored FEC packet will travel from p0e0 to p0a0.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            foreach(var attr in configObject.EventTags){
+                time = attr.Time;
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            }
 
-            time = 13032597;
-            nodeName = "p0a0";
-            nodeText = "p0a0 receives the FEC packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
+            // time = 3008916;
+            // nodeName = "p0e0";
+            // nodeText = "Now silver colored FEC packet will travel from p0e0 to p0a0.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
+            // time = 13032597;
+            // nodeName = "p0a0";
+            // nodeText = "p0a0 receives the FEC packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "HC_booster"){
-            time = 3962;
-            nodeName = "p0e0";
-            nodeText = "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            foreach(var attr in configObject.EventTags){
+                time = attr.Time;
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            }
 
-            time = 7094;
-            nodeName = "p0a0";
-            nodeText = "At p0e0 pink packet turns blue. This shows that the compressed packet has been decompressed now.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            // time = 3962;
+            // nodeName = "p0e0";
+            // nodeText = "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
+            // time = 7094;
+            // nodeName = "p0a0";
+            // nodeText = "At p0e0 pink packet turns blue. This shows that the compressed packet has been decompressed now.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "MCD_booster"){
-            time = 105300;
-            nodeName = "p0a0";
-            nodeText = "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            foreach(var attr in configObject.EventTags){
+                time = attr.Time;
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            }
+
+            // time = 105300;
+            // nodeName = "p0a0";
+            // nodeText = "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
-            time = 4318;
-            nodeName = "p0e0";
-            nodeText = "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            foreach(var attr in configObject.EventTags){
+                time = attr.Time;
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            }
 
-            time = 7025;
-            nodeName = "p0a0";
-            nodeText = "At p0e0 pink packet turns blue. This shows that the compressed packet has been decompressed now.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
-            time = 8019205;
-            nodeName = "p0e0";
-            nodeText = "Now silver colored FEC packet will travel from p0e0 to p0a0.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            // time = 4318;
+            // nodeName = "p0e0";
+            // nodeText = "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
-            time = 13033964;
-            nodeName = "p0a0";
-            nodeText = "p0a0 receives the FEC packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            // time = 7025;
+            // nodeName = "p0a0";
+            // nodeText = "At p0e0 pink packet turns blue. This shows that the compressed packet has been decompressed now.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
-            time = 98824182;
-            nodeName = "p0a0";
-            nodeText = "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            // time = 8019205;
+            // nodeName = "p0e0";
+            // nodeText = "Now silver colored FEC packet will travel from p0e0 to p0a0.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
+            // time = 13033964;
+            // nodeName = "p0a0";
+            // nodeText = "p0a0 receives the FEC packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
+            // time = 98824182;
+            // nodeName = "p0a0";
+            // nodeText = "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
             time = 101832;
@@ -791,35 +886,44 @@ public class BillBoardControl : MonoBehaviour
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
-            time = 8256;
-            nodeName = "D_FW_1";
-            nodeText = "The packets are allowed to continue their journey.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            foreach(var attr in configObject.EventTags){
+                time = attr.Time;
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            }
 
-            time = 120885;
-            nodeName = "p1e0";
-            nodeText = "It implements some other functions, not important in this demo, but for others. You will see packets bouncing around the supporting devices.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split1.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            
+            // time = 8256;
+            // nodeName = "D_FW_1";
+            // nodeText = "The packets are allowed to continue their journey.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
-            time = 716224;
-            nodeName = "D_FW_1";
-            nodeText = "This packet is not allowed through. It will be dropped at p1e1 switch";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            // time = 120885;
+            // nodeName = "p1e0";
+            // nodeText = "It implements some other functions, not important in this demo, but for others. You will see packets bouncing around the supporting devices.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split1.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
-            time = 413491;
-            nodeName = "Yellow Curve";
-            nodeText = "This curve shows the progress of positive test and their success rate so far.";
-            hyperlink = null;
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            // time = 716224;
+            // nodeName = "D_FW_1";
+            // nodeText = "This packet is not allowed through. It will be dropped at p1e1 switch";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
-            time = 4997492;
-            nodeName = "Green Curve";
-            nodeText = "This curve shows the progress of negative test and their success rate so far.";
-            hyperlink = null;
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            // time = 413491;
+            // nodeName = "Yellow Curve";
+            // nodeText = "This curve shows the progress of positive test and their success rate so far.";
+            // hyperlink = null;
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
+            // time = 4997492;
+            // nodeName = "Green Curve";
+            // nodeText = "This curve shows the progress of negative test and their success rate so far.";
+            // hyperlink = null;
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "Figure_7"){
             time = 8019053;
@@ -927,39 +1031,65 @@ public class BillBoardControl : MonoBehaviour
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "Untunneled_traffic"){
+            if(configObject.EventTags!=null){
+                foreach(var attr in configObject.EventTags){
+                    time = attr.Time;
+                    nodeName = attr.Node;
+                    nodeText = attr.Text;
+                    hyperlink = attr.Hyperlink;
+                    info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+                }
+            }
             
         }
         else if(Global.chosanExperimentName == "Tunneled_traffic"){
-            time = 3418;
-            nodeName = "c0";
-            nodeText = "Tunneling happens here. Packet is supposed to go towards p3a0 directly, but due to tunneling it goes towards p1a0.";
-            hyperlink = "https://www.github.com/eniac/FlightplanWharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            foreach(var attr in configObject.EventTags){
+                time = attr.Time;
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            }
 
-            time = 6607;
-            nodeName = "p3a0";
-            nodeText = "Tunneling happens here. Packet is supposed to go towards p3e1 directly, but due to tunneling it goes towards p3e0.";
-            hyperlink = "https://www.github.com/eniac/FlightplanWharf/splits3/ALV_bt/ALV_bt.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            // time = 3418;
+            // nodeName = "c0";
+            // nodeText = "Tunneling happens here. Packet is supposed to go towards p3a0 directly, but due to tunneling it goes towards p1a0.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
+            // time = 6607;
+            // nodeName = "p3a0";
+            // nodeText = "Tunneling happens here. Packet is supposed to go towards p3e1 directly, but due to tunneling it goes towards p3e0.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
         else if(Global.chosanExperimentName == "QoS"){
-            time = 1528;
-            nodeName = "p0e1";
-            nodeText = "Diffserv field is set to 44 here, to enable higher priority service in the network. Packet turns from blue to pink.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            foreach(var attr in configObject.EventTags){
+                time = attr.Time;
+                nodeName = attr.Node;
+                nodeText = attr.Text;
+                hyperlink = attr.Hyperlink;
+                info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            }
 
-            time = 12885;
-            nodeName = "p0e1";
-            nodeText = "Enables higher priority service again in return journey of the packet. Packet turns from yellow to light blue.";
-            hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4";
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
 
-            time = 12901;
-            nodeName = "p0h3";
-            nodeText = "Now p0h3 is going to dispatch pink colored reset packet, with Diffserv field set to 44.";
-            hyperlink = null;
-            info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+            // time = 1528;
+            // nodeName = "p0e1";
+            // nodeText = "Diffserv field is set to 44 here, to enable higher priority service in the network. Packet turns from blue to pink.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
+            // time = 12885;
+            // nodeName = "p0e1";
+            // nodeText = "Enables higher priority service again in return journey of the packet. Packet turns from yellow to light blue.";
+            // hyperlink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4";
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+
+            // time = 12901;
+            // nodeName = "p0h3";
+            // nodeText = "Now p0h3 is going to dispatch pink colored reset packet, with Diffserv field set to 44.";
+            // hyperlink = null;
+            // info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
         return info;
     }

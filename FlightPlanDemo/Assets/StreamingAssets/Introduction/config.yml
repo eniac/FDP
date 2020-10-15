@@ -1,0 +1,79 @@
+# input configuration file to the animation
+
+experiment_info:
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/"
+
+
+
+static_tags:
+  - node: D_FW_1
+    text: "This is the firewall. It resides on the supporting device connected to the switch p1e1."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4"
+
+  - node: "D_V2_1"
+    text: "FEC (Forward Error Correction) encoder and decoder."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4"
+
+  - node: "D_V2_2"
+    text: "FEC (Forward Error Correction) encoder and decoder."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4"
+
+  - node: "D_V3_1"
+    text: "If heading out on a lossy link, then FEC encode."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split2.p4"
+
+  - node: "D_V3_2"
+    text: "FEC (Forward Error Correction) decoder."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split3.p4"
+
+
+event_tags:
+  - time: 8256
+    node: D_FW_1
+    text: "The packets are allowed to continue their journey."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4"
+
+  - time: 120885
+    node: p1e0
+    text: "It implements some other functions, not important in this demo, but for others. You will see packets bouncing around the supporting devices."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split1.p4"
+
+  - time: 716224
+    node: D_FW_1
+    text: "This packet is not allowed through. It will be dropped at p1e1 switch"
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4"
+
+  - time: 413491
+    node: "Yellow Curve"
+    text: "This curve shows the progress of positive test and their success rate so far."
+    hyperlink: ""
+
+  - time: 4997492
+    node: "Green Curve"
+    text: "This curve shows the progress of negative test and their success rate so far."
+    hyperlink: null
+
+graph:
+  show: "y"
+  x_div: 1
+  x_label: "% test completed"
+  y_label: "% success rate"
+  title: "Firewall Effectiveness"
+  curve_info:
+    - file_name: "graph_log1.txt"
+      curve_color: "#ffff00"
+      legend_text: "Positive Test"
+      curve_width: 1
+      packet_target: D_FW_1
+
+    - file_name: "graph_log2.txt"
+      curve_color: "#00ff40"
+      legend_text: "Negative Test"
+      curve_width: 4
+      packet_target: D_FW_1
+
+
+packet_legend:
+  - type: "TCP Packets"
+    color: "#0000ff"
+    

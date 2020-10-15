@@ -1,0 +1,62 @@
+# input configuration file to the animation
+
+experiment_info:
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
+
+static_tags:
+  - node: p0a0
+    text: "MCD Booster - provides in-network caching of memcached entries."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - node: p0h0
+    text: "This is the source host."
+    hyperlink: null
+
+  - node: p1h0
+    text: "This is the destination host."
+    hyperlink: null
+
+event_tags:
+  - time: 105300
+    node: p0a0
+    text: "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+graph:
+  show: "y"
+  x_div: 1000000
+  x_label: "time (sec)"
+  y_label: "# packets received at receiver"
+  title: "MCD Effectiveness"
+  curve_info:
+    - file_name: "graph_log1.txt"
+      curve_color: "#ffff00"
+      legend_text: "No MCD"
+      curve_width: 1
+      packet_target: p1h0
+
+    - file_name: "graph_log2.txt"
+      curve_color: "#00ff40"
+      legend_text: "With MCD"
+      curve_width: 1
+      packet_target: p1h0
+
+
+packet_legend:
+  - type: "MCD REquest"
+    color: "#0EF3E1"
+
+  - type: "MCD reply"
+    color: "#61D612"
+
+  - type: "MCD Cached"
+    color: "#FF8A00"
+
+  - type: "Parity"
+    color: "#ffffff"
+
+  - type: "ICMP REquest"
+    color: "#0000ff"
+
+
+

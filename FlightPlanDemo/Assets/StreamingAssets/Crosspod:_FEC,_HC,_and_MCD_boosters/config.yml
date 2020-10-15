@@ -1,0 +1,92 @@
+# input configuration file to the animation
+
+experiment_info:
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
+
+static_tags:
+  - node: p0e0
+    text: "All the three boosters are active - Forward Error Correction (FEC), Memcached (MCD), Header Compression (HC)."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - node: p0a0
+    text: "Lost packets are recovered. MCD Booster - Provides in-network caching of memcached entries. Header is decompressed."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - node: p0h0
+    text: "This is the source host."
+    hyperlink: null
+
+  - node: p1h0
+    text: "This is the destination host."
+    hyperlink: null
+
+event_tags:
+  - time: 4318
+    node: p0e0
+    text: "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - time: 7025
+    node: p0a0
+    text: "At p0e0 pink packet turns blue. This shows that the compressed packet has been decompressed now."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - time: 8019205
+    node: p0e0
+    text: "Now silver colored FEC packet will travel from p0e0 to p0a0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - time: 13033964
+    node: p0a0
+    text: "p0a0 receives the FEC packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - time: 98824182
+    node: p0a0
+    text: "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+graph:
+  show: "n"
+  x_div: 1000000
+  x_label: "time (sec)"
+  y_label: "# packets received at receiver"
+  title: ""
+  curve_info:
+    - file_name: "graph_log1.txt"
+      curve_color: "#ffff00"
+      legend_text: ""
+      curve_width: 1
+      packet_target: 
+
+    - file_name: "graph_log2.txt"
+      curve_color: "#00ff40"
+      legend_text: ""
+      curve_width: 1
+      packet_target: 
+
+
+packet_legend:
+  - type: "TCP p0h0->p1h0"
+    color: "#0EF3E1"
+
+  - type: "TCP p1h0->p0h0"
+    color: "#61D612"
+
+  - type: "MCD Request"
+    color: "#FF8A00"
+
+  - type: "MCD Reply"
+    color: "#ff00ff"
+
+  - type: "MCD Cached"
+    color: "#ffffff"
+
+  - type: "Compressed"
+    color: "#0000ff"
+
+  - type: "Parity"
+    color: "#ffff00"
+
+  - type: "ICMP Request"
+    color: "#ff0000"

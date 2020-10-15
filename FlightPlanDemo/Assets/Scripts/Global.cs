@@ -46,8 +46,10 @@ public static class Global
         F,
         R
     }
+
     public static string chosanExperimentName;
     public static string experimentYaml;
+    public static string configYaml;
     public static string experimentMetadata;
     public static float gVar = 10;
     public const float U_SEC = 1000000f;

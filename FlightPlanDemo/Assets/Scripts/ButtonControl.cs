@@ -31,6 +31,7 @@ public class ButtonControl : MonoBehaviour
     List<GameObject> switchObject;
     List<GameObject> satObject;
     List<string> colorPatterns = new List<string>(){"Origin based Color", "Request/Reply Color", "Path based Color"};
+    ConfigRoot configObject;
 
     // Start is called before the first frame update
     void Start()
@@ -50,6 +51,10 @@ public class ButtonControl : MonoBehaviour
         if(anim.GetUpdateStatus()==false){
             ChangePauseResumeButtonText(Global.AnimStatus.Pause);
         }
+    }
+
+    public void SetConfigObject(ConfigRoot configObject){
+        this.configObject = configObject;
     }
 
     public void Settings(){
@@ -236,16 +241,20 @@ public class ButtonControl : MonoBehaviour
     string ParseCodeLink(){
         string codeLink = "https://flightplan.cis.upenn.edu/";
         if(Global.chosanExperimentName == "FEC_booster"){
-           codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
+        //    codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
+            codeLink = configObject.ExperimentInfo.Hyperlink;
         }
         else if(Global.chosanExperimentName == "MCD_booster"){
-            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
+            // codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
+            codeLink = configObject.ExperimentInfo.Hyperlink;
         }
         else if(Global.chosanExperimentName == "HC_booster"){
-            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
+            // codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
+            codeLink = configObject.ExperimentInfo.Hyperlink;
         }
         else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
-           codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
+            //    codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/";
+            codeLink = configObject.ExperimentInfo.Hyperlink;
         }
         else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/";
@@ -254,7 +263,8 @@ public class ButtonControl : MonoBehaviour
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/";
         }
         else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
-            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/";
+            // codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/";
+            codeLink = configObject.ExperimentInfo.Hyperlink;
         }
         else if(Global.chosanExperimentName == "Figure_7"){
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_All/";
@@ -263,13 +273,16 @@ public class ButtonControl : MonoBehaviour
             codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/";
         }
         else if(Global.chosanExperimentName == "Untunneled_traffic"){
-            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/";
+            // codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/";
+            codeLink = configObject.ExperimentInfo.Hyperlink;
         }
         else if(Global.chosanExperimentName == "Tunneled_traffic"){
-            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/";
+            // codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/";
+            codeLink = configObject.ExperimentInfo.Hyperlink;
         }
         else if(Global.chosanExperimentName == "QoS"){
-            codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/";
+            // codeLink = "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/";
+            codeLink = configObject.ExperimentInfo.Hyperlink;
         }
         return codeLink;
     }
