@@ -5,61 +5,61 @@ experiment_info:
 
 static_tags:
   - node: c0
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: c1
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: c3
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p0a0
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p0e1
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p1a0
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p2a1
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
-  
+
   - node: p3a0
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p3a1
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
-  
+
   - node: p3e0
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p3e1
-    text: "processes tunneled packets."
+    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p0h3
-    text: "This is the source host."
+    text: "This is host that generates traffic."
     hyperlink: null
 
   - node: p3h2
-    text: "This is the destination host."
+    text: "This is the destination host for traffic"
     hyperlink: null
 
 event_tags:
   - time: 1194
     node: p0e1
-    text: "Due to tunneling effect, this packet will follow the tunneled path p0e1->p0a0->c0->p1a0->c1->p3a0->p3e0->p3e0->p3a1 to reach to p3h2."
+    text: "This packet enters the tunnel to follow the pre-programmed tunnel path p0e1->p0a0->c0->p1a0->c1->p3a0->p3e0->p3e0->p3a1 to reach to p3h2."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
 graph:

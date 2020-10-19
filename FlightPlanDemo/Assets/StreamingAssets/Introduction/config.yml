@@ -3,8 +3,6 @@
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/"
 
-
-
 static_tags:
   - node: D_FW_1
     text: "This is the firewall. It resides on the supporting device connected to the switch p1e1."
@@ -38,7 +36,6 @@ static_tags:
     text: "Header Decompressor, if heading out on a multiplexed link."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split6.p4"
 
-
 event_tags:
   - time: 8256
     node: D_FW_1
@@ -47,22 +44,22 @@ event_tags:
 
   - time: 120885
     node: p1e0
-    text: "It implements some other functions, not important in this demo, but for others. You will see packets bouncing around the supporting devices."
+    text: "This node implements network functions that aren't important in this demo. You will see packets bouncing around its supporting devices."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split1.p4"
 
   - time: 716224
     node: D_FW_1
-    text: "This packet is not allowed through. It will be dropped at p1e1 switch"
+    text: "This packet is not allowed through. It will be dropped at the p1e1 switch"
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4"
 
   - time: 413491
     node: "Yellow Curve"
-    text: "This curve shows the progress of positive test and their success rate so far."
+    text: "This curve shows the progress of the positive test and firewall's success rate so far."
     hyperlink: ""
 
   - time: 4997492
     node: "Green Curve"
-    text: "This curve shows the progress of negative test and their success rate so far."
+    text: "This curve shows the progress of the negative test and the firewall's success rate so far."
     hyperlink: null
 
 graph:
@@ -84,8 +81,6 @@ graph:
       curve_width: 4
       packet_target: D_FW_1
 
-
 packet_legend:
   - type: "TCP Packets"
     color: "#0000ff"
-    

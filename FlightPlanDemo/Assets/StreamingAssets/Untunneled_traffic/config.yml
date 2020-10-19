@@ -5,17 +5,17 @@ experiment_info:
 
 static_tags:
   - node: p0h3
-    text: "This is the source host."
+    text: "This is host that generates traffic."
     hyperlink: null
 
   - node: p3h2
-    text: "This is the destination host."
+    text: "This is the destination host for traffic"
     hyperlink: null
 
 event_tags:
   - time: 1443
     node: p0e1
-    text: "Unlike Tunneled Traffic experiment, this packet will follow the normal path p0e1->p0a1->c3->p3a1 to reach to p3h2."
+    text: "Unlike the Tunneled Traffic experiment, this packet will follow the normal (routed) path p0e1->p0a1->c3->p3a1 to reach its destination (p3h2)."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
 graph:
@@ -36,7 +36,6 @@ graph:
       legend_text: ""
       curve_width: 1
       packet_target: 
-
 
 packet_legend:
   - type: "TCP p0h3->p3h2"
