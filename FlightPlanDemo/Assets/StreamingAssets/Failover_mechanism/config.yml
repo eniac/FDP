@@ -1,0 +1,72 @@
+# input configuration file to the animation
+
+experiment_info:
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/"
+
+static_tags:
+  - node: SA_1
+    text: "Supporting device to offload p0e0"
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+
+  - node: SA_2
+    text: "Redundent supporting device to support failover"
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+
+  - node: p0h0
+    text: "This is the source host."
+    hyperlink: null
+
+  - node: p1h0
+    text: "This is the destination host."
+    hyperlink: null
+
+event_tags:
+  - time: 1971
+    node: p0e0
+    text: "This packet now travels to SA_1 for processing [Supporting device SA_1 offloads p0e0]"
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+
+  - time: 29746104
+    node: p0e0
+    text: "Since SA_1 has stopped working, it is failed over by SA_2.So this packet is going towards SA_2"
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+
+  - time: 5020014
+    node: SA_1
+    text: "Since this node got the wrong header in packet, it is now sending one additional pink colored feedback packet to p0e0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+
+  - time: 35751096
+    node: SA_2
+    text: "Since this node got the wrong header in packet, it is now sending one additional pink colored feedback packet to p0e0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+
+graph:
+  show: "y"
+  x_div: 1000000
+  x_label: "time (sec)"
+  y_label: "# bytes passing through the devices"
+  title: "Failover Mechanism"
+  curve_info:
+    - file_name: "graph_log1.txt"
+      curve_color: "#ffff00"
+      legend_text: "SA_1"
+      curve_width: 1
+      packet_target: SA_1
+
+    - file_name: "graph_log2.txt"
+      curve_color: "#00ff40"
+      legend_text: "SA_2"
+      curve_width: 1
+      packet_target: SA_2
+
+
+packet_legend:
+  - type: "ICMP Request"
+    color: "#0000ff"
+
+  - type: "ICMP Reply"
+    color: "#ffff00"
+
+  - type: "Feedback"
+    color: "#EC119D"

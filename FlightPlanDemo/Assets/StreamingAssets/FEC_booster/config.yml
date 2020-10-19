@@ -23,12 +23,12 @@ static_tags:
 event_tags:
   - time: 3008916
     node: p0e0
-    text: "Now silver colored FEC packet will travel from p0e0 to p0a0."
+    text: "Now silver colored parity packet will travel from p0e0 to p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 13032597
     node: p0a0
-    text: "p0a0 receives the FEC packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0."
+    text: "p0a0 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
 graph:

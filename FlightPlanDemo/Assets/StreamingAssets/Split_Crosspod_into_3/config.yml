@@ -1,0 +1,99 @@
+# input configuration file to the animation
+
+experiment_info:
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/"
+
+static_tags:
+  - node: p0e0
+    text: "All the three boosters are active - Forward Error Correction (FEC), Memcached (MCD), Header Compression (HC)."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - node: S1
+    text: "This is a supporting device. Recoveres lost packets. MCD Booster - provides in-network caching of memcached entries. Decompresses header."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
+
+  - node: S2
+    text: "This is a supporting device. Recoveres lost packets. MCD Booster - provides in-network caching of memcached entries. Decompresses header."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
+
+  - node: p0h0
+    text: "This is the source host."
+    hyperlink: null
+
+  - node: p1h0
+    text: "This is the destination host."
+    hyperlink: null
+
+event_tags:
+  - time: 101832
+    node: p0e0
+    text: "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - time: 104354
+    node: S1
+    text: "At S1 pink packet turns blue. This shows that the compressed packet has been decompressed now."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
+
+  - time: 903726
+    node: p0e0
+    text: "Now silver colored parity packet will travel from p0e0 to p0a0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
+
+  - time: 1408013
+    node: S1
+    text: "S1 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0"
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
+
+  - time: 10291712
+    node: S1
+    text: "The cached packets reside at S1. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
+
+
+graph:
+  show: "n"
+  x_div: 1000000
+  x_label: "time (sec)"
+  y_label: "# packets received at receiver"
+  title: ""
+  curve_info:
+    - file_name: "graph_log1.txt"
+      curve_color: "#ffff00"
+      legend_text: ""
+      curve_width: 1
+      packet_target: 
+
+    - file_name: "graph_log2.txt"
+      curve_color: "#00ff40"
+      legend_text: ""
+      curve_width: 1
+      packet_target: 
+
+
+packet_legend:
+  - type: "TCP p0h0->p1h0"
+    color: "#0000ff"
+
+  - type: "TCP p1h0->p0h0"
+    color: "#ffff00"
+
+  - type: "Compressed"
+    color: "#ff00ff"
+
+  - type: "MCD Request"
+    color: "#0EF3E1"
+
+  - type: "MCD Reply"
+    color: "#61D612"
+
+  - type: "MCD Cached"
+    color: "#FF8A00"
+
+  - type: "Parity"
+    color: "#ffffff"
+
+  - type: "ICMP Request"
+    color: "#ff0000"
+
+

@@ -12,8 +12,6 @@ static_tags:
     text: "This is the destination host."
     hyperlink: null
 
-p0h3 p0e1         p0a1 c3                p3a1 p3e1 p3h2
-p0h3 p0e1 p0a0 c0 p1a0 c1 p3a0 p3e0 p3e0 p3a1 p3e1 p3h2
 event_tags:
   - time: 1443
     node: p0e1

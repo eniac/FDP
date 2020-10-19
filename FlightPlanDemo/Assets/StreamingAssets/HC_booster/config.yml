@@ -35,7 +35,7 @@ graph:
   show: "y"
   x_div: 1000000
   x_label: "time (sec)"
-  y_label: "# packets received at receiver"
+  y_label: "# bytes passed through node"
   title: "HC Effectiveness"
   curve_info:
     - file_name: "graph_log1.txt"

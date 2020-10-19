@@ -138,320 +138,75 @@ public class GraphInput : MonoBehaviour
     void Parser(){
         gInfo.relative_scale = new List<float>();
         gInfo.relative_offset = new List<float>();
-        
+
+        // Parsing packet legend info
+        gInfo.packetLegend = "";
+        gInfo.color = new List<Color>();
+        foreach(var pkt in configObject.PacketLegend){
+            gInfo.packetLegend += pkt.Type + "\n";
+            gInfo.color.Add(ColorHexToRGB(pkt.Color));
+        }
+
+        // Parsing Graph parameters
+        gInfo.show = true;
+        if(configObject.Graph.Show != "y"){
+            gInfo.nCurves=0;
+            gInfo.show = false;
+            return;
+        }
+        gInfo.xDiv = configObject.Graph.XDiv;
+        gInfo.xLabel = configObject.Graph.XLabel;
+        gInfo.yLabel = configObject.Graph.YLabel;
+        gInfo.title = configObject.Graph.Title;
+        gInfo.nCurves=0;
+        graphLogNames.Clear();
+        pointColor.Clear();
+        segmentColor.Clear();
+        gInfo.graphLegend = "";
+        gInfo.segmentWidth = new List<float>();
+        gInfo.packetTarget = new List<string>();
+        foreach(var curve in configObject.Graph.CurveInfo){
+            (gInfo.nCurves)++;
+            graphLogNames.Add(curve.FileName);
+            pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
+            segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
+            gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
+            gInfo.segmentWidth.Add(curve.CurveWidth);
+            gInfo.packetTarget.Add(curve.PacketTarget);
+        }
+        for(int i=0; i<gInfo.nCurves; i++){
+            gInfo.relative_scale.Add(1f);
+        }
+        for(int i=0; i<gInfo.nCurves; i++){
+            gInfo.relative_offset.Add(0f);
+        }
+
+
+        // TODO Animation Time for each experiment
         if(Global.chosanExperimentName == "FEC_booster"){
             // Animation Time
             gInfo.animTime = 716f;
-            gInfo.packetLegend = "";
-
-            // Parsing packet legend info
-            gInfo.color = new List<Color>();
-            foreach(var pkt in configObject.PacketLegend){
-                gInfo.packetLegend += pkt.Type + "\n";
-                gInfo.color.Add(ColorHexToRGB(pkt.Color));
-            }
-
-            // Parsing Graph parameters
-            gInfo.show = true;
-            if(configObject.Graph.Show != "y"){
-                gInfo.nCurves=0;
-                gInfo.show = false;
-                return;
-            }
-            gInfo.xDiv = configObject.Graph.XDiv;
-            gInfo.xLabel = configObject.Graph.XLabel;
-            gInfo.yLabel = configObject.Graph.YLabel;
-            gInfo.title = configObject.Graph.Title;
-            gInfo.nCurves=0;
-            graphLogNames.Clear();
-            pointColor.Clear();
-            segmentColor.Clear();
-            gInfo.graphLegend = "";
-            gInfo.segmentWidth = new List<float>();
-            gInfo.packetTarget = new List<string>();
-            foreach(var curve in configObject.Graph.CurveInfo){
-                (gInfo.nCurves)++;
-                graphLogNames.Add(curve.FileName);
-                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-                gInfo.segmentWidth.Add(curve.CurveWidth);
-                gInfo.packetTarget.Add(curve.PacketTarget);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_scale.Add(1f);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_offset.Add(0f);
-            }
-
-            
-            
-
-            // gInfo.show = true;
-            // gInfo.nCurves = 2;
-            // gInfo.packetLegend = "Parity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
-            // gInfo.color = ColorHexToRGB(new List<string>(){"#ffffff", "#0000ff", "#ffff00"});
-            // gInfo.xLabel = "time (sec)";
-            // gInfo.yLabel = "# packets received at receiver";
-            // gInfo.graphLegend = "<color=#ffff00>---- No FEC</color>\n <color=#00ff40>---- With FEC (k=5, h=1)</color>";
-            // gInfo.title = "FEC Effectiveness";
-            // gInfo.xDiv = Global.U_SEC;
-            // gInfo.segmentWidth = new List<float>(){1f, 1f};
-            // gInfo.packetTarget = new List<string>(){"p1h0", "p1h0"};
-            // for(int i=0; i<gInfo.nCurves; i++){
-            //     gInfo.relative_scale.Add(1f);
-            // }
-            // for(int i=0; i<gInfo.nCurves; i++){
-            //     gInfo.relative_offset.Add(0f);
-            // }
         }
         else if(Global.chosanExperimentName == "MCD_booster"){
             gInfo.animTime = 2704f;
-
-            gInfo.packetLegend = "";
-
-            // Parsing packet legend info
-            gInfo.color = new List<Color>();
-            foreach(var pkt in configObject.PacketLegend){
-                gInfo.packetLegend += pkt.Type + "\n";
-                gInfo.color.Add(ColorHexToRGB(pkt.Color));
-            }
-
-            // Parsing Graph parameters
-            gInfo.show = true;
-            if(configObject.Graph.Show != "y"){
-                gInfo.nCurves=0;
-                gInfo.show = false;
-                return;
-            }
-            gInfo.xDiv = configObject.Graph.XDiv;
-            gInfo.xLabel = configObject.Graph.XLabel;
-            gInfo.yLabel = configObject.Graph.YLabel;
-            gInfo.title = configObject.Graph.Title;
-            gInfo.nCurves=0;
-            graphLogNames.Clear();
-            pointColor.Clear();
-            segmentColor.Clear();
-            gInfo.graphLegend = "";
-            gInfo.segmentWidth = new List<float>();
-            gInfo.packetTarget = new List<string>();
-            foreach(var curve in configObject.Graph.CurveInfo){
-                (gInfo.nCurves)++;
-                graphLogNames.Add(curve.FileName);
-                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-                gInfo.segmentWidth.Add(curve.CurveWidth);
-                gInfo.packetTarget.Add(curve.PacketTarget);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_scale.Add(1f);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_offset.Add(0f);
-            }
-
-            // gInfo.show = true;
-            // gInfo.nCurves = 2;
-            // gInfo.packetLegend = "MCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
-            // gInfo.color = ColorHexToRGB(new List<string>(){"#0EF3E1", "#61D612", "#FF8A00", "#ffffff", "#0000ff"});
-            // gInfo.xLabel = "time (sec)";
-            // gInfo.yLabel = "# packets received at receiver";
-            // gInfo.graphLegend = "<color=#ffff00>---- No MCD</color>\n <color=#00ff40>---- With MCD</color>";
-            // gInfo.title = "MCD Effectiveness";
-            // gInfo.xDiv = Global.U_SEC;
-            // gInfo.segmentWidth = new List<float>(){1f, 1f};
-            // gInfo.packetTarget = new List<string>(){"p0e0", "p1h0"};
-            // for(int i=0; i<gInfo.nCurves; i++){
-            //     gInfo.relative_scale.Add(1f);
-            // }
-            // for(int i=0; i<gInfo.nCurves; i++){
-            //     gInfo.relative_offset.Add(0f);
-            // }
         }
         else if(Global.chosanExperimentName == "HC_booster"){
             gInfo.animTime = 726f;
-
-            gInfo.packetLegend = "";
-
-            // Parsing packet legend info
-            gInfo.color = new List<Color>();
-            foreach(var pkt in configObject.PacketLegend){
-                gInfo.packetLegend += pkt.Type + "\n";
-                gInfo.color.Add(ColorHexToRGB(pkt.Color));
-            }
-
-            // Parsing Graph parameters
-            gInfo.show = true;
-            if(configObject.Graph.Show != "y"){
-                gInfo.nCurves=0;
-                gInfo.show = false;
-                return;
-            }
-            gInfo.xDiv = configObject.Graph.XDiv;
-            gInfo.xLabel = configObject.Graph.XLabel;
-            gInfo.yLabel = configObject.Graph.YLabel;
-            gInfo.title = configObject.Graph.Title;
-            gInfo.nCurves=0;
-            graphLogNames.Clear();
-            pointColor.Clear();
-            segmentColor.Clear();
-            gInfo.graphLegend = "";
-            gInfo.segmentWidth = new List<float>();
-            gInfo.packetTarget = new List<string>();
-            foreach(var curve in configObject.Graph.CurveInfo){
-                (gInfo.nCurves)++;
-                graphLogNames.Add(curve.FileName);
-                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-                gInfo.segmentWidth.Add(curve.CurveWidth);
-                gInfo.packetTarget.Add(curve.PacketTarget);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_scale.Add(1f);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_offset.Add(0f);
-            }
-
-
-            // gInfo.show = true;
-            // gInfo.nCurves = 2;
-            // gInfo.packetLegend = "Compressed\nParity\nTCP p0h0->p1h0\nTCP p1h0->p0h0";
-            // gInfo.color = ColorHexToRGB(new List<string>(){"#ff00ff", "#ffffff", "#0000ff", "#ffff00"});
-            // gInfo.xLabel = "time (sec)";
-            // gInfo.yLabel = "# bytes";
-            // gInfo.graphLegend = "<color=#ffff00>---- Before Header Compression</color>\n <color=#00ff40>---- After Header Compression</color>";
-            // gInfo.title = "HC Effectiveness";
-            // gInfo.xDiv = Global.U_SEC;
-            // gInfo.segmentWidth = new List<float>(){1f, 1f};
-            // gInfo.packetTarget = new List<string>(){"p0e0", "dropper"};
-            // for(int i=0; i<gInfo.nCurves; i++){
-            //     gInfo.relative_scale.Add(1f);
-            // }
-            // for(int i=0; i<gInfo.nCurves; i++){
-            //     gInfo.relative_offset.Add(0f);
-            // }
         }
         else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
             gInfo.animTime = 3447f;
-
-            gInfo.packetLegend = "";
-
-            // Parsing packet legend info
-            gInfo.color = new List<Color>();
-            foreach(var pkt in configObject.PacketLegend){
-                gInfo.packetLegend += pkt.Type + "\n";
-                gInfo.color.Add(ColorHexToRGB(pkt.Color));
-            }
-
-            // Parsing Graph parameters
-            gInfo.show = true;
-            if(configObject.Graph.Show != "y"){
-                gInfo.nCurves=0;
-                gInfo.show = false;
-                return;
-            }
-            gInfo.xDiv = configObject.Graph.XDiv;
-            gInfo.xLabel = configObject.Graph.XLabel;
-            gInfo.yLabel = configObject.Graph.YLabel;
-            gInfo.title = configObject.Graph.Title;
-            gInfo.nCurves=0;
-            graphLogNames.Clear();
-            pointColor.Clear();
-            segmentColor.Clear();
-            gInfo.graphLegend = "";
-            gInfo.segmentWidth = new List<float>();
-            gInfo.packetTarget = new List<string>();
-            foreach(var curve in configObject.Graph.CurveInfo){
-                (gInfo.nCurves)++;
-                graphLogNames.Add(curve.FileName);
-                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-                gInfo.segmentWidth.Add(curve.CurveWidth);
-                gInfo.packetTarget.Add(curve.PacketTarget);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_scale.Add(1f);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_offset.Add(0f);
-            }
-
-            // gInfo.show = false;
-            // gInfo.nCurves = 0;
-            // gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nCompressed\nParity\nICMP Request";
-            // gInfo.color = ColorHexToRGB(new List<string>(){"#0EF3E1", "#61D612","#FF8A00", "#ff00ff", "#ffffff", "#0000ff", "#ffff00", "#ff0000"});
         }
         else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
             gInfo.animTime = 3912f;
-            gInfo.show = false;
-            gInfo.nCurves = 0;
-            gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nCompressed\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
-            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#ff00ff","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000"});
         }
         else if(Global.chosanExperimentName == "Split_Crosspod_into_6"){
             gInfo.animTime = 4882f;
-            gInfo.show = false;
-            gInfo.nCurves = 0;
-            gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nCompressed\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request";
-            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#ff00ff","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000"});
         }
         else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
             gInfo.animTime = 83f;
 
-            gInfo.packetLegend = "";
-
-            // Parsing packet legend info
-            gInfo.color = new List<Color>();
-            foreach(var pkt in configObject.PacketLegend){
-                gInfo.packetLegend += pkt.Type + "\n";
-                gInfo.color.Add(ColorHexToRGB(pkt.Color));
-            }
-
-            // Parsing Graph parameters
-            gInfo.show = true;
-            if(configObject.Graph.Show != "y"){
-                gInfo.nCurves=0;
-                gInfo.show = false;
-                return;
-            }
-            gInfo.xDiv = configObject.Graph.XDiv;
-            gInfo.xLabel = configObject.Graph.XLabel;
-            gInfo.yLabel = configObject.Graph.YLabel;
-            gInfo.title = configObject.Graph.Title;
-            gInfo.nCurves=0;
-            graphLogNames.Clear();
-            pointColor.Clear();
-            segmentColor.Clear();
-            gInfo.graphLegend = "";
-            gInfo.segmentWidth = new List<float>();
-            gInfo.packetTarget = new List<string>();
-            foreach(var curve in configObject.Graph.CurveInfo){
-                (gInfo.nCurves)++;
-                graphLogNames.Add(curve.FileName);
-                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-                gInfo.segmentWidth.Add(curve.CurveWidth);
-                gInfo.packetTarget.Add(curve.PacketTarget);
-            }
-
-            // gInfo.show = true;
-            // gInfo.nCurves = 2;
-            // colorControl.SetColorPattern(Global.ColorPattern.None);
-            // gInfo.packetLegend = "TCP Packets";
-            // gInfo.color = ColorHexToRGB(new List<string>(){"#ffff00"});
-            // gInfo.xLabel = "% test completed";
-            // gInfo.yLabel = "% success rate";
-            // gInfo.graphLegend = "<color=#ffff00>---- Positive Test</color>\n <color=#00ff40>---- Negative Test</color>";
-            // gInfo.title = "Firewall Effectiveness";
-            // gInfo.xDiv = 1f;
-            // gInfo.segmentWidth = new List<float>(){1f, 4f};
-            // gInfo.packetTarget = new List<string>(){"D_FW_1", "D_FW_1"};
+            gInfo.relative_scale.Clear();
+            gInfo.relative_offset.Clear();
             float scale = 642823f/100f;
             gInfo.relative_scale.Add(scale);
             scale = (6074785f-642823f)/100f;
@@ -461,186 +216,18 @@ public class GraphInput : MonoBehaviour
         }
         else if(Global.chosanExperimentName == "Failover_mechanism"){
             gInfo.animTime = 121f;
-            gInfo.show = true;
-            gInfo.nCurves = 2;
-            gInfo.packetLegend = "ICMP Request\nICMP Reply\nFeedback";
-            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#EC119D"});
-            gInfo.xLabel = "time (sec)";
-            gInfo.yLabel = "# bytes passing through the devices";
-            gInfo.graphLegend = "<color=#ffff00>---- SA_1</color>\n <color=#00ff40>---- SA_2</color>";
-            gInfo.title = "Failover Mechanism";
-            gInfo.xDiv = Global.U_SEC;
-            gInfo.segmentWidth = new List<float>(){1f, 1f};
-            gInfo.packetTarget = new List<string>(){"SA_1", "SA_2"};
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_scale.Add(1f);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_offset.Add(0f);
-            }
         }
         else if(Global.chosanExperimentName == "Figure_7"){
             gInfo.animTime = 5555f;
-            gInfo.show = false;
-            gInfo.nCurves = 0;
-            gInfo.packetLegend = "TCP p0h0->p1h0\nTCP p1h0->p0h0\nMCD Request\nMCD Reply\nMCD Cached\nParity\nICMP Request\nFeedback";
-            gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00","#0EF3E1", "#61D612","#FF8A00", "#ffffff", "#ff0000", "#EC119D"});
         }
         else if(Global.chosanExperimentName == "Untunneled_traffic"){
             gInfo.animTime = 316f;
-
-            gInfo.packetLegend = "";
-
-            // Parsing packet legend info
-            gInfo.color = new List<Color>();
-            foreach(var pkt in configObject.PacketLegend){
-                gInfo.packetLegend += pkt.Type + "\n";
-                gInfo.color.Add(ColorHexToRGB(pkt.Color));
-            }
-
-            // Parsing Graph parameters
-            gInfo.show = true;
-            if(configObject.Graph.Show != "y"){
-                gInfo.nCurves=0;
-                gInfo.show = false;
-                return;
-            }
-            gInfo.xDiv = configObject.Graph.XDiv;
-            gInfo.xLabel = configObject.Graph.XLabel;
-            gInfo.yLabel = configObject.Graph.YLabel;
-            gInfo.title = configObject.Graph.Title;
-            gInfo.nCurves=0;
-            graphLogNames.Clear();
-            pointColor.Clear();
-            segmentColor.Clear();
-            gInfo.graphLegend = "";
-            gInfo.segmentWidth = new List<float>();
-            gInfo.packetTarget = new List<string>();
-            foreach(var curve in configObject.Graph.CurveInfo){
-                (gInfo.nCurves)++;
-                graphLogNames.Add(curve.FileName);
-                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-                gInfo.segmentWidth.Add(curve.CurveWidth);
-                gInfo.packetTarget.Add(curve.PacketTarget);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_scale.Add(1f);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_offset.Add(0f);
-            }
-
-
-            // gInfo.show = false;
-            // gInfo.nCurves = 0;
-            // gInfo.packetLegend = "TCP p0h3->p3h2\nTCP p3h2->p0h3";
-            // gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00"});
         }
         else if(Global.chosanExperimentName == "Tunneled_traffic"){
             gInfo.animTime = 168f;
-            
-            gInfo.packetLegend = "";
-
-            // Parsing packet legend info
-            gInfo.color = new List<Color>();
-            foreach(var pkt in configObject.PacketLegend){
-                gInfo.packetLegend += pkt.Type + "\n";
-                gInfo.color.Add(ColorHexToRGB(pkt.Color));
-            }
-
-            // Parsing Graph parameters
-            gInfo.show = true;
-            if(configObject.Graph.Show != "y"){
-                gInfo.nCurves=0;
-                gInfo.show = false;
-                return;
-            }
-            gInfo.xDiv = configObject.Graph.XDiv;
-            gInfo.xLabel = configObject.Graph.XLabel;
-            gInfo.yLabel = configObject.Graph.YLabel;
-            gInfo.title = configObject.Graph.Title;
-            gInfo.nCurves=0;
-            graphLogNames.Clear();
-            pointColor.Clear();
-            segmentColor.Clear();
-            gInfo.graphLegend = "";
-            gInfo.segmentWidth = new List<float>();
-            gInfo.packetTarget = new List<string>();
-            foreach(var curve in configObject.Graph.CurveInfo){
-                (gInfo.nCurves)++;
-                graphLogNames.Add(curve.FileName);
-                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-                gInfo.segmentWidth.Add(curve.CurveWidth);
-                gInfo.packetTarget.Add(curve.PacketTarget);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_scale.Add(1f);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_offset.Add(0f);
-            }
-
-
-            // gInfo.show = false;
-            // gInfo.nCurves = 0;
-            // gInfo.packetLegend = "TUNNEL p0h3->p3h2";
-            // gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff"});
         }
         else if(Global.chosanExperimentName == "QoS"){
             gInfo.animTime = 1576f;
-            
-            gInfo.packetLegend = "";
-
-            // Parsing packet legend info
-            gInfo.color = new List<Color>();
-            foreach(var pkt in configObject.PacketLegend){
-                gInfo.packetLegend += pkt.Type + "\n";
-                gInfo.color.Add(ColorHexToRGB(pkt.Color));
-            }
-
-            // Parsing Graph parameters
-            gInfo.show = true;
-            if(configObject.Graph.Show != "y"){
-                gInfo.nCurves=0;
-                gInfo.show = false;
-                return;
-            }
-            gInfo.xDiv = configObject.Graph.XDiv;
-            gInfo.xLabel = configObject.Graph.XLabel;
-            gInfo.yLabel = configObject.Graph.YLabel;
-            gInfo.title = configObject.Graph.Title;
-            gInfo.nCurves=0;
-            graphLogNames.Clear();
-            pointColor.Clear();
-            segmentColor.Clear();
-            gInfo.graphLegend = "";
-            gInfo.segmentWidth = new List<float>();
-            gInfo.packetTarget = new List<string>();
-            foreach(var curve in configObject.Graph.CurveInfo){
-                (gInfo.nCurves)++;
-                graphLogNames.Add(curve.FileName);
-                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-                gInfo.segmentWidth.Add(curve.CurveWidth);
-                gInfo.packetTarget.Add(curve.PacketTarget);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_scale.Add(1f);
-            }
-            for(int i=0; i<gInfo.nCurves; i++){
-                gInfo.relative_offset.Add(0f);
-            }
-
-            
-            // gInfo.show = false;
-            // gInfo.nCurves = 0;
-            // gInfo.packetLegend = "TCP p0h3->p3h2\nTCP p3h2->p0h3\nHigh-Priority TCP p0e1->p0a1\nHigh-Priority TCP p0e1->p0h3";
-            // gInfo.color = ColorHexToRGB(new List<string>(){"#0000ff", "#ffff00", "#EC119D", "#0EF3E1"});
         }
 
         if(gInfo.nCurves>0){
