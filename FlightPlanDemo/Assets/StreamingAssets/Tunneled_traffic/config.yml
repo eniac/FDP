@@ -1,51 +1,51 @@
 # input configuration file to the animation
 
 experiment_info:
-  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/"
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/README.md"
 
 static_tags:
   - node: c0
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: c1
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: c3
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p0a0
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p0e1
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p1a0
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p2a1
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p3a0
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p3a1
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p3e0
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p3e1
-    text: "Forwards each incoming packet depending on whether the packet is being tunneled, and the specific tunnel the packet is in."
+    text: "Incoming packets are forwarded differently, depending on whether they are tunneled and the specific tunnel they're in."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
 
   - node: p0h3
@@ -60,7 +60,7 @@ event_tags:
   - time: 1194
     node: p0e1
     text: "This packet enters the tunnel to follow the pre-programmed tunnel path p0e1->p0a0->c0->p1a0->c1->p3a0->p3e0->p3e0->p3a1 to reach to p3h2."
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+    hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits3/ALV_bt/ALV_bt.p4#L126"
 
 graph:
   show: "n"

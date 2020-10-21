@@ -1,7 +1,7 @@
 # input configuration file to the animation
 
 experiment_info:
-  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/"
+  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/README.md"
 
 static_tags:
   - node: p0h3
@@ -16,7 +16,7 @@ event_tags:
   - time: 1443
     node: p0e1
     text: "Unlike the Tunneled Traffic experiment, this packet will follow the normal (routed) path p0e1->p0a1->c3->p3a1 to reach its destination (p3h2)."
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/ALV_bt.p4"
+    hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits3/ALV_bt/ALV_bt.p4#L121"
 
 graph:
   show: "n"
