@@ -39,7 +39,7 @@ static_tags:
 event_tags:
   - time: 8256
     node: D_FW_1
-    text: "The packets are allowed to continue their journey by the firewall."
+    text: "We start with 'positive tests'. This packet is allowed to continue its journey by the firewall."
     hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4#L160"
 
   - time: 120885
@@ -49,7 +49,7 @@ event_tags:
 
   - time: 716224
     node: D_FW_1
-    text: "This packet will not be allowed through by the firewall."
+    text: "We now come to 'negative tests'. This packet will not be allowed through by the firewall."
     hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4#L175"
 
   - time: 413491
