@@ -39,8 +39,8 @@ static_tags:
 event_tags:
   - time: 8256
     node: D_FW_1
-    text: "The packets are allowed to continue their journey."
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4"
+    text: "The packets are allowed to continue their journey by the firewall."
+    hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4#L160"
 
   - time: 120885
     node: p1e0
@@ -49,8 +49,8 @@ event_tags:
 
   - time: 716224
     node: D_FW_1
-    text: "This packet is not allowed through. It will be dropped at the p1e1 switch"
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4"
+    text: "This packet will not be allowed through by the firewall."
+    hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4#L175"
 
   - time: 413491
     node: "Yellow Curve"
