@@ -1,7 +1,7 @@
 # input configuration file to the animation
 
 experiment_info:
-  hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/"
+  hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete_2_FW/README.md"
 
 static_tags:
   - node: D_FW_1
