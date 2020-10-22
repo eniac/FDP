@@ -59,7 +59,7 @@ static_tags:
 event_tags:
   - time: 1194
     node: p0e1
-    text: "This packet enters the tunnel to follow the pre-programmed tunnel path p0e1->p0a0->c0->p1a0->c1->p3a0->p3e0->p3e0->p3a1 to reach to p3h2."
+    text: "This packet enters the tunnel to follow the pre-programmed tunnel path p0e1 -> p0a0 -> c0 -> p1a0 -> c1 -> p3a0 -> p3e0 -> p3e0 -> p3a1 to reach to p3h2."
     hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits3/ALV_bt/ALV_bt.p4#L126"
 
 graph:

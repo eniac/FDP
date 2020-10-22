@@ -130,7 +130,7 @@ public class ColorControl : MonoBehaviour
                 break;
                 
             case Global.ColorPattern.None:
-                color = Color.yellow;
+                color = Color.blue;
                 break;
         }
         return color;

@@ -11,6 +11,7 @@ public class ButtonControl : MonoBehaviour
     [SerializeField] private Animator SettingAnimator = default;
     [SerializeField] private Topology topo = default;
     [SerializeField] private Text messageText = default;
+    [SerializeField] GameObject infoBoxDetail = default;
     [SerializeField] private Dropdown colorPatternDropdown = default;
     [SerializeField] private InputField searchField = default;
     [SerializeField] private PopUpControl popup = default;
@@ -32,6 +33,7 @@ public class ButtonControl : MonoBehaviour
     List<GameObject> satObject;
     List<string> colorPatterns = new List<string>(){"Origin based Color", "Request/Reply Color", "Path based Color"};
     ConfigRoot configObject;
+    GameObject infoBoxObject;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +46,14 @@ public class ButtonControl : MonoBehaviour
         linkObject = topo.GetLinkObjects();
         PopulateColorPatternDropdown();
         popup.PopUpInit(messageText);
+        InfoBoxInit();
+    }
+
+    void InfoBoxInit(){
+        infoBoxObject = infoBoxDetail; //Instantiate(infoBoxDetail) as GameObject;
+        infoBoxObject.SetActive(false);
+        infoBoxObject.transform.Find("Background").transform.Find("Button").GetComponent<Button>().onClick.AddListener(delegate{InfoBoxOkButtonHandler();});
+        infoBoxObject.transform.Find("Background").transform.Find("Hyperlink").GetComponent<Button>().onClick.AddListener(delegate{InfoBoxHyperlinkHandler();});
     }
 
     void Update(){
@@ -294,7 +304,26 @@ public class ButtonControl : MonoBehaviour
         }
     }
 
+    public void About(){
+        infoBoxObject.SetActive(true);
+    }
+
     void SetMenuButtonText(string buttonName, string buttonText){
         panelMenu.transform.Find(buttonName).GetComponentInChildren<Text>().text = buttonText;
+    }
+
+    void InfoBoxOkButtonHandler(){
+        infoBoxObject.SetActive(false);
+    }
+
+    void InfoBoxHyperlinkHandler(){
+        string link = "https://flightplan.cis.upenn.edu/";
+        if( Application.platform==RuntimePlatform.WebGLPlayer )
+        {
+            Application.ExternalEval("window.open(\"" + link + "\")");
+        }
+        else{
+            Application.OpenURL(link);
+        }
     }
 }

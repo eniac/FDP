@@ -152,35 +152,35 @@ public class GraphInput : MonoBehaviour
         if(configObject.Graph.Show != "y"){
             gInfo.nCurves=0;
             gInfo.show = false;
-            return;
         }
-        gInfo.xDiv = configObject.Graph.XDiv;
-        gInfo.xLabel = configObject.Graph.XLabel;
-        gInfo.yLabel = configObject.Graph.YLabel;
-        gInfo.title = configObject.Graph.Title;
-        gInfo.nCurves=0;
-        graphLogNames.Clear();
-        pointColor.Clear();
-        segmentColor.Clear();
-        gInfo.graphLegend = "";
-        gInfo.segmentWidth = new List<float>();
-        gInfo.packetTarget = new List<string>();
-        foreach(var curve in configObject.Graph.CurveInfo){
-            (gInfo.nCurves)++;
-            graphLogNames.Add(curve.FileName);
-            pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-            segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-            gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-            gInfo.segmentWidth.Add(curve.CurveWidth);
-            gInfo.packetTarget.Add(curve.PacketTarget);
+        else{
+            gInfo.xDiv = configObject.Graph.XDiv;
+            gInfo.xLabel = configObject.Graph.XLabel;
+            gInfo.yLabel = configObject.Graph.YLabel;
+            gInfo.title = configObject.Graph.Title;
+            gInfo.nCurves=0;
+            graphLogNames.Clear();
+            pointColor.Clear();
+            segmentColor.Clear();
+            gInfo.graphLegend = "";
+            gInfo.segmentWidth = new List<float>();
+            gInfo.packetTarget = new List<string>();
+            foreach(var curve in configObject.Graph.CurveInfo){
+                (gInfo.nCurves)++;
+                graphLogNames.Add(curve.FileName);
+                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
+                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
+                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
+                gInfo.segmentWidth.Add(curve.CurveWidth);
+                gInfo.packetTarget.Add(curve.PacketTarget);
+            }
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_scale.Add(1f);
+            }
+            for(int i=0; i<gInfo.nCurves; i++){
+                gInfo.relative_offset.Add(0f);
+            }
         }
-        for(int i=0; i<gInfo.nCurves; i++){
-            gInfo.relative_scale.Add(1f);
-        }
-        for(int i=0; i<gInfo.nCurves; i++){
-            gInfo.relative_offset.Add(0f);
-        }
-
 
         // TODO Animation Time for each experiment
         if(Global.chosanExperimentName == "FEC_booster"){
@@ -204,6 +204,7 @@ public class GraphInput : MonoBehaviour
         }
         else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
             gInfo.animTime = 83f;
+            colorControl.SetColorPattern(Global.ColorPattern.None);
 
             gInfo.relative_scale.Clear();
             gInfo.relative_offset.Clear();

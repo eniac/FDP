@@ -9,11 +9,11 @@ static_tags:
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2_FW/ALV_FW_split2.p4"
 
   - node: "D_V2_1"
-    text: "FEC (Forward Error Correction) encoder and decoder."
+    text: "FEC decoder. MCD Booster - provides in-network caching of memcached entries. Header decompressor"
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4"
 
   - node: "D_V2_2"
-    text: "FEC (Forward Error Correction) encoder and decoder."
+    text: "FEC encoder. Header compressor."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4"
 
   - node: D_V3_1
@@ -25,7 +25,7 @@ static_tags:
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split3.p4"
 
   - node: D_V3_3
-    text: "Header decompressor, If multiplexed link."
+    text: "Header Decompressor, if multiplexed link."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split4.p4"
 
   - node: D_V3_4
@@ -33,7 +33,7 @@ static_tags:
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split5.p4"
 
   - node: D_V3_5
-    text: "Header Decompressor, if heading out on a multiplexed link."
+    text: "Header Compressor, if heading out on a multiplexed link."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_2/ALV_Complete_2_split6.p4"
 
 event_tags:

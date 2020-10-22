@@ -61,7 +61,7 @@ public class BillBoardControl : MonoBehaviour
     }
 
     void GetBillBoardInfo(){
-        GameObject tag_prefab = Resources.Load("TagRight") as GameObject;
+        GameObject tag_prefab = Resources.Load("TagLeft") as GameObject;
 
         Dictionary<string, Tuple<string, string>> nodeInfo = MetadataParser();
 
