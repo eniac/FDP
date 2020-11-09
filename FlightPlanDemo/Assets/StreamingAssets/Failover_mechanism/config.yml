@@ -2,6 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/"
+  intro_text: "This experiment demonstrates the failover mechanism of Flightplan system. When the supporting device fails, it is failed over by another device and the packets start flowing through it."
 
 static_tags:
   - node: SA_1
@@ -70,3 +71,6 @@ packet_legend:
 
   - type: "Feedback"
     color: "#EC119D"
+
+introduction:
+  show: "no"             # choose ("yes", "no")

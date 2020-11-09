@@ -2,7 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_All/"
-
+  intro_text: "This experiment demonstartes the three boosters, i.e. forward error correction (FEC)), memcached (MCD), and header compression (HC) in action. FEC booster recovers the lost packets, MCD Booster provides in-network caching of memcached entries. HC booster compresses and decompresses the packet headers"
 static_tags:
   - node: p0e0
     text: "FEC encoder and decoder. Header compressor and decompressor. MCD Booster - provides in-network caching of memcached entries."
@@ -195,3 +195,5 @@ packet_legend:
   - type: "Feedback"
     color: "#EC119D"
       
+introduction:
+  show: "no"             # choose ("yes", "no")

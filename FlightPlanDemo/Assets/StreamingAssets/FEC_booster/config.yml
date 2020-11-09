@@ -2,6 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
+  intro_text: "This experiment demonstartes the FEC booster effectiveness. The lost packets are recovered using Forward Error Correction. This reduces the number of retransmission packets."
 
 static_tags:
   - node: p0e0
@@ -62,4 +63,5 @@ packet_legend:
     color: "#ffff00"
 
 
-
+introduction:
+  show: "no"             # choose ("yes", "no")

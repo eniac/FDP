@@ -2,6 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/README.md"
+  intro_text: "This experiment demonstares the effect of Tunneling. Rather than following the original path, the packets follow a new path as a result of tunneling."
 
 static_tags:
   - node: c0
@@ -85,3 +86,6 @@ graph:
 packet_legend:
   - type: "TUNNEL p0h3->p3h2"
     color: "#0000ff"
+
+introduction:
+  show: "no"             # choose ("yes", "no")

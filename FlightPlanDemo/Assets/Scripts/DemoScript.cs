@@ -6,7 +6,7 @@ public class DemoScript : MonoBehaviour
 {
     [SerializeField]  YamlParser yamlParser = default;
     [SerializeField] ConfigParser configParser = default;
-    [SerializeField]  Topology topo = default;
+    [SerializeField] Topology topo = default;
     [SerializeField] AnimControl anim = default;
     [SerializeField] BillBoardControl billBoard = default;
     [SerializeField] IntroTagControl introTag = default;
@@ -23,9 +23,9 @@ public class DemoScript : MonoBehaviour
         yield return StartCoroutine(configParser.GetYaml());
         configParser.YamlLoader();
 
-        buttonControl.SetConfigObject(configParser.GetConfigObject());
-        billBoard.SetConfigObject(configParser.GetConfigObject());
-        graphInput.SetConfigObject(configParser.GetConfigObject());
+        buttonControl.SetConfigObject(configParser.GetDynamicConfigObject());
+        billBoard.SetConfigObject(configParser.GetDynamicConfigObject());
+        graphInput.SetConfigObject(configParser.GetDynamicConfigObject());
 
         yield return StartCoroutine(graphInput.GraphInitStart());
 
@@ -37,13 +37,14 @@ public class DemoScript : MonoBehaviour
         topo.DisplayTopology();
         billBoard.BillBoardInit();
 
-        introTag.IntroTagInit(topo.GetNodePosition("p0e0"));
+        introTag.IntroTagInit(configParser.GetDynamicConfigObject());
 
         // yield return StartCoroutine(anim.GetElapsedTimeFile());
         
         // anim.StartAnimation();
 
         yield return StartCoroutine(anim.GetMetadataFile());
+        yield return StartCoroutine(anim.WriteFile());
         
         anim.AnimationInit();
     }

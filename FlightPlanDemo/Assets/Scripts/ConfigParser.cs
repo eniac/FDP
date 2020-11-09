@@ -18,6 +18,7 @@ public class ConfigParser : MonoBehaviour
 {
     string yamlString = null;
     ConfigRoot obj;
+    JObject dynamicObj;
 
 
     // Get file from file system or server
@@ -52,13 +53,20 @@ public class ConfigParser : MonoBehaviour
         string jsonText = w.ToString();
         Console.WriteLine(jsonText.ToString());
 
+        Debug.Log("jsonText = " + jsonText);
+
         // Json string root object
-        obj = JsonConvert.DeserializeObject<ConfigRoot>(jsonText);
+        // obj = JsonConvert.DeserializeObject<ConfigRoot>(jsonText);
+        dynamicObj = JObject.Parse(jsonText);
     }
 
     // Get config details from yaml and store them into appropriate data structure
-    public ConfigRoot GetConfigObject(){
-        return obj;
+    // public ConfigRoot GetConfigObject(){
+    //     return obj;
+    // }
+
+    public JObject GetDynamicConfigObject(){
+        return dynamicObj;
     }
 }
 
@@ -78,6 +86,8 @@ public class ConfigRoot{
 public class ExperimentAttribute{
     [JsonProperty("hyperlink")]
     public string Hyperlink { get; set; }
+    [JsonProperty("intro_text")]
+    public string IntroText { get; set; }
 }
 
 public class StaticTagAttribute{

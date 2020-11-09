@@ -2,6 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/"
+  intro_text: "This experiment demonstartes the Quality of Service (QOS). Diffserv field updated to enable priority services in the network."
 
 static_tags:
   - node: p0e1
@@ -64,3 +65,6 @@ packet_legend:
 
   - type: "High-Priority TCP p0e1->p0h3"
     color: "#0EF3E1"
+
+introduction:
+  show: "no"             # choose ("yes", "no")

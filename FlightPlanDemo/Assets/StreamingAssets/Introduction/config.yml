@@ -2,6 +2,7 @@
 
 experiment_info:
   hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete_2_FW/README.md"
+  intro_text: "This demo will help you understand the tool's interface.\nRight after clicking the <color=#EC7011>START</color> button below, a tag will be shown on the screen. Tags will help describe what you are seeing on the screen."
 
 static_tags:
   - node: D_FW_1
@@ -84,3 +85,86 @@ graph:
 packet_legend:
   - type: "TCP Packets"
     color: "#0000ff"
+
+introduction:
+  show: "yes"             # choose ("yes", "no")
+  tag_2d:
+    menu:
+      heading: "Menu"
+      detail: "The menu can be expanded and collaped by clicking this button."
+
+    time_slider:
+      heading: "Time Slider"
+      detail: "The slider shows the progress of the experiment over time."
+
+    elapsed_time:
+      heading: "Elapsed Time"
+      detail: "This shows the elapsed time since the experiment's start."
+
+    remaining_time:
+      heading: "Remaining Time"
+      detail: "This shows the remaining time for the experiment."
+
+    speed_slider:
+      heading: "Speed Slider"
+      detail: "Use this to change the display speed of the experiment's visualisation."
+
+    graph:
+      heading: "Graph"          # choose ("none", <heading string>)
+      detail: "This shows relevant quantitative information from the experiment."
+
+    packet_legend:
+      heading: "Packet Legend"
+      detail: "Packet color legend to identify packets in the visualisation."
+
+    info_code_button:
+      heading: "Info + Code"
+      detail: "For any experiment, click on 'Info + Code' to access background info and code."
+
+  tag_3d:
+    edge_switch:
+      node: "p0e0"
+      heading: "Edge Switch"
+      detail: "(p_e_) The Switch that is directly connected to the host is called edge switch."
+    
+    aggregation_switch:
+      node: "p0a1"        # choose ("none", <node name>)
+      heading: "Aggregation Switch"
+      detail: "(p_a_) These switches interconnect edge and core switches."
+
+    core_switch:
+      node: "c2"
+      heading: "Core Switch"
+      detail: "(c_) Core switches interconnect aggregation switches."
+
+    supporting_device:
+      node: "D_V2_1"      # choose ("none", <node name>)
+      heading: "Supporting Device"
+      detail: "A switch may offload part of its program to a supporting device such as this."
+
+    link:
+      node1: "c3"
+      node2: "p0a1"
+      heading: "Link"
+      detail: "Links connect switches and host together."
+    
+    lossy_link:
+      node1: "p0a0"         # choose ("none", <node name>)
+      node2: "p0e0"         # choose ("none", <node name>)
+      heading: "Lossy Link"
+      detail: "Lossy Link may drop packets at random because of a hardware fault."
+
+    static_tag_info:
+      node: "D_FW_1"        # choose ("none", <node name>)
+      heading: "Info Tags"
+      detail: "Additional information can be obtained by clicking on red beacons such as this."
+
+  tag_info:
+    zoom_info: 
+      detail: "3D model can be zoomed in and out using mouse scroll."
+
+    rotation_info:
+      detail: "Model can be rotated on its axis using mouse click and drag."
+
+    experiment_info: 
+      detail: "This experiment tests the firewall's effectiveness. The firewall part of the P4 program has been offloaded to Device D_FW_1. The experiment consists of both positive and negative tests. It starts with a series of positive tests -- i.e., involving packets that we expect the firewall to let through. This is followed by negative tests, where we expect the firewall to block packets."

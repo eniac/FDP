@@ -76,7 +76,9 @@ public class StartMenuControl : MonoBehaviour
     void SetFileNames(){
         Global.experimentYaml = chosenExperiment + "/topology.yml";
         Global.configYaml = chosenExperiment + "/config.yml";
+        Global.introConfigYaml = chosenExperiment + "/intro_config.yml";
         Global.experimentMetadata = chosenExperiment + "/metadata.txt";
+        Global.animTimeFile = chosenExperiment + "/UserData.php";
     }
 
     public void QuitDemo(){

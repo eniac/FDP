@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+
 public class ButtonControl : MonoBehaviour
 {
     [SerializeField] private GameObject panelFooter = default;
@@ -32,7 +35,8 @@ public class ButtonControl : MonoBehaviour
     List<GameObject> switchObject;
     List<GameObject> satObject;
     List<string> colorPatterns = new List<string>(){"Origin based Color", "Request/Reply Color", "Path based Color"};
-    ConfigRoot configObject;
+    // ConfigRoot configObject;
+    JObject dynamicConfigObject;
     GameObject infoBoxObject;
 
     // Start is called before the first frame update
@@ -63,8 +67,9 @@ public class ButtonControl : MonoBehaviour
         }
     }
 
-    public void SetConfigObject(ConfigRoot configObject){
-        this.configObject = configObject;
+    public void SetConfigObject(JObject dynamicConfigObject){
+        // this.configObject = configObject;
+        this.dynamicConfigObject = dynamicConfigObject;
     }
 
     public void Settings(){
@@ -249,7 +254,8 @@ public class ButtonControl : MonoBehaviour
     }
 
     string ParseCodeLink(){
-        string codeLink = configObject.ExperimentInfo.Hyperlink;
+        string codeLink = (string)dynamicConfigObject["experiment_info"]["hyperlink"];
+        // string codeLink = configObject.ExperimentInfo.Hyperlink;
         return codeLink;
     }
 

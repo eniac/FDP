@@ -7,6 +7,9 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+
 public class GraphInput : MonoBehaviour
 {
     struct GraphInfo{
@@ -41,7 +44,9 @@ public class GraphInput : MonoBehaviour
     List<Color> segmentColor = new List<Color>(){new Color(1f, 1f, 0f, 0.5f), new Color(0f, 1f, 0.25f, 0.5f), new Color(0f, 1f, 1f, 0.5f)};
     float rc=0;
     GraphInfo gInfo = new GraphInfo();
-    ConfigRoot configObject;
+    // ConfigRoot configObject;
+    JObject dynamicConfigObject;
+
     public IEnumerator GraphInitStart(){
         UpdateDisable();
         Parser();
@@ -78,8 +83,9 @@ public class GraphInput : MonoBehaviour
         gInfo.graphLogText.Add(graphText);
     }
 
-    public void SetConfigObject(ConfigRoot configObject){
-        this.configObject = configObject;
+    public void SetConfigObject(JObject dynamicConfigObject){
+        // this.configObject = configObject;
+        this.dynamicConfigObject = dynamicConfigObject;
     }
 
     public void GraphInputInit(){
@@ -142,22 +148,28 @@ public class GraphInput : MonoBehaviour
         // Parsing packet legend info
         gInfo.packetLegend = "";
         gInfo.color = new List<Color>();
-        foreach(var pkt in configObject.PacketLegend){
-            gInfo.packetLegend += pkt.Type + "\n";
-            gInfo.color.Add(ColorHexToRGB(pkt.Color));
+
+        for(int i=0; i<((JArray)dynamicConfigObject["packet_legend"]).Count; i++){
+            gInfo.packetLegend += (string)dynamicConfigObject["packet_legend"][i]["type"] + "\n";
+            gInfo.color.Add(ColorHexToRGB((string)dynamicConfigObject["packet_legend"][i]["color"]));
         }
+
+        // foreach(var pkt in configObject.PacketLegend){
+        //     gInfo.packetLegend += pkt.Type + "\n";
+        //     gInfo.color.Add(ColorHexToRGB(pkt.Color));
+        // }
 
         // Parsing Graph parameters
         gInfo.show = true;
-        if(configObject.Graph.Show != "y"){
+        if((string)dynamicConfigObject["graph"]["show"] != "y"){
             gInfo.nCurves=0;
             gInfo.show = false;
         }
         else{
-            gInfo.xDiv = configObject.Graph.XDiv;
-            gInfo.xLabel = configObject.Graph.XLabel;
-            gInfo.yLabel = configObject.Graph.YLabel;
-            gInfo.title = configObject.Graph.Title;
+            gInfo.xDiv = float.Parse((string)dynamicConfigObject["graph"]["x_div"]);
+            gInfo.xLabel = (string)dynamicConfigObject["graph"]["x_label"];
+            gInfo.yLabel = (string)dynamicConfigObject["graph"]["y_label"];
+            gInfo.title = (string)dynamicConfigObject["graph"]["title"];
             gInfo.nCurves=0;
             graphLogNames.Clear();
             pointColor.Clear();
@@ -165,15 +177,47 @@ public class GraphInput : MonoBehaviour
             gInfo.graphLegend = "";
             gInfo.segmentWidth = new List<float>();
             gInfo.packetTarget = new List<string>();
-            foreach(var curve in configObject.Graph.CurveInfo){
+
+            JArray curveArray = (JArray)dynamicConfigObject["graph"]["curve_info"];
+            for(int i=0; i<curveArray.Count; i++){
                 (gInfo.nCurves)++;
-                graphLogNames.Add(curve.FileName);
-                pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
-                segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
-                gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
-                gInfo.segmentWidth.Add(curve.CurveWidth);
-                gInfo.packetTarget.Add(curve.PacketTarget);
+                graphLogNames.Add((string)curveArray[i]["file_name"]);
+                pointColor.Add(ColorHexToRGB((string)curveArray[i]["curve_color"] + "ff"));
+                segmentColor.Add(ColorHexToRGB((string)curveArray[i]["curve_color"] + "7f"));
+                gInfo.graphLegend += "<color=" + (string)curveArray[i]["curve_color"] + ">---- " + (string)curveArray[i]["legend_text"] + "</color>\n";
+                gInfo.segmentWidth.Add(int.Parse((string)curveArray[i]["curve_width"]));
+                gInfo.packetTarget.Add((string)curveArray[i]["packet_target"]);
             }
+
+
+        // // Parsing Graph parameters
+        // gInfo.show = true;
+        // if(configObject.Graph.Show != "y"){
+        //     gInfo.nCurves=0;
+        //     gInfo.show = false;
+        // }
+        // else{
+        //     gInfo.xDiv = configObject.Graph.XDiv;
+        //     gInfo.xLabel = configObject.Graph.XLabel;
+        //     gInfo.yLabel = configObject.Graph.YLabel;
+        //     gInfo.title = configObject.Graph.Title;
+        //     gInfo.nCurves=0;
+        //     graphLogNames.Clear();
+        //     pointColor.Clear();
+        //     segmentColor.Clear();
+        //     gInfo.graphLegend = "";
+        //     gInfo.segmentWidth = new List<float>();
+        //     gInfo.packetTarget = new List<string>();
+        //     foreach(var curve in configObject.Graph.CurveInfo){
+        //         (gInfo.nCurves)++;
+        //         graphLogNames.Add(curve.FileName);
+        //         pointColor.Add(ColorHexToRGB(curve.CurveColor + "ff"));
+        //         segmentColor.Add(ColorHexToRGB(curve.CurveColor + "7f"));
+        //         gInfo.graphLegend += "<color=" + curve.CurveColor + ">---- " + curve.LegendText + "</color>\n";
+        //         gInfo.segmentWidth.Add(curve.CurveWidth);
+        //         gInfo.packetTarget.Add(curve.PacketTarget);
+        //     }
+
             for(int i=0; i<gInfo.nCurves; i++){
                 gInfo.relative_scale.Add(1f);
             }

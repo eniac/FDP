@@ -5,10 +5,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 using System.IO;
 using System.Text;
 using System.Linq;
+
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 using UnityEngine.Networking;
 
@@ -34,7 +36,8 @@ public class BillBoardControl : MonoBehaviour
     bool boardOn=false;
     bool eventTagStatus = true, switchTagStatus = true;
     GameObject timeSliderHandle;
-    ConfigRoot configObject;
+    // ConfigRoot configObject;
+    JObject dynamicConfigObject;
 
     public void BillBoardInit(){
         timeSliderHandle = timeSlider.gameObject.transform.Find("Handle Slide Area").transform.Find("Handle").gameObject;
@@ -46,8 +49,9 @@ public class BillBoardControl : MonoBehaviour
         UpdateEnable();
     }
 
-    public void SetConfigObject(ConfigRoot configObject){
-        this.configObject = configObject;
+    public void SetConfigObject(JObject dynamicConfigObject){
+        // this.configObject = configObject;
+        this.dynamicConfigObject = dynamicConfigObject;
     }
 
     public void ResetTimeInfo(){
@@ -278,15 +282,23 @@ public class BillBoardControl : MonoBehaviour
         Dictionary<string, Tuple<string, string>> info = new Dictionary<string, Tuple<string, string>>();
         string nodeName, nodeText, hyperlink;
 
-        if(configObject.StaticTags==null){
-            return info;
-        }
-        foreach(var attr in configObject.StaticTags){
-            nodeName = attr.Node;
-            nodeText = attr.Text;
-            hyperlink = attr.Hyperlink;
+        JArray sTag = (JArray)dynamicConfigObject["static_tags"];
+        for(int i=0; i<sTag.Count; i++){
+            nodeName = (string)sTag[i]["node"];
+            nodeText = (string)sTag[i]["text"];
+            hyperlink = (string)sTag[i]["hyperlink"];
             info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
         }
+
+        // if(configObject.StaticTags==null){
+        //     return info;
+        // }
+        // foreach(var attr in configObject.StaticTags){
+        //     nodeName = attr.Node;
+        //     nodeText = attr.Text;
+        //     hyperlink = attr.Hyperlink;
+        //     info.Add(nodeName, new Tuple<string, string>(nodeText, hyperlink));
+        // }
         return info;
     }
 
@@ -295,16 +307,26 @@ public class BillBoardControl : MonoBehaviour
         int time;
         string nodeName, nodeText, hyperlink;
 
-        if(configObject.EventTags==null){
-            return info;
-        }
-        foreach(var attr in configObject.EventTags){
-            time = attr.Time;
-            nodeName = attr.Node;
-            nodeText = attr.Text;
-            hyperlink = attr.Hyperlink;
+        JArray eTag = (JArray)dynamicConfigObject["event_tags"];
+        for(int i=0; i<eTag.Count; i++){
+            time = int.Parse((string)eTag[i]["time"]);
+            nodeName = (string)eTag[i]["node"];
+            nodeText = (string)eTag[i]["text"];
+            hyperlink = (string)eTag[i]["hyperlink"];
             info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
         }
+
+
+        // if(configObject.EventTags==null){
+        //     return info;
+        // }
+        // foreach(var attr in configObject.EventTags){
+        //     time = attr.Time;
+        //     nodeName = attr.Node;
+        //     nodeText = attr.Text;
+        //     hyperlink = attr.Hyperlink;
+        //     info.Add(time, new Tuple<string, string, string>(nodeName, nodeText, hyperlink));
+        // }
         return info;
     }
 }

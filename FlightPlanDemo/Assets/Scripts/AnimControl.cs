@@ -101,6 +101,90 @@ public class AnimControl : MonoBehaviour
         }
     }
 
+    public IEnumerator WriteFile(){
+        //"text/html
+        var filePath = Path.Combine(Application.streamingAssetsPath, Global.animTimeFile);
+        if (filePath.Contains ("://") || filePath.Contains (":///")) {
+            Debug.Log("File to write on = " + filePath);
+            String data = "350";
+            byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+            // var request = new UnityWebRequest(filePath, "POST");
+            // request.uploadHandler = (UploadHandler) new UploadHandlerRaw(dataBytes);
+            // request.SetRequestHeader("Content-Type", "text/html");
+            // yield return request.SendWebRequest();
+            // Debug.Log("Status Code: " + request.responseCode);
+
+            // UnityWebRequest webRequest = UnityWebRequest.Put(filePath, data);
+            // UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(data));
+            // customUploadHandler.contentType = "text/html";
+            // webRequest.uploadHandler = customUploadHandler;
+            // SendRequest(webRequest);
+
+            // UnityWebRequest requestU= new UnityWebRequest(filePath, UnityWebRequest.kHttpVerbPOST);
+            // UploadHandlerRaw uH= new UploadHandlerRaw(dataBytes);
+            // requestU.uploadHandler= uH;
+            // requestU.SetRequestHeader("Content-Type", "application/txt");
+            // DownloadHandlerBuffer dH= new DownloadHandlerBuffer();
+            // requestU.downloadHandler= dH;
+            // yield return requestU.SendWebRequest();
+            // Debug.Log("Status Code: " + requestU.responseCode);
+
+            // UnityWebRequest wr= new UnityWebRequest(filePath);
+            // UploadHandler uploader = new UploadHandlerRaw(dataBytes);
+            // wr.uploadHandler = uploader;
+            // yield return wr.SendWebRequest();
+            // Debug.Log("Status Code: " + wr.responseCode);
+
+            // WWWForm form = new WWWForm();
+            // form.AddField("name", "usernameText");
+            // form.AddField("data", "mobileNoText");
+            // UnityWebRequest www = UnityWebRequest.Post(filePath, form);
+            // www.SetRequestHeader("Content-Type", "application/json");
+            // yield return www.SendWebRequest();
+            // if (www.isNetworkError){
+            //     Debug.Log(www.error);
+            // }
+            // else{
+            //     Debug.Log("Uploaded");
+            //     Debug.Log("Status Code: " + www.responseCode);
+            // }
+
+            // List<IMultipartFormSection> wwwForm = new List<IMultipartFormSection>();
+            // wwwForm.Add(new MultipartFormDataSection("curScoreKey", "340"));
+
+            // UnityWebRequest www = UnityWebRequest.Post(filePath, wwwForm);
+            // yield return www.SendWebRequest();
+            // if(www.isNetworkError || www.isHttpError){
+            //     Debug.Log("Web request Error = " + www.error);
+            // }
+            // else{
+            //     Debug.Log("Message received from server = " + www.downloadHandler.text);
+            //     Debug.Log("Status Code: " + www.responseCode);
+            // }
+
+            string databaseURL =  filePath+"?txt=YourStringToBeAdded";
+
+            // List<IMultipartFormSection> wwwForm = new List<IMultipartFormSection>();
+            // wwwForm.Add(new MultipartFormDataSection("curScoreKey", "340"));
+
+            WWWForm wwwForm = new WWWForm();
+            wwwForm.AddField("curScoreKey", "340");
+
+            UnityWebRequest www = UnityWebRequest.Post(databaseURL, wwwForm);
+            yield return www.SendWebRequest();
+            if(www.isNetworkError || www.isHttpError){
+                Debug.Log("Web request Error = " + www.error);
+            }
+            else{
+                Debug.Log("Message received from server = " + www.downloadHandler.text);
+                Debug.Log("Status Code: " + www.responseCode);
+            }       
+        }
+        else{
+            // elapsedTimeString = File.ReadAllText(filePath);
+        }
+    }
+
     public void AnimationInit(){
         string line;
         string[] info;

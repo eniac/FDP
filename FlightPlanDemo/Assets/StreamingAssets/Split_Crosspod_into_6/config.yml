@@ -2,6 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/"
+  intro_text: "In this experiment, the Program is split into six parts: five supporting devices for booster offloading + connected switch for routing. All the boosters are active"
 
 static_tags:
   - node: p0e0
@@ -106,3 +107,6 @@ packet_legend:
 
   - type: "ICMP Request"
     color: "#ff0000"
+
+introduction:
+  show: "no"             # choose ("yes", "no")
