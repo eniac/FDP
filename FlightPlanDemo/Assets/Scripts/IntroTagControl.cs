@@ -84,10 +84,6 @@ public class IntroTagControl : MonoBehaviour
         if((string)dynamicConfigObject["introduction"]["show"] == "no"){
             return;
         }
-        // TODO H
-        // if(Global.chosanExperimentName != "Introduction"){
-        //     return;
-        // }
 
         // 2D Tags
         Tag2DInit(introTag2Drd, TagType.T2Drd);

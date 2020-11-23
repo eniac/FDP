@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Atlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+    variantMultiplier: 1
+    packables:
+    - {fileID: 21300000, guid: 275a75bd187e87cc181851646b3c2c6e, type: 3}
+    - {fileID: 2800000, guid: 275a75bd187e87cc181851646b3c2c6e, type: 3}
+    - {fileID: 21300000, guid: 92698d08c5d279b86aea6616f8e09419, type: 3}
+    - {fileID: 2800000, guid: 92698d08c5d279b86aea6616f8e09419, type: 3}
+    - {fileID: 21300000, guid: 1b9b1bbeb7d734143867d5127331b1cd, type: 3}
+    - {fileID: 2800000, guid: 1b9b1bbeb7d734143867d5127331b1cd, type: 3}
+    - {fileID: 2800000, guid: 15ba465dc618ba7e1a61ae3b5eb4e0a6, type: 3}
+    - {fileID: 21300000, guid: 15ba465dc618ba7e1a61ae3b5eb4e0a6, type: 3}
+    - {fileID: 2800000, guid: c80ba872aab7b4e9fbe0ea5f91b47427, type: 3}
+    - {fileID: 21300000, guid: c80ba872aab7b4e9fbe0ea5f91b47427, type: 3}
+    - {fileID: 2800000, guid: 6f3146611755faa429ef78074cabc56f, type: 3}
+    - {fileID: 21300000, guid: 6f3146611755faa429ef78074cabc56f, type: 3}
+    - {fileID: 2800000, guid: a1ae3f3851c97f74683be7dc9997c2c4, type: 3}
+    - {fileID: 21300000, guid: a1ae3f3851c97f74683be7dc9997c2c4, type: 3}
+    - {fileID: 2800000, guid: 967c7b47090d34cf090c40749e45f0b4, type: 3}
+    - {fileID: 21300000, guid: 967c7b47090d34cf090c40749e45f0b4, type: 3}
+    - {fileID: 2800000, guid: 935962ddb1e44499dad00e5ca6b38823, type: 3}
+    - {fileID: 21300000, guid: 935962ddb1e44499dad00e5ca6b38823, type: 3}
+    - {fileID: 10914, guid: 0000000000000000f000000000000000, type: 0}
+    totalSpriteSurfaceArea: 12886077
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 6f3146611755faa429ef78074cabc56f, type: 3}
+  - {fileID: 21300000, guid: c80ba872aab7b4e9fbe0ea5f91b47427, type: 3}
+  - {fileID: 21300000, guid: 967c7b47090d34cf090c40749e45f0b4, type: 3}
+  - {fileID: 21300000, guid: 92698d08c5d279b86aea6616f8e09419, type: 3}
+  - {fileID: 21300000, guid: a1ae3f3851c97f74683be7dc9997c2c4, type: 3}
+  - {fileID: 21300000, guid: 15ba465dc618ba7e1a61ae3b5eb4e0a6, type: 3}
+  - {fileID: 21300000, guid: 275a75bd187e87cc181851646b3c2c6e, type: 3}
+  - {fileID: 21300000, guid: 935962ddb1e44499dad00e5ca6b38823, type: 3}
+  - {fileID: 21300000, guid: 1b9b1bbeb7d734143867d5127331b1cd, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - InfoBox
+  - Circle
+  - UIButtonDefault_0
+  - callout_left_up
+  - informtionBox
+  - callout_right_up
+  - callout_left_down
+  - UIPanel_0
+  - callout_right_down
+  m_Tag: Atlas
+  m_IsVariant: 0

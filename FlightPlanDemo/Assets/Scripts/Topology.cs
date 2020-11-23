@@ -36,6 +36,9 @@ static class Constants
 
 public class Topology : MonoBehaviour
 {
+    [SerializeField] private GameObject nodeCombineObject = default; 
+    [SerializeField] private GameObject linkCombineObject = default;
+    [SerializeField] private GameObject hostCombineObject = default; 
     [SerializeField] private CamMovement camControl = default; 
     [SerializeField] private Camera mainCamera = default;
     [SerializeField] private string LayerToUse = default;
@@ -400,6 +403,7 @@ public class Topology : MonoBehaviour
         foreach (string h in h_names){
             // Instantiate Object and set position
             GameObject go = Instantiate(h_prefab) as GameObject;
+            go.transform.parent = hostCombineObject.transform;
             go.transform.position = positions[h];
             go.name = h;
             hostObjectDict.Add(h, go);
@@ -423,36 +427,57 @@ public class Topology : MonoBehaviour
             }
         }
 
+        // 1. Create and configure the RenderTexture
+        var renderTexture = new RenderTexture(2048, 2048, 24) { name = "_RenderTexture" };
+
+        // 2. Create material
+        var textMaterial = new Material(Shader.Find("Standard"));
+
+        // assign the new renderTexture as Albedo
+        textMaterial.SetTexture("_MainTex", renderTexture);
+
+        // set RenderMode to Fade
+        ChangeRenderMode(textMaterial, BlendMode.Fade);
+
+        // 3. WE CAN'T CREATE A NEW LAYER AT RUNTIME SO CONFIGURE THEM BEFOREHAND AND USE LayerToUse
+
+        // 4. exclude the Layer in the normal camera
+        if (!mainCamera) mainCamera = Camera.main;
+        mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer(LayerToUse));
+
         // Showing Switches
         GameObject s_prefab = Resources.Load("Switch") as GameObject;
         // GameObject bubble_prefab = Resources.Load("ChatBubble") as GameObject;
         foreach (string s in s_names){
             GameObject go = Instantiate(s_prefab) as GameObject;
+            go.transform.parent = nodeCombineObject.transform;
             go.transform.position = positions[s];
             go.name = s;
             goList.Add(go);
             switchObjectDict.Add(s, go);
             if(s.ToLower().Contains(Constants.DROPPER_STRING)){
-                go.GetComponent<MeshRenderer>().enabled = false;
+                go.SetActive(false);
+                // go.GetComponent<MeshRenderer>().enabled = false;
             }
             else{
-                DisplayLabels(ref go, s, "Switch");
+                DisplayLabels(ref go, s, "Switch", textMaterial, renderTexture);
             }
             if(colorDict.ContainsKey(Constants.SWITCH_STRING)==false){
                 colorDict.Add(Constants.SWITCH_STRING, go.GetComponent<MeshRenderer>().material.color);
             }
-            ChangeRenderMode(go.GetComponent<MeshRenderer>().material, BlendMode.Opaque);
+            // ChangeRenderMode(go.GetComponent<MeshRenderer>().material, BlendMode.Opaque);
         }
 
         // Showing satellites
         GameObject sat_prefab = Resources.Load("Satellite") as GameObject;
         foreach(string sat in sat_names){
             GameObject go = Instantiate(sat_prefab) as GameObject;
+            go.transform.parent = nodeCombineObject.transform;
             go.transform.position = positions[sat];
             go.name = sat;
             goList.Add(go);
             satObjectDict.Add(sat, go);
-            DisplayLabels(ref go, sat, "Sat");
+            DisplayLabels(ref go, sat, "Sat", textMaterial, renderTexture);
             if(colorDict.ContainsKey(Constants.SAT_STRING)==false){
                 colorDict.Add(Constants.SAT_STRING, go.GetComponent<MeshRenderer>().material.color);
             }
@@ -463,6 +488,7 @@ public class Topology : MonoBehaviour
         foreach (KeyValuePair<string, List<string>> link in sat_links){
             foreach(var sat in link.Value){
                 GameObject go = Instantiate(sat_link_prefab) as GameObject;
+                go.transform.parent = linkCombineObject.transform;
                 // Setting the position
                 go.transform.position = (positions[link.Key]-positions[sat])/2.0f + positions[sat];
                 // Scaling
@@ -481,6 +507,7 @@ public class Topology : MonoBehaviour
         foreach (KeyValuePair<string, List<string>> link in s_h_links){
             foreach(var node in link.Value){
                 GameObject go = Instantiate(link_prefab) as GameObject;
+                go.transform.parent = linkCombineObject.transform;
                 // Setting the position
                 go.transform.position = PipePosition(link.Key, node);
                 // go.transform.position = (positions[link.Key]-positions[node])/2.0f + positions[node];
@@ -498,6 +525,14 @@ public class Topology : MonoBehaviour
                 linkObjectList.Add(go);
             }
         }
+
+        // Combining meshes
+        MeshCombiner.AdvanceCombine(nodeCombineObject);
+        MeshCombiner.AdvanceCombine(linkCombineObject);
+        MeshCombiner.AdvanceCombine(hostCombineObject);
+        // MeshCombiner.CombineMeshesNew(nodeCombineObject);
+        // MeshCombiner.CombineMeshesNew(linkCombineObject);
+        // MeshCombiner.CombineMeshesNew(hostCombineObject);
     }
 
     Vector3 PipePosition(string node1, string node2){
@@ -553,7 +588,7 @@ public class Topology : MonoBehaviour
         }
     }
     // Display labels on the nodes
-    void DisplayLabels(ref GameObject go, string label, string obj_type){
+    void DisplayLabels(ref GameObject go, string label, string obj_type, Material textMaterial, RenderTexture renderTexture){
         // 0. make the clone of this and make it a child
         var innerObject = new GameObject(go.name + "_original", typeof(MeshRenderer));
         // if(is_host){
@@ -573,30 +608,31 @@ public class Topology : MonoBehaviour
         innerMesh.mesh = go.GetComponent<MeshFilter>().mesh;
         name = go.name + "_textDecal";
 
-        // 1. Create and configure the RenderTexture
-        var renderTexture = new RenderTexture(2048, 2048, 24) { name = go.name + "_RenderTexture" };
+        // // 1. Create and configure the RenderTexture
+        // var renderTexture = new RenderTexture(2048, 2048, 24) { name = go.name + "_RenderTexture" };
 
-        // 2. Create material
-        var textMaterial = new Material(Shader.Find("Standard"));
+        // // 2. Create material
+        // var textMaterial = new Material(Shader.Find("Standard"));
 
-        // assign the new renderTexture as Albedo
-        textMaterial.SetTexture("_MainTex", renderTexture);
+        // // assign the new renderTexture as Albedo
+        // textMaterial.SetTexture("_MainTex", renderTexture);
 
-        // set RenderMode to Fade
-        ChangeRenderMode(textMaterial, BlendMode.Fade);
-        // textMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        // textMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        // textMaterial.SetInt("_ZWrite", 0);
-        // textMaterial.DisableKeyword("_ALPHATEST_ON");
-        // textMaterial.EnableKeyword("_ALPHABLEND_ON");
-        // textMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-        // textMaterial.renderQueue = 3000;
+        // // set RenderMode to Fade
+        // ChangeRenderMode(textMaterial, BlendMode.Fade);
 
-        // 3. WE CAN'T CREATE A NEW LAYER AT RUNTIME SO CONFIGURE THEM BEFOREHAND AND USE LayerToUse
+        // // textMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        // // textMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        // // textMaterial.SetInt("_ZWrite", 0);
+        // // textMaterial.DisableKeyword("_ALPHATEST_ON");
+        // // textMaterial.EnableKeyword("_ALPHABLEND_ON");
+        // // textMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        // // textMaterial.renderQueue = 3000;
 
-        // 4. exclude the Layer in the normal camera
-        if (!mainCamera) mainCamera = Camera.main;
-        mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer(LayerToUse));
+        // // 3. WE CAN'T CREATE A NEW LAYER AT RUNTIME SO CONFIGURE THEM BEFOREHAND AND USE LayerToUse
+
+        // // 4. exclude the Layer in the normal camera
+        // if (!mainCamera) mainCamera = Camera.main;
+        // mainCamera.cullingMask &= ~(1 << LayerMask.NameToLayer(LayerToUse));
 
         // 5. Add new Camera as child of this object
         var camera = new GameObject("TextCamera").AddComponent<Camera>();

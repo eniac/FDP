@@ -19,6 +19,13 @@ public class StartMenuControl : MonoBehaviour
     List<string> experimentNames = new List<string>(){EXP_TEXT};
     string chosenExperiment = EXP_TEXT;
 
+    public void Awake(){
+        // Debug.Log("##################### before = " + Application.targetFrameRate + " : " + QualitySettings.vSyncCount);
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = -1;
+        // Debug.Log("##################### after = " + Application.targetFrameRate + " : " + QualitySettings.vSyncCount);
+    }
+
     public IEnumerator Start(){
         yield return StartCoroutine(GetExperiments());
         PopulateExperimentDropdown();

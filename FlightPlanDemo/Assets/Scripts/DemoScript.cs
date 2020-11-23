@@ -13,8 +13,16 @@ public class DemoScript : MonoBehaviour
     [SerializeField] ButtonControl buttonControl = default;
     [SerializeField] GraphInput graphInput = default;
 
+    public void Awake(){
+        // Debug.Log("##################### before = " + Application.targetFrameRate + " : " + QualitySettings.vSyncCount);
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = -1;
+        // Debug.Log("##################### after = " + Application.targetFrameRate + " : " + QualitySettings.vSyncCount);
+    }
+
     // Start is called before the first frame update
     public IEnumerator Start(){
+        // Debug.Log("##################### after Demo = " + Application.targetFrameRate + " : " + QualitySettings.vSyncCount);
         yamlParser.Display();
         yield return StartCoroutine(yamlParser.GetYaml());
         yamlParser.YamlLoader();
