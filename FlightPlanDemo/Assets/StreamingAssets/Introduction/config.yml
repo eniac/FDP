@@ -91,7 +91,7 @@ introduction:
   tag_2d:
     menu:
       heading: "Menu"
-      detail: "The menu can be expanded and collaped by clicking this button."
+      detail: "The menu can be expanded and collapsed by clicking this button."
 
     time_slider:
       heading: "Time Slider"
@@ -125,17 +125,17 @@ introduction:
     edge_switch:
       node: "p0e0"
       heading: "Edge Switch"
-      detail: "(p_e_) The Switch that is directly connected to the host is called edge switch."
+      detail: "(p*e_*) The Switch that is directly connected to the host is called edge switch."
     
     aggregation_switch:
       node: "p0a1"        # choose ("none", <node name>)
       heading: "Aggregation Switch"
-      detail: "(p_a_) These switches interconnect edge and core switches."
+      detail: "(p*a*) These switches interconnect edge and core switches."
 
     core_switch:
       node: "c2"
       heading: "Core Switch"
-      detail: "(c_) Core switches interconnect aggregation switches."
+      detail: "(c*) Core switches interconnect aggregation switches."
 
     supporting_device:
       node: "D_V2_1"      # choose ("none", <node name>)

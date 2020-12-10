@@ -2,7 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/README.md"
-  intro_text: "This experiment demonstares the effect of Tunneling. Rather than following the original path, the packets follow a new path as a result of tunneling."
+  intro_text: "This experiment demonstrates the effect of Tunneling. Rather than following the original path, the packets follow a new path as a result of tunneling."
 
 static_tags:
   - node: c0

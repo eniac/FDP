@@ -2,7 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_bt/README.md"
-  intro_text: "This experiments serves as the base for the next experiment 'Untunneled traffic'. This experiment shows the the natural path followed by the packets. The next experiment will show how this path is affected by tunneling."
+  intro_text: "This experiment serves as the base for the next experiment 'Tunneled traffic'. This experiment shows the natural path followed by the packets. The next experiment will show how this path is affected by tunneling."
 
 static_tags:
   - node: p0h3

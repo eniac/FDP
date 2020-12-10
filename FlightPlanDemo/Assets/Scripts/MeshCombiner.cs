@@ -170,16 +170,10 @@ public class MeshCombiner : MonoBehaviour
         go.transform.GetComponent<MeshFilter>().sharedMesh = finalMesh;
         Debug.Log ("Final mesh has " + submeshes.Count + " materials.");
 
-        // for(int a=0; a<go.transform.childCount; a++){
-        //     go.transform.GetChild(a).gameObject.SetActive(false);
-        // }
 
-        StaticBatchingUtility.Combine(go);
+        // StaticBatchingUtility.Combine(go);
 
-        // List<GameObject> children = new List<GameObject>();
-
-        // children = MeshCombiner.CombineRecursively(go, go, children);
-        // StaticBatchingUtility.Combine(children.ToArray(), go);
+       
     }
 
     static List<GameObject> CombineRecursively(GameObject go, GameObject root, List<GameObject> children){
