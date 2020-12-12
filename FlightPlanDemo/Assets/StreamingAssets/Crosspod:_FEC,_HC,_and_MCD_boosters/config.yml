@@ -69,25 +69,25 @@ graph:
 
 packet_legend:
   - type: "TCP p0h0->p1h0"
-    color: "#0EF3E1"
-
-  - type: "TCP p1h0->p0h0"
-    color: "#61D612"
-
-  - type: "MCD Request"
-    color: "#FF8A00"
-
-  - type: "MCD Reply"
-    color: "#ff00ff"
-
-  - type: "MCD Cached"
-    color: "#ffffff"
-
-  - type: "Compressed"
     color: "#0000ff"
 
-  - type: "Parity"
+  - type: "TCP p1h0->p0h0"
     color: "#ffff00"
+
+  - type: "MCD Request"
+    color: "#0EF3E1"
+
+  - type: "MCD Reply"
+    color: "#61D612"
+
+  - type: "MCD Cached"
+    color: "#FF8A00"
+
+  - type: "Compressed"
+    color: "#ff00ff"
+
+  - type: "Parity"
+    color: "#ffffff"
 
   - type: "ICMP Request"
     color: "#ff0000"

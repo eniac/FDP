@@ -71,9 +71,10 @@ public class GraphControl : MonoBehaviour
         RectTransform legendText = transform.Find("PacketLegendText").GetComponent<RectTransform>();
         legendText.gameObject.SetActive(true);
         legendText.anchoredPosition = new Vector2(-160f, 70f);
-        legendText.GetComponent<Text>().text = text;
+        legendText.GetComponent<Text>().text =  "<b>PACKET TYPE</b>\n" + text;
 
         float y=legendYstart;
+        y = y+legendYdiff;  
         foreach(var c in colors){
             CreateColorLegend(new Vector2(legendX, y), c);
             y = y+legendYdiff;    

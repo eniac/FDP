@@ -8,6 +8,7 @@ public class SliderMenuAnim : MonoBehaviour
     public void ShowHideMenu(){
         if(PanelMenu != null){
             Animator animator = PanelMenu.GetComponent<Animator>();
+            animator.updateMode = AnimatorUpdateMode.UnscaledTime;
             if(animator == null){
                 Debug.Log("Animator is NULL");
             }

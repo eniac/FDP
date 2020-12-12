@@ -56,7 +56,7 @@ packet_legend:
   - type: "Parity"
     color: "#ffffff"
 
-  - type: "ICMP REquest"
+  - type: "ICMP Request"
     color: "#0000ff"
 
 introduction:
