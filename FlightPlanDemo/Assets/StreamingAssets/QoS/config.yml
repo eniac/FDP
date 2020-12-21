@@ -2,7 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/"
-  intro_text: "This experiment demonstartes the Quality of Service (QOS). Diffserv field updated to enable priority services in the network."
+  intro_text: "This experiment demonstrates the Quality of Service (QoS). Diffserv field updated to enable priority services in the network."
 
 static_tags:
   - node: p0e1

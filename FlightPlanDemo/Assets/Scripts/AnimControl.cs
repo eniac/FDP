@@ -509,6 +509,8 @@ public class AnimControl : MonoBehaviour
                 || (animParamBeforeSliderJump.jumpDuration>0 
                 && referenceCounter >= animParamBeforeSliderJump.jumpRC)){
                 ResetAnimParamBeforeSliderJump();
+                Debug.Log("******************************START*********************************************");
+
             }
         }
         else{

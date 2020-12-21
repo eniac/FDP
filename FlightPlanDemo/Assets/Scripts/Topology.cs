@@ -65,6 +65,7 @@ public class Topology : MonoBehaviour
     List<GameObject> bubbleObject = new List<GameObject>();
     List<GameObject> tagMarkObject = new List<GameObject>();
     bool linkOpacity = true, nodeOpacity = true;
+    Dictionary<String, String> markerNames;
 
     public enum BlendMode
     {
@@ -89,6 +90,7 @@ public class Topology : MonoBehaviour
         highlightedNodesStatus = false;
         highlightedNodes = new List<string>();
         colorDict = new Dictionary<string, Color>();
+        markerNames = new Dictionary<string, string>();
     }
     public void SetParameters(List<string> h_names, List<string> s_names, 
                                 List<string> sat_names, List<string> dropper_names, Dictionary<string, 
@@ -932,8 +934,23 @@ public class Topology : MonoBehaviour
         if(prefab!=null){
             GameObject mark = Instantiate(prefab) as GameObject;
             mark.transform.SetParent (nodeObj.transform, false);
+            mark.name = node + "_marker";
+            for (int i=0; i< mark.transform.childCount; i++){
+                mark.transform.GetChild(i).gameObject.name = node + "_" + mark.transform.GetChild(i).gameObject.name + "_marker";
+                AddMarkerNames(mark.transform.GetChild(i).gameObject.name, node);
+            }
+            AddMarkerNames(mark.name, node);
             tagMarkObject.Add(mark);
         }      
+    }
+
+    void AddMarkerNames(string markerName, string nodeName){
+        Debug.Log("Name added = " + markerName + " : " + nodeName);
+        markerNames.Add(markerName, nodeName);
+    }
+
+    public Dictionary<string, string> GetMarkerNames(){
+        return markerNames;
     }
 
     public void ShowTagMarker(){

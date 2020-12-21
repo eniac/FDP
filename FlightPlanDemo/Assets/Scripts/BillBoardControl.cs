@@ -183,12 +183,20 @@ public class BillBoardControl : MonoBehaviour
     }
 
     void DetectMouseClick(){
+        Dictionary<string, string> markerNames;
         if(Input.GetMouseButtonDown(0)){
             RaycastHit hit;
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if(Physics.Raycast(ray, out hit, 100.0f)){
                 if(hit.transform != null && boardInfo.ContainsKey(hit.collider.gameObject.name)){
                     ShowBillBoard(boardInfo[hit.collider.gameObject.name].boardObject);
+                }
+                else {
+                    Debug.Log("Name asked = " + hit.collider.gameObject.name);
+                    markerNames = topo.GetMarkerNames();
+                    if(hit.transform != null && markerNames.Keys.Contains(hit.collider.gameObject.name)){
+                        ShowBillBoard(boardInfo[markerNames[hit.collider.gameObject.name]].boardObject);
+                    }
                 }
             }
         }

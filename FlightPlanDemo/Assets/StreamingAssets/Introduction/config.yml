@@ -107,7 +107,7 @@ introduction:
 
     speed_slider:
       heading: "Speed Slider"
-      detail: "Use this to change the display speed of the experiment's visualisation."
+      detail: "Use this to change the display speed of the experiment's visualization."
 
     graph:
       heading: "Graph"          # choose ("none", <heading string>)
@@ -115,7 +115,7 @@ introduction:
 
     packet_legend:
       heading: "Packet Legend"
-      detail: "Packet color legend to identify packets in the visualisation."
+      detail: "Packet color legend to identify packets in the visualization."
 
     info_code_button:
       heading: "Info + Code"

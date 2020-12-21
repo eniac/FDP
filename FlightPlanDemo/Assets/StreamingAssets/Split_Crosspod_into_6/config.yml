@@ -55,7 +55,7 @@ event_tags:
 
   - time: 13046449
     node: S2_1
-    text: "S2_1 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional HC packet moving out of p0a0."
+    text: "S2_1 receives the parity packet. FEC retrieves the lost packet. This can be seen as additional HC packet moving out of p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - time: 98639076
