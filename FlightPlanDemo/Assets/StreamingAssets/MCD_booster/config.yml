@@ -2,7 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
-  intro_text: "Memory Cached (MCD) booster provides in-network caching of memcached entries."
+  intro_text: "Memcached (MCD) booster provides in-network caching of Memcached entries."
 
 static_tags:
   - node: p0a0
@@ -44,10 +44,10 @@ graph:
 
 
 packet_legend:
-  - type: "MCD REquest"
+  - type: "MCD Request"
     color: "#0EF3E1"
 
-  - type: "MCD reply"
+  - type: "MCD Reply"
     color: "#61D612"
 
   - type: "MCD Cached"

@@ -41,13 +41,13 @@ graph:
   curve_info:
     - file_name: "graph_log1.txt"
       curve_color: "#ffff00"
-      legend_text: "Before Header Compression"
+      legend_text: "With Header Compression"
       curve_width: 1
       packet_target: p1e0
 
     - file_name: "graph_log2.txt"
       curve_color: "#00ff40"
-      legend_text: "After Header Compression"
+      legend_text: "Without Header Compression"
       curve_width: 1
       packet_target: dropper
 
