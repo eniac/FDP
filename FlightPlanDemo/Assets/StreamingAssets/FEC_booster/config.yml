@@ -24,7 +24,7 @@ static_tags:
 event_tags:
   - time: 3008916
     node: p0e0
-    text: "Now a parity packet (coloured silver) will be sent from p0e0 to p0a0."
+    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete/ALV_Complete.p4#L254"
 
   - time: 13032597
