@@ -7,7 +7,7 @@ experiment_info:
 static_tags:
   - node: p0e1
     text: "Diffserv field is set to 44 here, to give this traffic higher-priority service in the network."
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4"
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits3/ALV_qos/ALV_qos.p4#L171"
 
   - node: p0h3
     text: "This is the source host."
@@ -21,12 +21,12 @@ event_tags:
   - time: 1528
     node: p0e1
     text: "Diffserv field is set to 44 here, to give this traffic higher-priority service in the network. Packet turns from blue to pink."
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4"
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits3/ALV_qos/ALV_qos.p4#L171"
 
   - time: 12885
     node: p0e1
     text: "Enables higher-priority service again during the return journey of the packet. Packet turns from yellow to light blue."
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits3/ALV_qos/ALV_qos.p4"
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits3/ALV_qos/ALV_qos.p4#L171"
 
   - time: 12901
     node: p0h3
