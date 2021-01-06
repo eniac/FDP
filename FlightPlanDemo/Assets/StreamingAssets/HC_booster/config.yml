@@ -2,15 +2,15 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
-  intro_text: "This experiment demonstartes the Header Compressor (HC) booster. HC booster compresses and decompresses the packet headers"
+  intro_text: "This experiment features the Header Compressor (HC) booster, which improves network utilisation."
 
 static_tags:
   - node: p0e0
-    text: "HC Booster - Header is compressed here."
+    text: "Headers of packets travelling to p0a0 are compressed at this node."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: p0a0
-    text: "Header is decompressed here."
+    text: "Headers of packets travelling from p0e0 are decompressed at this node."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: p0h0
@@ -24,12 +24,12 @@ static_tags:
 event_tags:
   - time: 3962
     node: p0e0
-    text: "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet."
+    text: "Header is compressed. We show this by changing the packet's colour from blue to pink."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 7094
     node: p0a0
-    text: "At p0e0 pink packet turns blue. This shows that the compressed packet has been decompressed now."
+    text: "Header is decompressed. We show this by changing the packet's colour from pink back to blue."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
 graph:
@@ -41,13 +41,13 @@ graph:
   curve_info:
     - file_name: "graph_log1.txt"
       curve_color: "#ffff00"
-      legend_text: "Before Header Compression"
+      legend_text: "With Header Compression"
       curve_width: 1
       packet_target: p1e0
 
     - file_name: "graph_log2.txt"
       curve_color: "#00ff40"
-      legend_text: "After Header Compression"
+      legend_text: "Without Header Compression"
       curve_width: 1
       packet_target: dropper
 

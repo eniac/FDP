@@ -2,16 +2,20 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/"
-  intro_text: "This experiment demonstrates the failover mechanism of Flightplan system. When the supporting device fails, it is failed over by another device and the packets start flowing through it."
+  intro_text: "This experiment demonstrates the failover mechanism of Flightplan's 'Full' runtime. It shows the fail-over to a spare supporting device when the original device fails, and how the packet flow changes as a result."
 
 static_tags:
   - node: SA_1
-    text: "Supporting device to offload p0e0"
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+    text: "Supporting device that is offloaded logic from p0e0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_split1/ALV_part2.p4#L84"
 
   - node: SA_2
-    text: "Redundent supporting device to support failover"
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+    text: "Redundent supporting device for p0e0, to support failover."
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_split1/ALV_part2.p4#L84"
+
+  - node: p0e0
+    text: "Switch that offloads logic to supporting devices."
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_split1/ALV_part1.p4#L88"
 
   - node: p0h0
     text: "This is the source host."
@@ -24,30 +28,30 @@ static_tags:
 event_tags:
   - time: 1971
     node: p0e0
-    text: "This packet now travels to SA_1 for processing [Supporting device SA_1 offloads p0e0]"
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+    text: "This packet now travels for processing on SA_1, to which logic from p0e0 has been offloaded"
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_split1/ALV_part2.p4#L84"
 
   - time: 29746104
     node: p0e0
-    text: "Since SA_1 has stopped working, it is failed over by SA_2.So this packet is going towards SA_2"
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+    text: "Since SA_1 has stopped working, the systems fails-over to SA_2. So this packet is going towards SA_2"
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_split1/ALV_part2.p4#L84"
 
   - time: 5020014
     node: SA_1
-    text: "Since this node got the wrong header in packet, it is now sending one additional pink colored feedback packet to p0e0."
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+    text: "We simulate a failure by corrupting the state in the dataplane, which results in a pink colored feedback packet being sent to p0e0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_split1/ALV_part2.p4#L84"
 
   - time: 35751096
     node: SA_2
-    text: "Since this node got the wrong header in packet, it is now sending one additional pink colored feedback packet to p0e0."
-    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_split1/ALV_part2.p4"
+    text: "We simulate a failure by corrupting the state in the dataplane, which results in a pink colored feedback packet being sent to p0e0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_split1/ALV_part2.p4#L84"
 
 graph:
   show: "y"
   x_div: 1000000
   x_label: "time (sec)"
   y_label: "# bytes passing through the devices"
-  title: "Failover Mechanism"
+  title: "Failover mechanism"
   curve_info:
     - file_name: "graph_log1.txt"
       curve_color: "#ffff00"

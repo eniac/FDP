@@ -2,11 +2,11 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
-  intro_text: "Memory Cached (MCD) booster provides in-network caching of memcached entries."
+  intro_text: "Memcached (MCD) booster provides in-network caching of Memcached entries."
 
 static_tags:
   - node: p0a0
-    text: "MCD Booster - provides in-network caching of memcached entries."
+    text: "In-network Memcached cache is located here."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: p0h0
@@ -20,7 +20,7 @@ static_tags:
 event_tags:
   - time: 105300
     node: p0a0
-    text: "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested."
+    text: "The cached entries reside at p0a0. The reply (orange packet) from p0a0 reduces pressure from the target Memcached server (on p1h0) and replies back to p0h0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
 graph:
@@ -44,10 +44,10 @@ graph:
 
 
 packet_legend:
-  - type: "MCD REquest"
+  - type: "MCD Request"
     color: "#0EF3E1"
 
-  - type: "MCD reply"
+  - type: "MCD Reply"
     color: "#61D612"
 
   - type: "MCD Cached"

@@ -2,7 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_All/"
-  intro_text: "This experiment demonstartes the three boosters, i.e. forward error correction (FEC)), memcached (MCD), and header compression (HC) in action. FEC booster recovers the lost packets, MCD Booster provides in-network caching of memcached entries. HC booster compresses and decompresses the packet headers"
+  intro_text: "This experiment features different in-network programs split in different ways. Figure 7 in the Flightplan paper (NSDI'21) is based on this experiment."
 static_tags:
   - node: p0e0
     text: "FEC encoder and decoder. Header compressor and decompressor. MCD Booster - provides in-network caching of memcached entries."
@@ -87,47 +87,47 @@ static_tags:
 event_tags:
   - time: 8019053
     node: p0e0
-    text: "Now silver colored parity packet will travel from p0e0 to p0a0."
+    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 13035743
     node: D_V2_1
-    text: "p0a0 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0"
+    text: "The parity packet is used by FEC to decode the lost packet. This can be seen as an additional blue packet being generated."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4"
 
   - time: 8029314
     node: S2
-    text: "Now silver colored parity packet will travel from p0e0 to p0a0."
+    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
 
   - time: 13048252
     node: p1a0
-    text: "p1a0 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p1a0"
+    text: "The parity packet is used by FEC to decode the lost packet. This can be seen as an additional blue packet being generated."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 8070301
     node: p1a0
-    text: "Now silver colored parity packet will travel from p0e0 to p0a0."
+    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 13111909
     node: S1
-    text: "S1 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional yellow packet moving out of S1"
+    text: "The parity packet is used by FEC to decode the lost packet. This can be seen as an additional yellow packet being generated."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
 
   - time: 8078902
     node: D_V2_1
-    text: "Now silver colored parity packet will travel from p0e0 to p0a0."
+    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4"
 
   - time: 13124382
     node: p0e0
-    text: "p0e0 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional yellow packet moving out of p0e0."
+    text: "The parity packet is used by FEC to decode the lost packet. This can be seen as an additional yellow packet being generated."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 98666932
     node: D_V2_1
-    text: "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested."
+    text: "MCD cache entries reside at this device, which replies (orange packet) on behalf of the  target Memcached server."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4"
 
   - time: 4042553
