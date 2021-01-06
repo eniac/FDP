@@ -61,11 +61,11 @@ static_tags:
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_3
-    text: "Header decompressor."
+    text: "MCD Booster - provides in-network caching of memcached entries."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_4
-    text: "MCD Booster - provides in-network caching of memcached entries."
+    text: "Header decompressor."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_5

@@ -55,5 +55,5 @@ public static class Global
     public static string animTimeFile;
     public static float gVar = 10;
     public const float U_SEC = 1000000f;
-    public const bool PRE_PLAY = false;
+    public const bool PRE_PLAY = true;
 }

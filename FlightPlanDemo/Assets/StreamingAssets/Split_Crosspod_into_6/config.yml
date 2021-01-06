@@ -10,11 +10,11 @@ static_tags:
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: S2_1
-    text: "Lost packets are recovered. Header is decompressed."
+    text: "FEC (Forward Error Correction) decoder."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_2
-    text: "Decompress the header which was compressed on p0e0."
+    text: "Compresses header."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_3
@@ -22,11 +22,11 @@ static_tags:
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_4
-    text: "MCD Booster - provides in-network caching of memcached entries."
+    text: "Header decompressor."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_5
-    text: "FEC(Forward Error Correction) encoder."
+    text: "FEC (Forward Error Correction) encode, if heading out on a lossy link."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: p0h0

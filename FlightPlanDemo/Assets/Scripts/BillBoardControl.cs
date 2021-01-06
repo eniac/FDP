@@ -202,11 +202,17 @@ public class BillBoardControl : MonoBehaviour
         }
     }
 
+    // Create yellow marker for the event tag on the time slider
     public void CreateButton(Vector3 position, Vector2 size){
         GameObject button_prefab = timeSlider.gameObject.transform.Find("Marker").gameObject;
         GameObject go = Instantiate(button_prefab) as GameObject;
         go.transform.parent = timeSlider.gameObject.transform;
-        Vector2 bPos = new Vector2(position.x, position.y + 20f);
+        Debug.Log("YELLOW MARKER = " + position.x + " : " + position.y);
+        // float posx = position.x - (25f*(position.x/305f)) < 305f ? 305f : position.x - (25f*(position.x/305f));
+        // float posy = position.y + 15f;
+        float posx = position.x;
+        float posy = position.y + 15f;
+        Vector2 bPos = new Vector2(posx, posy);
         go.transform.position = bPos;
         go.SetActive(true);
     }

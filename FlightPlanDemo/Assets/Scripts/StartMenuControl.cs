@@ -93,6 +93,18 @@ public class StartMenuControl : MonoBehaviour
         // Can not see effect of "Application.Quit()" in editor
         Application.Quit();
     }
+
+    public void AboutButton(){
+        string link = "https://flightplan.cis.upenn.edu/";
+        if( Application.platform==RuntimePlatform.WebGLPlayer )
+        {
+            // Application.ExternalEval("window.open(\"https://flightplan.cis.upenn.edu/\")");
+            Application.ExternalEval("window.open(\"" + link + "\")");
+        }
+        else{
+            Application.OpenURL(link);
+        }
+    }
 }
 
 
