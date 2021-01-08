@@ -2,16 +2,16 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
-  intro_text: "This experiment features the FEC booster mitigating the packet loss from a faulty link. Parity packets are added to the packet stream and used to recover lost data packets."
+  intro_text: "This experiment demonstrates the FEC booster effectiveness. The lost packets are recovered using Forward Error Correction. This reduces the number of retransmission packets."
 
 static_tags:
   - node: p0e0
-    text: "FEC encoding generates parity packets and sends them with data packets forwarded to p0a0."
-    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete/ALV_Complete.p4#L254"
+    text: "FEC Booster - Parity packets are generated at this node."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: p0a0
     text: "Lost packets are recovered with the help of parity packets here."
-    hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete/ALV_Complete.p4#L185"
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: p0h0
     text: "This is the source host."
@@ -24,13 +24,13 @@ static_tags:
 event_tags:
   - time: 3008916
     node: p0e0
-    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
-    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete/ALV_Complete.p4#L254"
+    text: "Now silver colored parity packet will travel from p0e0 to p0a0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 13032597
     node: p0a0
-    text: "p0a0 receives the parity packet. FEC recreates the lost packet. This can be seen as an additional blue packet moving out of p0a0."
-    hyperlink: "https://github.com/eniac/Flightplan/blob/master/Wharf/splits/ALV_Complete/ALV_Complete.p4#L185"
+    text: "p0a0 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
 graph:
   show: "y"

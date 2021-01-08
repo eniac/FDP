@@ -81,6 +81,8 @@ public class AnimControl : MonoBehaviour
     Dictionary<string, GameObject> HoldbackPackets = new Dictionary<string, GameObject>();  // Packetid : game object
     Dictionary<string, GameObject> HoldBackParity = new Dictionary<string, GameObject>();
     HashSet<int> packetTime = new HashSet<int>();
+    bool eventTagAppearFlag = false;
+    float animTime=0;
 
     void Start(){
         DisableUpdate();
@@ -454,6 +456,7 @@ public class AnimControl : MonoBehaviour
 
     public void SetAnimParamBeforeSliderJump(float jumpDuration=0f){
         if(jumpDuration!=0f){
+            sliderControl.SetTimeSlider(referenceCounter);
             animParamBeforeSliderJump.jumpDuration = jumpDuration;
             animParamBeforeSliderJump.jumpRC = (RCtime()/Global.U_SEC)+jumpDuration;
             animParamBeforeSliderJump.sliderJump = true;
@@ -512,9 +515,19 @@ public class AnimControl : MonoBehaviour
                 Debug.Log("******************************START*********************************************");
 
             }
+            if(eventTagAppearFlag==true){
+                animParamBeforeSliderJump.sliderJump = false;
+                animParamBeforeSliderJump.jumpDuration = -1f;
+                AdjustSpeed(animParamBeforeSliderJump.timeScale);
+                timeScaleBeforePause = animParamBeforeSliderJump.timeScaleBeforePause;
+            }
         }
         else{
-            sliderControl.SetTimeSlider(referenceCounter);
+            // sliderControl.SetTimeSlider(referenceCounter);
+        }
+        sliderControl.SetTimeSlider(referenceCounter);
+        if(eventTagAppearFlag == true){
+            eventTagAppearFlag = false;
         }
         graphInput.ReferenceCounterValue(referenceCounter);
     }
@@ -684,6 +697,7 @@ public class AnimControl : MonoBehaviour
             topo.MakeLinksOpaque();
             topo.MakeNodesOpaque();
             sliderControl.SetTimeSlider(0);
+            AdjustSpeed(1f);
             if(prePlay == true){
                 loadingPanel.SetActive(false);
                 AdjustSpeed(1f);
@@ -724,6 +738,7 @@ public class AnimControl : MonoBehaviour
                 topo.MakeLinksOpaque();
                 topo.MakeNodesOpaque();
                 sliderControl.SetTimeSlider(0);
+                AdjustSpeed(1f);
                 DisableUpdate();
             }
             return;
@@ -1044,6 +1059,18 @@ public class AnimControl : MonoBehaviour
 
     public bool GetPrePlayStatus(){
         return prePlay;
+    }
+
+    public void EventTagAppear(){
+        eventTagAppearFlag = true;
+    }
+
+    public void SetAnimTime(float time){
+        animTime = time;
+    }
+
+    public float GetAnimTime(){
+        return animTime;
     }
 }
 

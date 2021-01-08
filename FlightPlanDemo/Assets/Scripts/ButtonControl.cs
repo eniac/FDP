@@ -210,6 +210,12 @@ public class ButtonControl : MonoBehaviour
         ChangePauseResumeButtonText(Global.AnimStatus.Rewind);
     }
 
+    public void GoToNextEvent(){
+        anim.SetAnimParamBeforeSliderJump();
+        anim.Pause();
+        anim.SetAnimParamBeforeSliderJump(anim.GetAnimTime());
+    }
+
     void ChangePauseResumeButtonText(Global.AnimStatus status){
         if(status == Global.AnimStatus.Pause){
             // Show Resume Symbol on Button
@@ -276,6 +282,10 @@ public class ButtonControl : MonoBehaviour
 
     public void PointerEnterSpeedSlider(){
         ToolTipControl.ShowToolTip_Static("Speed Slider");
+    }
+
+    public void PointerEnterGoToNextEvent(){
+        ToolTipControl.ShowToolTip_Static("Go To Next Event");
     }
 
     public void PointerExit(){

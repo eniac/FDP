@@ -93,6 +93,10 @@ introduction:
       heading: "Menu"
       detail: "The menu can be expanded and collapsed by clicking this button."
 
+    next_event_button:
+      heading: "Next Event"
+      detail: "Clicking on this button, fast forwards the experiment to reach to the next point of interest."
+
     time_slider:
       heading: "Time Slider"
       detail: "The slider shows the progress of the experiment over time."
@@ -125,7 +129,7 @@ introduction:
     edge_switch:
       node: "p0e0"
       heading: "Edge Switch"
-      detail: "(p*e_*) The Switch that is directly connected to the host is called edge switch."
+      detail: "(p*e*) The Switch that is directly connected to the host is called edge switch."
     
     aggregation_switch:
       node: "p0a1"        # choose ("none", <node name>)

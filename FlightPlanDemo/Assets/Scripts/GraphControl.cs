@@ -107,23 +107,7 @@ public class GraphControl : MonoBehaviour
         title.GetComponent<Text>().text = t;
     }
 
-    public void GraphInit(Global.GraphType gType, Color pointColor, Color segmentColor, float xMax, float yMax, float segmentWidth=1f){
-        GraphAttributes gt = new GraphAttributes();
-        gt.lastCircleGameObject = null;
-        gt.pointColor = pointColor;
-        gt.segmentColor = segmentColor;
-        gt.xMax = xMax;
-        gt.yMax = yMax;
-        gt.points = new List<GameObject>();
-        gt.segments = new List<GameObject>();
-        gt.segmentWidth = segmentWidth;
-        if(gAttr.ContainsKey(gType)==true){
-            gAttr[gType] = gt;
-        }
-        else{
-            gAttr.Add(gType, gt);
-        }
-
+    public void GraphAxisInit(float xMax, float yMax){
         // Labeling X axis
         float separatorCount = 3f;
         for(int i=0; i<=separatorCount; i++){
@@ -145,6 +129,24 @@ public class GraphControl : MonoBehaviour
             float normalizedValue = i * 1f / separatorCount;
             labelY.anchoredPosition = new Vector2(-3f, normalizedValue*graphHeight);
             labelY.GetComponent<Text>().text = Mathf.RoundToInt(normalizedValue * yMax).ToString();
+        }
+    }
+
+    public void GraphInit(Global.GraphType gType, Color pointColor, Color segmentColor, float xMax, float yMax, float segmentWidth=1f){
+        GraphAttributes gt = new GraphAttributes();
+        gt.lastCircleGameObject = null;
+        gt.pointColor = pointColor;
+        gt.segmentColor = segmentColor;
+        gt.xMax = xMax;
+        gt.yMax = yMax;
+        gt.points = new List<GameObject>();
+        gt.segments = new List<GameObject>();
+        gt.segmentWidth = segmentWidth;
+        if(gAttr.ContainsKey(gType)==true){
+            gAttr[gType] = gt;
+        }
+        else{
+            gAttr.Add(gType, gt);
         }
     }
     public void ShowPlot(Global.GraphType gType, float x, float y){

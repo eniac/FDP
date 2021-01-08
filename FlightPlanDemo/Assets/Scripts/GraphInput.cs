@@ -102,6 +102,9 @@ public class GraphInput : MonoBehaviour
             lastData.Add(reader.ReadLine());
         }
         graph.GraphParamInit(gInfo.xLabel, gInfo.yLabel, gInfo.graphLegend, gInfo.title);
+        if(gInfo.nCurves > 0){
+            graph.GraphAxisInit(gInfo.xMax, gInfo.yMax);
+        }
         for(int i=0; i<gInfo.nCurves; i++){
             graph.GraphInit((Global.GraphType)i, pointColor[i], segmentColor[i], gInfo.xMax, gInfo.yMax, gInfo.segmentWidth[i] );
         }

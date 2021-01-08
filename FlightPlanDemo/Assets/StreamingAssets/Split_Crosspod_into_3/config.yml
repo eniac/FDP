@@ -2,20 +2,20 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/"
-  intro_text: "This experiment features the Crosspod program split into three parts: the forwarding logic is kept on the switch, and the booster logic is divided and offloaded to two supporting devices."
+  intro_text: "In this experiment, the Program is split into three parts: two supporting devices for booster offloading + connected switch for routing. All the boosters are active. This is a long experiment. Feel free to use 'Next Event Button (>>|)' to quickly move to the next point of interest."
 
 static_tags:
   - node: p0e0
-    text: "The full Crosspod program is executed on this element, featuring all 3 boosters: FEC, MCD, HC."
+    text: "All the three boosters are active - Forward Error Correction (FEC), Memcached (MCD), Header Compression (HC)."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: S1
-    text: "This device offloads the first half of the non-routing logic from p0e0."
-    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4#L132"
+    text: "This is a supporting device. Recoveres lost packets. MCD Booster - provides in-network caching of memcached entries. Decompresses header."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
 
   - node: S2
-    text: "This device offloads the second half of the non-routing logic from p0e0."
-    hyperlink: "https://www.github.com/eniac/Flightplan/blob/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4#L174"
+    text: "This is a supporting device. Recoveres lost packets. MCD Booster - provides in-network caching of memcached entries. Decompresses header."
+    hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
 
   - node: p0h0
     text: "This is the source host."
@@ -28,27 +28,27 @@ static_tags:
 event_tags:
   - time: 101832
     node: p0e0
-    text: "Header is compressed. We show this by changing the packet's colour from blue to pink."
+    text: "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 104354
     node: S1
-    text: "Header is decompressed. We show this by changing the packet's colour from pink back to blue."
+    text: "At S1 pink packet turns blue. This shows that the compressed packet has been decompressed now."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
 
   - time: 903726
     node: p0e0
-    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
+    text: "Now silver colored parity packet will travel from p0e0 to p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 1408013
     node: S1
-    text: "S1 receives the parity packet through p0a0. FEC recreates the lost packet. This can be seen as an additional blue packet being generated."
+    text: "S1 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0"
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
 
   - time: 10291712
     node: S1
-    text: "The cached entries reside at this device. The reply (orange packet) from p0a0 reduces pressure from the target Memcached server (on p1h0) and replies back to p0h0."
+    text: "The cached packets reside at S1. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
 
 

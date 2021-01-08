@@ -154,7 +154,7 @@ public class IntroTagControl : MonoBehaviour
             case 1:
                 introScreen.SetActive(false);
                 pos = panelMenu.transform.position;
-                head = (string)introConfig2DTagObj["menu"]["heading"];
+                head = "<size=60>" + (string)introConfig2DTagObj["menu"]["heading"] + "</size>";
                 detail = (string)introConfig2DTagObj["menu"]["detail"];
                 // head = "Menu";
                 // detail = "The menu can be expanded and collaped by clicking this button.";
@@ -163,6 +163,14 @@ public class IntroTagControl : MonoBehaviour
 
             case 2:
                 introTag2Drd.SetActive(false);
+                pos = footer.transform.Find("Next").transform.position;
+                head = (string)introConfig2DTagObj["next_event_button"]["heading"];
+                detail = (string)introConfig2DTagObj["next_event_button"]["detail"];
+                TagUpdate(introTag2Dru, TagType.T2Dru, pos, head, detail);
+                break;
+
+            case 3:
+                introTag2Dru.SetActive(false);
                 pos = footer.transform.Find("TimeSlider").transform.position;
                 head = (string)introConfig2DTagObj["time_slider"]["heading"];
                 detail = (string)introConfig2DTagObj["time_slider"]["detail"];
@@ -171,7 +179,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag2Dru, TagType.T2Dru, pos, head, detail);
                 break;
 
-            case 3:
+            case 4:
                 pos = footer.transform.Find("ElapsedTime").transform.position;
                 head = (string)introConfig2DTagObj["elapsed_time"]["heading"];
                 detail = (string)introConfig2DTagObj["elapsed_time"]["detail"];
@@ -180,7 +188,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag2Dru, TagType.T2Dru, pos, head, detail);
                 break;
 
-            case 4:
+            case 5:
                 introTag2Dru.SetActive(false);
                 pos = footer.transform.Find("RemainingTime").transform.position;
                 head = (string)introConfig2DTagObj["remaining_time"]["heading"];
@@ -190,7 +198,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
-            case 5:
+            case 6:
                 introTag2Dru.SetActive(false);
                 pos = footer.transform.Find("SpeedSlider").transform.position;
                 head = (string)introConfig2DTagObj["speed_slider"]["heading"];
@@ -200,7 +208,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
-            case 6:
+            case 7:
                 var showThis = (string)introConfig2DTagObj["graph"]["heading"];
                 if(showThis == "none"){
                     state++;
@@ -215,7 +223,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag2Dlu, TagType.T2Dlu, pos, head, detail);
                 break;
 
-            case 7:
+            case 8:
                 introTag2Dlu.SetActive(false);
                 pos = graph.transform.Find("PacketLegendText").transform.position + new Vector3(70f, 80f, 0);
                 head = (string)introConfig2DTagObj["packet_legend"]["heading"];
@@ -225,7 +233,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag2Dld, TagType.T2Dld, pos, head, detail);
                 break;
 
-            case 8:
+            case 9:
                 introTag2Dld.SetActive(false);
                 pos = clickForCode.transform.position;
                 head = (string)introConfig2DTagObj["info_code_button"]["heading"];
@@ -235,7 +243,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag2Dld, TagType.T2Dld, pos, head, detail);
                 break;
 
-            case 9:
+            case 10:
                 introTag2Dld.SetActive(false);
                 pos = topo.GetNodePosition((string)introConfig3DTagObj["edge_switch"]["node"]) + new Vector3(0, 1.0f, -1.5f);
                 head = (string)introConfig3DTagObj["edge_switch"]["heading"];
@@ -246,7 +254,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
                 break;
 
-            case 10:
+            case 11:
                 introTag3Dlu.SetActive(false);
                 node1 = (string)introConfig3DTagObj["aggregation_switch"]["node"];
                 if(node1 == "none"){
@@ -263,7 +271,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
                 break;
 
-            case 11:
+            case 12:
                 introTag3Dlu.SetActive(false);
                 pos = topo.GetNodePosition((string)introConfig3DTagObj["core_switch"]["node"]) + new Vector3(0, 1.0f, -1.5f);
                 head = (string)introConfig3DTagObj["core_switch"]["heading"];
@@ -274,7 +282,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
                 break;
 
-            case 12:
+            case 13:
                 introTag3Dlu.SetActive(false);
                 node1 = (string)introConfig3DTagObj["supporting_device"]["node"];
                 if(node1 == "none"){
@@ -291,7 +299,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 break;
 
-            case 13:
+            case 14:
                 introTag3Dru.SetActive(false);
                 node1 = (string)introConfig3DTagObj["link"]["node1"];
                 node2 = (string)introConfig3DTagObj["link"]["node2"];
@@ -304,7 +312,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag3Dru, TagType.T3Dru, pos, head, detail);
                 break;
 
-            case 14:
+            case 15:
                 introTag3Dru.SetActive(false);
                 
 
@@ -324,7 +332,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(introTag3Dlu, TagType.T3Dlu, pos, head, detail);
                 break;
 
-            case 15:
+            case 16:
                 introTag3Dlu.SetActive(false);
                 node1 = (string)introConfig3DTagObj["static_tag_info"]["node"];
                 if(node1 == "none"){
@@ -342,7 +350,7 @@ public class IntroTagControl : MonoBehaviour
                 cameraRotate.DoRotate(new Quaternion(0,-0.3f,0,1.0f));
                 break;
 
-            case 16:
+            case 17:
                 introTag3Dru.SetActive(false);
                 pos = infoBox.transform.position; 
                 head = null;
@@ -351,7 +359,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(infoBox, TagType.Info, pos, head, detail);
                 break;
 
-            case 17:
+            case 18:
                 pos = infoBox.transform.position + new Vector3(10f, 10f, 0f); 
                 head = null;
                 detail = (string)introConfigInfoTagObj["rotation_info"]["detail"];
@@ -359,7 +367,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(infoBox, TagType.Info, pos, head, detail);
                 break;
 
-            case 18:
+            case 19:
                 infoBox.SetActive(false);
                 pos = infoBoxDetail.transform.position; 
                 head = null;
@@ -368,7 +376,7 @@ public class IntroTagControl : MonoBehaviour
                 TagUpdate(infoBoxDetail, TagType.InfoDetail, pos, head, detail);
                 break;
 
-            case 19:
+            case 20:
                 infoBoxDetail.SetActive(false);
                 pos = infoBox.transform.position  + new Vector3(-10f, -10f, -0f); 
                 head = null;

@@ -227,6 +227,7 @@ public class BillBoardControl : MonoBehaviour
             else{
                 if(ShowBillBoard(timeInfo[time].Item1.boardObject)){
                     timeInfo[time] = new Tuple<BillBoardNodeInfo, bool>( timeInfo[time].Item1, true);
+                    anim.EventTagAppear();
                 }
             }
         }
