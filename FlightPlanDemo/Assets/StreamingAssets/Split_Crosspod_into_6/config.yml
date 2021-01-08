@@ -2,7 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/"
-  intro_text: "This experiment features the Crosspod program split into six parts: the forwarding logic is kept on the switch, and the booster logic is offloaded to separate supporting devices, one for each booster function.  This is a long experiment. Feel free to use 'Next Event Button (>>|)' to quickly move to the next point of interest."
+  intro_text: "This experiment features the Crosspod program split into six parts: the forwarding logic is kept on the switch, and the booster logic is offloaded to separate supporting devices, one for each booster function. This is a long experiment. Feel free to use 'Next Event Button (>>|)' to quickly move to the next point of interest."
 
 static_tags:
   - node: p0e0
@@ -10,11 +10,11 @@ static_tags:
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: S2_1
-    text: "FEC (Forward Error Correction) decoder."
+    text: "Lost packets are recovered. Header is decompressed."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_2
-    text: "Compresses header."
+    text: "Decompress the header which was compressed on p0e0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_3
@@ -22,7 +22,7 @@ static_tags:
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_4
-    text: "Header decompressor."
+    text: "Headers of packets are compressed at this node."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/ALV_Complete_split2_hl3new_2.p4"
 
   - node: S2_5

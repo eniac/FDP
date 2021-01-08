@@ -2,15 +2,15 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
-  intro_text: "It is a composed system using all 3 boosters i.e. Forward Error Correction, Memory Cached and Header Compression. This is a long experiment. Feel free to use 'Next Event Button (>>|)' to quickly move to the next point of interest."
+  intro_text: "Crosspod is a program that invokes 3 types of network boosters: link-layer Forward Error Correction (FEC), Memcached Cache (MCD) and Header Compression (HC). This is a long experiment. Feel free to use 'Next Event Button (>>|)' to quickly move to the next point of interest."
 
 static_tags:
   - node: p0e0
-    text: "All the three boosters are active - Forward Error Correction (FEC), Memcached (MCD), Header Compression (HC)."
+    text: "In this experiment we see this node apply FEC encoding and header compression."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: p0a0
-    text: "Lost packets are recovered. MCD Booster - Provides in-network caching of memcached entries. Header is decompressed."
+    text: "In this experiment we see this node apply FEC decoding--to recover lost packets--header decompression, and Memcached lookups."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - node: p0h0
@@ -24,27 +24,27 @@ static_tags:
 event_tags:
   - time: 4318
     node: p0e0
-    text: "header compression booster compresses header bytes. The packet turning from blue to pink shows that it is now a compressed packet."
+    text: "Header is compressed. We show this by changing the packet's colour from blue to pink."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 7025
     node: p0a0
-    text: "At p0e0 pink packet turns blue. This shows that the compressed packet has been decompressed now."
+    text: "Header is decompressed. We show this by changing the packet's colour from pink back to blue."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 8019205
     node: p0e0
-    text: "Now silver colored parity packet will travel from p0e0 to p0a0."
+    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 13033964
     node: p0a0
-    text: "p0a0 receives the parity packet. FEC retrieves the lost packet. This can be seen as aditional blue packet moving out of p0a0."
+    text: "p0a0 receives the parity packet. FEC recreates the lost packet. This can be seen as an additional blue packet moving out of p0a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 98824182
     node: p0a0
-    text: "The cached packets reside at p0a0. The orange packet reply from p0a0 offloads the target destination host and sends the cached copy of requested."
+    text: "The cached entries reside at p0a0. The reply (orange packet) from p0a0 reduces pressure from the target Memcached server (on p1h0) and replies back to p0h0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
 graph:
