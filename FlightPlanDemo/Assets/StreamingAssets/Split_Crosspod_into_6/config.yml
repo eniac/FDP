@@ -2,7 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_2_hl3new/"
-  intro_text: "This experiment features the Crosspod program split into six parts: the forwarding logic is kept on the switch, and the booster logic is offloaded to separate supporting devices, one for each booster function. This is a long experiment. Feel free to use 'Next Event Button (>>|)' to quickly move to the next point of interest."
+  intro_text: "This experiment features the Crosspod program split into six parts: the forwarding logic is kept on the switch, and the booster logic is offloaded to separate supporting devices, one for each booster function.  Since this is a long experiment remember that you can use the 'Go To Next Event' button (>>|) to quickly move to the next point of interest."
 
 static_tags:
   - node: p0e0

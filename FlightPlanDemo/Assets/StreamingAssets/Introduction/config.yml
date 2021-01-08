@@ -95,7 +95,7 @@ introduction:
 
     next_event_button:
       heading: "Next Event"
-      detail: "Clicking on this button, fast forwards the experiment to reach to the next point of interest."
+      detail: "Clicking on this button will fast-forward the experiment until the next point of interest."
 
     time_slider:
       heading: "Time Slider"

@@ -2,7 +2,7 @@
 
 experiment_info:
   hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/"
-  intro_text: "Crosspod is a program that invokes 3 types of network boosters: link-layer Forward Error Correction (FEC), Memcached Cache (MCD) and Header Compression (HC). This is a long experiment. Feel free to use 'Next Event Button (>>|)' to quickly move to the next point of interest."
+  intro_text: "Crosspod is a program that invokes 3 types of network boosters: link-layer Forward Error Correction (FEC), Memcached Cache (MCD) and Header Compression (HC). Since this is a long experiment remember that you can use the 'Go To Next Event' button (>>|) to quickly move to the next point of interest."
 
 static_tags:
   - node: p0e0
