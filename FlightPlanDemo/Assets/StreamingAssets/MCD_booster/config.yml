@@ -44,7 +44,7 @@ graph:
 
 
 packet_legend:
-  - type: "MCD REquest"
+  - type: "MCD Request"
     color: "#0EF3E1"
 
   - type: "MCD reply"
