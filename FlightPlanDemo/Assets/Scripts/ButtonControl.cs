@@ -214,6 +214,7 @@ public class ButtonControl : MonoBehaviour
         anim.SetAnimParamBeforeSliderJump();
         anim.Pause();
         anim.SetAnimParamBeforeSliderJump(anim.GetAnimTime());
+        ChangePauseResumeButtonText(Global.AnimStatus.Forward);
     }
 
     void ChangePauseResumeButtonText(Global.AnimStatus status){

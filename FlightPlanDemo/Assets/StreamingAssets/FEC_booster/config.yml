@@ -65,3 +65,90 @@ packet_legend:
 
 introduction:
   show: "no"             # choose ("yes", "no")
+  tag_2d:
+    menu:
+      heading: "Menu"
+      detail: "The menu can be expanded and collapsed by clicking this button."
+
+    next_event_button:
+      heading: "Next Event"
+      detail: "Clicking on this button will fast-forward the experiment until the next point of interest."
+
+    time_slider:
+      heading: "Time Slider"
+      detail: "The slider shows the progress of the experiment over time."
+
+    elapsed_time:
+      heading: "Elapsed Time"
+      detail: "This shows the elapsed time since the experiment's start."
+
+    remaining_time:
+      heading: "Remaining Time"
+      detail: "This shows the remaining time for the experiment."
+
+    speed_slider:
+      heading: "Speed Slider"
+      detail: "Use this to change the display speed of the experiment's visualization."
+
+    graph:
+      heading: "Graph"          # choose ("none", <heading string>)
+      detail: "This shows relevant quantitative information from the experiment."
+
+    packet_legend:
+      heading: "Packet Legend"
+      detail: "Packet color legend to identify packets in the visualization."
+
+    info_code_button:
+      heading: "Info + Code"
+      detail: "For any experiment, click on 'Info + Code' to access background info and code."
+
+  tag_3d:
+    edge_switch:
+      node: "none"
+      heading: "Edge Switch"
+      detail: "(p*e*) The Switch that is directly connected to the host is called edge switch."
+    
+    aggregation_switch:
+      node: "none"        # choose ("none", <node name>)
+      heading: "Aggregation Switch"
+      detail: "(p*a*) These switches interconnect edge and core switches."
+
+    core_switch:
+      node: "none"
+      heading: "Core Switch"
+      detail: "(c*) Core switches interconnect aggregation switches."
+
+    supporting_device:
+      node: "none"        # choose ("none", <node name>)
+      heading: "Supporting Device"
+      detail: "A switch may offload part of its program to a supporting device such as this."
+
+    link:
+      node1: "none"       # choose ("none", <node name>)
+      node2: "p0a1"
+      heading: "Link"
+      detail: "Links connect switches and host together."
+    
+    lossy_link:
+      node1: "p0a0"         # choose ("none", <node name>)
+      node2: "p0e0"         # choose ("none", <node name>)
+      heading: "Lossy Link"
+      detail: "Lossy Link may drop packets at random because of a hardware fault."
+
+    static_tag_info:
+      node: "p0a0"          # choose ("none", <node name>)
+      heading: "Info Tags"
+      detail: "Additional information can be obtained by clicking on red beacons such as this."
+
+  tag_info:
+    zoom_info: 
+      detail: "3D model can be zoomed in and out using mouse scroll."
+
+    rotation_info:
+      detail: "Model can be rotated on its axis using mouse click and drag."
+
+    experiment_info: 
+      detail: "none"      # choose ("none", <detail of experiment>)
+
+    outro:
+      detail: "none"      # choose ("none", <outro>)

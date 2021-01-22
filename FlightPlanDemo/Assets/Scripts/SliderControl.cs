@@ -46,7 +46,7 @@ public class SliderControl : MonoBehaviour
     public void SetSliderMaxValue(float value){
         anim.SetAnimTime(value);
         timeSlider.maxValue = value;
-        timeSlider.gameObject.transform.parent.Find("RemainingTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)value, 3, MidpointRounding.AwayFromZero).ToString();
+        timeSlider.gameObject.transform.parent.Find("RemainingTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)value, 3, MidpointRounding.AwayFromZero).ToString("0000.00")+"s";
     }
 
     public void SetSliderMode(Global.SliderMode mode){
@@ -61,9 +61,9 @@ public class SliderControl : MonoBehaviour
         lastTimeSliderPos = position;
 
         // Change Elapsed time and remaining time on UI element
-        timeSlider.gameObject.transform.parent.Find("ElapsedTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)position, 3, MidpointRounding.AwayFromZero).ToString()+"s";
+        timeSlider.gameObject.transform.parent.Find("ElapsedTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)position, 3, MidpointRounding.AwayFromZero).ToString("0000.00")+"s";
         float timeRemain = timeSlider.maxValue - position;
-        timeSlider.gameObject.transform.parent.Find("RemainingTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)timeRemain, 3, MidpointRounding.AwayFromZero).ToString()+"s";
+        timeSlider.gameObject.transform.parent.Find("RemainingTime").gameObject.GetComponent<Text>().text = Math.Round((Decimal)timeRemain, 3, MidpointRounding.AwayFromZero).ToString("0000.00")+"s";
         
         // Indicator if value has changed on slider
         timeSliderValueChange = true;

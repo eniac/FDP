@@ -172,3 +172,6 @@ introduction:
 
     experiment_info: 
       detail: "This experiment tests the firewall's effectiveness. The firewall part of the P4 program has been offloaded to Device D_FW_1. The experiment consists of both positive and negative tests. It starts with a series of positive tests -- i.e., involving packets that we expect the firewall to let through. This is followed by negative tests, where we expect the firewall to block packets."
+
+    outro:
+      detail: "The 'Introduction' is over. Please click on 'play' button in the bottom-left corner of the screen to start the visualization."      # choose ("none", <outro>)

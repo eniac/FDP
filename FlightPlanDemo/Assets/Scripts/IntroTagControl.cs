@@ -135,9 +135,13 @@ public class IntroTagControl : MonoBehaviour
     }
 
     void Update(){
-        if(Global.chosanExperimentName != "Introduction"){
+        // if(Global.chosanExperimentName != "Introduction"){
+        //     return;
+        // }
+        if((string)dynamicConfigObject["introduction"]["show"] == "no"){
             return;
         }
+
         Vector3 pos;
         string head = null, detail=null, node1=null, node2=null;
 
@@ -245,7 +249,13 @@ public class IntroTagControl : MonoBehaviour
 
             case 10:
                 introTag2Dld.SetActive(false);
-                pos = topo.GetNodePosition((string)introConfig3DTagObj["edge_switch"]["node"]) + new Vector3(0, 1.0f, -1.5f);
+                node1 = (string)introConfig3DTagObj["edge_switch"]["node"];
+                if(node1 == "none"){
+                    state++;
+                    break;
+                }
+
+                pos = topo.GetNodePosition(node1) + new Vector3(0, 1.0f, -1.5f);
                 head = (string)introConfig3DTagObj["edge_switch"]["heading"];
                 detail = (string)introConfig3DTagObj["edge_switch"]["detail"];
                 // pos = topo.GetNodePosition("p0e0") + new Vector3(0, 1.0f, -1.5f);
@@ -273,7 +283,13 @@ public class IntroTagControl : MonoBehaviour
 
             case 12:
                 introTag3Dlu.SetActive(false);
-                pos = topo.GetNodePosition((string)introConfig3DTagObj["core_switch"]["node"]) + new Vector3(0, 1.0f, -1.5f);
+                node1 = (string)introConfig3DTagObj["core_switch"]["node"];
+                if(node1 == "none"){
+                    state++;
+                    break;
+                }
+
+                pos = topo.GetNodePosition(node1) + new Vector3(0, 1.0f, -1.5f);
                 head = (string)introConfig3DTagObj["core_switch"]["heading"];
                 detail = (string)introConfig3DTagObj["core_switch"]["detail"];
                 // pos = topo.GetNodePosition("c2") + new Vector3(0, 1.0f, -1.5f);
@@ -302,6 +318,10 @@ public class IntroTagControl : MonoBehaviour
             case 14:
                 introTag3Dru.SetActive(false);
                 node1 = (string)introConfig3DTagObj["link"]["node1"];
+                if(node1 == "none"){
+                    state++;
+                    break;
+                }
                 node2 = (string)introConfig3DTagObj["link"]["node2"];
                 pos = ((topo.GetNodePosition(node1) - topo.GetNodePosition(node2))/2.0f) + topo.GetNodePosition(node2); 
                 head = (string)introConfig3DTagObj["link"]["heading"];
@@ -314,8 +334,6 @@ public class IntroTagControl : MonoBehaviour
 
             case 15:
                 introTag3Dru.SetActive(false);
-                
-
                 node1 = (string)introConfig3DTagObj["lossy_link"]["node1"];
                 if(node1 == "none"){
                     state++;
@@ -373,6 +391,10 @@ public class IntroTagControl : MonoBehaviour
                 head = null;
                 detail = (string)introConfigInfoTagObj["experiment_info"]["detail"];
                 // detail = "This experiment tests the firewall's effectiveness. The firewall part of the P4 program has been offloaded to Device D_FW_1. The experiment consists of both positive and negative tests. It starts with a series of positive tests -- i.e., involving packets that we expect the firewall to let through. This is followed by negative tests, where we expect the firewall to block packets.";
+                if(detail == "none"){
+                    state++;
+                    break;
+                }
                 TagUpdate(infoBoxDetail, TagType.InfoDetail, pos, head, detail);
                 break;
 
@@ -380,7 +402,11 @@ public class IntroTagControl : MonoBehaviour
                 infoBoxDetail.SetActive(false);
                 pos = infoBox.transform.position  + new Vector3(-10f, -10f, -0f); 
                 head = null;
-                detail = "The 'Introduction' is over. Please click on the 'play' button in the bottom-left corner of the screen to start the visualisation.";
+                detail = (string)introConfigInfoTagObj["outro"]["detail"];
+                if(detail == "none"){
+                    state++;
+                    break;
+                }
                 TagUpdate(infoBox, TagType.Info, pos, head, detail);
                 break;
 
@@ -403,10 +429,15 @@ public class IntroTagControl : MonoBehaviour
     }
 
     void OkButtonHandler(){
-        if(Global.chosanExperimentName != "Introduction"){
+        // if(Global.chosanExperimentName != "Introduction"){
+        //     introScreen.SetActive(false);
+        //     return;
+        // }
+        if((string)dynamicConfigObject["introduction"]["show"] == "no"){
             introScreen.SetActive(false);
             return;
         }
+        
         state++;
         isInState = false;
         if(tagHideOnOK != null){

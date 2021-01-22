@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2306584535544626569}
   - component: {fileID: 2306584535544626568}
   - component: {fileID: 2306584535544626551}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 2306584536329491096}
   - component: {fileID: 2306584536329491098}
   - component: {fileID: 2306584536329491097}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 2306584536559663576}
   - component: {fileID: 2306584536559663578}
   - component: {fileID: 2306584536559663577}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 2306584536692691783}
   - component: {fileID: 2306584536692691801}
   - component: {fileID: 2306584536692691800}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HeadingText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -346,7 +346,7 @@ GameObject:
   - component: {fileID: 2306584536944715123}
   - component: {fileID: 2306584536944715125}
   - component: {fileID: 2306584536944715124}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TextBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -424,7 +424,7 @@ GameObject:
   - component: {fileID: 2306584537040408343}
   - component: {fileID: 2306584537040408342}
   - component: {fileID: 2306584537040408341}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -541,7 +541,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2373895931358963996}
   - component: {fileID: 2373895931358963997}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TagRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -581,7 +581,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: caf4c5ba15ec97a898ca13db989f66d7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -601,7 +601,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 302656201
   m_SortingLayer: 1
-  m_SortingOrder: 11
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 15ba465dc618ba7e1a61ae3b5eb4e0a6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
@@ -624,7 +624,7 @@ GameObject:
   - component: {fileID: 671485161976436623}
   - component: {fileID: 2128790297518571569}
   - component: {fileID: 3022229362387670601}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -703,7 +703,7 @@ GameObject:
   - component: {fileID: 7496774174164896981}
   - component: {fileID: 6168437272322864971}
   - component: {fileID: 5987702182907475131}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HyperlinkButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -821,7 +821,7 @@ GameObject:
   - component: {fileID: 274993256572354893}
   - component: {fileID: 338761654669877335}
   - component: {fileID: 2165259744804664097}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Hyperlink
   m_TagString: Untagged
   m_Icon: {fileID: 0}

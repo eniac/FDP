@@ -97,7 +97,7 @@ event_tags:
 
   - time: 8029314
     node: S2
-    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
+    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from S2 to p1a0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits2/ALV_Complete_1_hl3new/ALV_Complete_split2_hl3new.p4"
 
   - time: 13048252
@@ -107,7 +107,7 @@ event_tags:
 
   - time: 8070301
     node: p1a0
-    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
+    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p1a0 to c0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete/ALV_Complete.p4"
 
   - time: 13111909
@@ -117,7 +117,7 @@ event_tags:
 
   - time: 8078902
     node: D_V2_1
-    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from p0e0 to p0a0."
+    text: "An FEC encoder-generated parity packet (coloured silver) will be sent from D_V2_1 to p0e0."
     hyperlink: "https://www.github.com/eniac/Flightplan/tree/master/Wharf/splits/ALV_Complete_1/ALV_Complete_split2.p4"
 
   - time: 13124382
