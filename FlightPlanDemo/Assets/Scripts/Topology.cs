@@ -125,32 +125,39 @@ public class Topology : MonoBehaviour
                 }
 		        // Traversing all the nodes linked with 'node'
                 foreach(var linked_node in s_h_links[node]){
-                    if(IsDropper(linked_node)){
-                        continue;
+                    string l_node = linked_node;
+                    if(IsDropper(l_node)){
+                        // continue;
+                        foreach(var dnode in s_h_links[l_node]){
+                            if(dnode != node){
+                                l_node = dnode;
+                                break;
+                            }
+                        }
                     }
                     // Find out the elligible parent node which should not be at same level or lower level	
-                    if(level[level_number].Contains(linked_node)==false && (level_number<=0 || level[level_number-1].Contains(linked_node)==false)){
+                    if(level[level_number].Contains(l_node)==false && (level_number<=0 || level[level_number-1].Contains(l_node)==false)){
                         // Add Parent node to one above level list and update 'level' dictionary
                         if (level.ContainsKey(level_number+1)){
-                            if(level[level_number+1].Contains(linked_node)==false){
-                                level[level_number+1].Add(linked_node);
+                            if(level[level_number+1].Contains(l_node)==false){
+                                level[level_number+1].Add(l_node);
                             }
                         }
                         else{
                             ll = new List<string>();
-                            ll.Add(linked_node);
+                            ll.Add(l_node);
                             level.Add(level_number+1, ll);
                         }
-                        // Add child node of linked_node to the successor dictionary
-                        if (successor.ContainsKey(linked_node)){
-                            if(successor[linked_node].Contains(node)==false){
-                                successor[linked_node].Add(node);
+                        // Add child node of l_node to the successor dictionary
+                        if (successor.ContainsKey(l_node)){
+                            if(successor[l_node].Contains(node)==false){
+                                successor[l_node].Add(node);
                             }
                         }
                         else{
                             ll = new List<string>();
                             ll.Add(node);
-                            successor.Add(linked_node, ll);
+                            successor.Add(l_node, ll);
                         }
                     }
                 }
@@ -187,6 +194,7 @@ public class Topology : MonoBehaviour
         foreach (KeyValuePair<int, List<string>> l in level){
             // Get the starting coordinates of the layer
             n = level[l.Key].Count;
+            Debug.Log("nLevel = " + n);
             if(n==1){
                 positions.Add(level[l.Key][0], new Vector3(0, y, 0));
                 continue;
@@ -436,6 +444,7 @@ public class Topology : MonoBehaviour
             GameObject go = Instantiate(s_prefab) as GameObject;
             go.transform.parent = nodeCombineObject.transform;
             go.transform.position = positions[s];
+            Debug.Log("Pos = " + s + " : " + positions[s]);
             go.name = s;
             goList.Add(go);
             switchObjectDict.Add(s, go);

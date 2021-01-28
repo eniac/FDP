@@ -277,6 +277,9 @@ public class GraphInput : MonoBehaviour
         else if(Global.chosanExperimentName == "QoS"){
             gInfo.animTime = 1576f;
         }
+        else if(Global.chosanExperimentName == "k=2"){
+            gInfo.animTime = 94f;
+        }
 
         if(gInfo.nCurves>0){
             gInfo.graphLogText = new List<string>();

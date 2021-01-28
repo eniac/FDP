@@ -57,4 +57,5 @@ public static class Global
     public const float U_SEC = 1000000f;
     public const bool PRE_PLAY = false;
     public const float MAX_SPEED = 3f;
+    public const int showAnimation = 1; 
 }

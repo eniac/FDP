@@ -10,3 +10,6 @@ Failover_mechanism
 Untunneled_traffic
 Tunneled_traffic
 QoS
+k=2
+Web_Query_Example
+k=2_Non_Lossy

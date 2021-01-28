@@ -671,7 +671,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &57200833
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3002,6 +3002,7 @@ MonoBehaviour:
   introTag: {fileID: 1733913313}
   buttonControl: {fileID: 1316801783}
   graphInput: {fileID: 834313939}
+  loadingPanel: {fileID: 57200832}
 --- !u!1 &338257832
 GameObject:
   m_ObjectHideFlags: 0

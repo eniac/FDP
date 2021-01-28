@@ -1,0 +1,163 @@
+# This output was auto-generated using generate_alv_network.py -- modify with care.
+# k=2
+# pod_switches_upper=1
+# pod_switches_lower=1
+# pod_num_hosts=1
+# num_hosts=2
+# num_core_switches=1
+hosts:
+    p0h0 :
+         interfaces:
+             - mac: '02:00:00:d8:c2:6b'
+               ip: 192.0.0.2/24
+               port: 1
+         programs:
+             - cmd: "echo 'Hello from p0h0'"
+               fg: True
+             # p0e0
+             - cmd: "sudo arp -v -i p0h0-eth1 -s 192.0.0.1 02:00:00:42:82:67"
+               fg: True
+             - cmd: "sudo route add default p0h0-eth1"
+               fg: True
+             # p1h0
+             - cmd: "sudo arp -v -i p0h0-eth1 -s 192.1.0.2 02:00:00:cf:e6:4f"
+    p1h0 :
+         interfaces:
+             - mac: '02:00:00:cf:e6:4f'
+               ip: 192.1.0.2/24
+               port: 1
+         programs:
+             - cmd: "echo 'Hello from p1h0'"
+               fg: True
+             # p1e0
+             - cmd: "sudo arp -v -i p1h0-eth1 -s 192.1.0.1 02:00:00:ba:e6:af"
+               fg: True
+             - cmd: "sudo route add default p1h0-eth1"
+               fg: True
+             # p0h0
+             - cmd: "sudo arp -v -i p1h0-eth1 -s 192.0.0.2 02:00:00:d8:c2:6b"
+switches:
+    c0 :
+         cfg: ../../build/bmv2/ALV.json
+         interfaces:
+             - link: p0a0
+               # ip: 192.2.1.1
+               mac: '02:00:00:c8:4d:7a'
+               port: 1
+             - link: p1a0
+               # ip: 192.2.1.1
+               mac: '02:00:00:78:19:6f'
+               port: 2
+         cmds:
+             # Switching
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:95:e8:81 => 1
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:9c:e9:f7 => 2
+             # ARP
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.1.1 => 02:00:00:95:e8:81
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.1.1 => 02:00:00:9c:e9:f7
+             # Routing
+             - table_add ipv4_forwarding ipv4_forward 0xC0000000&&&0xFFFF0000 => 192.0.1.1 1 0
+             - table_add ipv4_forwarding ipv4_forward 0xC0010000&&&0xFFFF0000 => 192.1.1.1 2 0
+    p0a0 :
+         cfg: ../../build/bmv2/ALV.json
+         interfaces:
+             - link: c0
+               # ip: 192.0.1.1
+               mac: '02:00:00:95:e8:81'
+               port: 1
+             - link: dropper
+               # ip: 192.0.1.1
+               mac: '02:00:00:40:e8:fb'
+               port: 2
+         cmds:
+             # Switching
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:c8:4d:7a => 1
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:b8:66:d3 => 2
+             # ARP
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.1.1 => 02:00:00:c8:4d:7a
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.1 => 02:00:00:b8:66:d3
+             # Routing
+             - table_add ipv4_forwarding ipv4_forward 0xC0000000&&&0xFFFFFF00 => 192.0.0.1 2 0
+             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.2.1.1 1 0
+    p0e0 :
+         cfg: ../../build/bmv2/ALV.json
+         interfaces:
+             - link: p0h0
+               # ip: 192.0.0.1
+               mac: '02:00:00:42:82:67'
+               port: 1
+             - link: dropper
+               # ip: 192.0.0.1
+               mac: '02:00:00:48:c1:9e'
+               port: 2
+         cmds:
+             # Switching
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:d8:c2:6b => 1
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:ab:00:7e => 2
+             # ARP
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.0.2 => 02:00:00:d8:c2:6b
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.0.1.1 => 02:00:00:ab:00:7e
+             # Routing
+             - table_add ipv4_forwarding ipv4_forward 0xC0000002&&&0xFFFFFFFF => 192.0.0.2 1 0
+             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.0.1.1 2 0
+    p1a0 :
+         cfg: ../../build/bmv2/ALV.json
+         interfaces:
+             - link: c0
+               # ip: 192.1.1.1
+               mac: '02:00:00:9c:e9:f7'
+               port: 1
+             - link: p1e0
+               # ip: 192.1.1.1
+               mac: '02:00:00:ce:8c:03'
+               port: 2
+         cmds:
+             # Switching
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:78:19:6f => 1
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:7a:dd:42 => 2
+             # ARP
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.2.1.1 => 02:00:00:78:19:6f
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.0.1 => 02:00:00:7a:dd:42
+             # Routing
+             - table_add ipv4_forwarding ipv4_forward 0xC0010000&&&0xFFFFFF00 => 192.1.0.1 2 0
+             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.2.1.1 1 0
+    p1e0 :
+         cfg: ../../build/bmv2/ALV.json
+         interfaces:
+             - link: p1h0
+               # ip: 192.1.0.1
+               mac: '02:00:00:ba:e6:af'
+               port: 1
+             - link: p1a0
+               # ip: 192.1.0.1
+               mac: '02:00:00:7a:dd:42'
+               port: 2
+         cmds:
+             # Switching
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:cf:e6:4f => 1
+             - table_add mac_forwarding mac_forward_set_egress 02:00:00:ce:8c:03 => 2
+             # ARP
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.0.2 => 02:00:00:cf:e6:4f
+             - table_add next_hop_arp_lookup arp_lookup_set_addresses 192.1.1.1 => 02:00:00:ce:8c:03
+             # Routing
+             - table_add ipv4_forwarding ipv4_forward 0xC0010002&&&0xFFFFFFFF => 192.1.0.2 1 0
+             - table_add ipv4_forwarding ipv4_forward 0xFFFFFF02&&&0x000000FF => 192.1.1.1 2 0
+    dropper:
+        cfg: ../../build/bmv2/Dropper.json
+        interfaces:
+            - link: p0e0
+              mac: '02:00:00:ab:00:7e'
+              port: 0
+            - link: p0a0
+              mac: '02:00:00:b8:66:d3'
+              port: 1
+        cmds:
+            - table_add forward set_egress 0 => 1
+            - table_add forward set_egress 1 => 0
+            - table_add dropper set_drop_rate 1 => 3 5
+            - table_add dropper set_drop_rate 0 => 3 5
+# All-to-all ping test parameters:
+#   --fg-host-prog "p0h0: ping -c 1 192.0.0.2" \
+#   --fg-host-prog "p0h0: ping -c 1 192.1.0.2" \
+#   --fg-host-prog "p1h0: ping -c 1 192.0.0.2" \
+#   --fg-host-prog "p1h0: ping -c 1 192.1.0.2" \
