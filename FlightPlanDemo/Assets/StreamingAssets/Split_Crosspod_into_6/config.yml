@@ -83,6 +83,10 @@ graph:
       packet_target: 
 
 
+slide_show:
+  show: "no"
+
+
 packet_legend:
   - type: "TCP p0h0->p1h0"
     color: "#0000ff"

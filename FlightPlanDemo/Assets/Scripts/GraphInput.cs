@@ -277,8 +277,11 @@ public class GraphInput : MonoBehaviour
         else if(Global.chosanExperimentName == "QoS"){
             gInfo.animTime = 1576f;
         }
-        else if(Global.chosanExperimentName == "k=2"){
+        else if(Global.chosanExperimentName == "Lossy_Network"){
             gInfo.animTime = 94f;
+        }
+        else if(Global.chosanExperimentName == "Web_Query"){
+            gInfo.animTime = 475f;
         }
 
         if(gInfo.nCurves>0){

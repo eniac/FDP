@@ -73,7 +73,7 @@ public class IntroTagControl : MonoBehaviour
         introConfigInfoTagObj = dynamicConfigObject["introduction"]["tag_info"];
 
         // string intText = "<size=30><color=#EC7011>F</color>lightplan <color=#EC7011>D</color>emo </size>\n"+Global.chosanExperimentName.Replace('_',' ')+"\n\n";
-        string intText = Global.chosanExperimentName.Replace('_',' ')+"\n\n";
+        string intText = "<size=30> <color=#EC7011>" + Global.chosanExperimentName.Replace('_',' ') + "</color></size>" +"\n\n";
 
         // Intro Screen 
         introScreen.SetActive(false);

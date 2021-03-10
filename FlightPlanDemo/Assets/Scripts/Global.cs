@@ -32,7 +32,8 @@ public static class Global
         ICMP,
         NAK,
         Tunnel,
-        Qos
+        Qos,
+        HTTP2
     }
     public enum ColorPattern{
         OriginBased=0,
@@ -50,6 +51,7 @@ public static class Global
     public static string chosanExperimentName;
     public static string experimentYaml;
     public static string configYaml;
+    public static string images;
     public static string introConfigYaml;
     public static string experimentMetadata;
     public static string animTimeFile;

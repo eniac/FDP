@@ -82,6 +82,8 @@ graph:
       curve_width: 1
       packet_target: 
 
+slide_show:
+  show: "no"
 
 packet_legend:
   - type: "TUNNEL p0h3->p3h2"

@@ -82,6 +82,9 @@ graph:
       curve_width: 4
       packet_target: D_FW_1
 
+slide_show:
+  show: "no"
+
 packet_legend:
   - type: "TCP Packets"
     color: "#0000ff"

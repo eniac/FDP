@@ -22,6 +22,7 @@ public class ButtonControl : MonoBehaviour
     // [SerializeField] private AnimationControl anim = default;
     [SerializeField] private AnimControl anim = default;
     [SerializeField] private ColorControl colorControl = default;
+    [SerializeField] private SlideShow slideShow = default;
     bool slideIn = false;
     bool showLable;
     List<GameObject> hostTextObject;
@@ -84,6 +85,7 @@ public class ButtonControl : MonoBehaviour
             slideIn = false;
         }
     }
+
     public void ToggleLables(){
         if(showLable == true){
             SetMenuButtonText("ToggleLabels", "Show Labels");
@@ -319,6 +321,10 @@ public class ButtonControl : MonoBehaviour
             billBoard.SetEventTagStatus(true);
             showEventTag = true;
         }
+    }
+
+    public void HideHelperImage(){
+        slideShow.HideHelperImage();
     }
 
     public void About(){

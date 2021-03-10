@@ -40,6 +40,7 @@ public class AnimControl : MonoBehaviour
     [SerializeField] GraphInput graphInput = default;
     [SerializeField] SliderControl sliderControl = default;
     [SerializeField] BillBoardControl billBoard = default;
+    [SerializeField] SlideShow slideShow = default;
     [SerializeField] IntroTagControl introTag = default;
     [SerializeField] GameObject loadingPanel = default;
 
@@ -201,6 +202,7 @@ public class AnimControl : MonoBehaviour
         PacketTypeInfo.Add("NAK", Global.PacketType.NAK);
         PacketTypeInfo.Add("TUNNEL", Global.PacketType.Tunnel);
         PacketTypeInfo.Add("QOS", Global.PacketType.Qos);
+        PacketTypeInfo.Add("HTTP2", Global.PacketType.HTTP2);
         
         line = packetInfoString.ReadLine();
         while(line!=null){
@@ -271,30 +273,30 @@ public class AnimControl : MonoBehaviour
         }
 
         // Display packet by source
-        // Debug.Log("Packet By Source");
-        // foreach(var s in packetBySource.Keys){
-        //     foreach(var k in packetBySource[s].Keys){
-        //         Debug.Log(s + " : " + k + " : " + packetBySource[s][k].packetID);
+        Debug.Log("Packet By Source");
+        foreach(var s in packetBySource.Keys){
+            foreach(var k in packetBySource[s].Keys){
+                Debug.Log(s + " : " + k + " : " + packetBySource[s][k].packetID);
+            }
+        }
+        Debug.Log("Packet By Target");
+        // foreach(var s in packetByTarget.Keys){
+        //     foreach(var k in packetByTarget[s].Keys){
+        //         Debug.Log(s + " : " + k + " : " + packetByTarget[s][k].packetID);
         //     }
         // }
-        // Debug.Log("Packet By Target");
-        // // foreach(var s in packetByTarget.Keys){
-        // //     foreach(var k in packetByTarget[s].Keys){
-        // //         Debug.Log(s + " : " + k + " : " + packetByTarget[s][k].packetID);
-        // //     }
-        // // }
-        // foreach(var t in packetByTarget.Keys){
-        //     for(int i=0; i<packetByTarget[t].Count; i++){
-        //         var k = packetByTarget[t].ElementAt(i).Key;
-        //         Debug.Log(i + " = " + t + " : " + k + " : " + packetByTarget[t][k].packetID);
-        //     }
-        // }
-        // Debug.Log("Packet ID Sequence");
-        // foreach(var k in packetIDSequence.Keys){
-        //     foreach(var t in packetIDSequence[k]){
-        //         Debug.Log(k + " : " + packetIDSequencePtr[k] + " : " + t);
-        //     }
-        // }
+        foreach(var t in packetByTarget.Keys){
+            for(int i=0; i<packetByTarget[t].Count; i++){
+                var k = packetByTarget[t].ElementAt(i).Key;
+                Debug.Log(i + " = " + t + " : " + k + " : " + packetByTarget[t][k].packetID);
+            }
+        }
+        Debug.Log("Packet ID Sequence");
+        foreach(var k in packetIDSequence.Keys){
+            foreach(var t in packetIDSequence[k]){
+                Debug.Log(k + " : " + packetIDSequencePtr[k] + " : " + t);
+            }
+        }
         
         packetTime.Clear();
         mcdCache.Clear();
@@ -781,6 +783,7 @@ public class AnimControl : MonoBehaviour
         lastPktTime = instantiatedPacketTime;
         billBoard.DetectEventTag(pktTime);
         introTag.DetectEventTag(pktTime);
+        slideShow.DetectSlideShowTime(pktTime);
         return pktTime;
     }
 

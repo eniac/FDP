@@ -50,8 +50,10 @@ graph:
       curve_color: "#00ff40"
       legend_text: ""
       curve_width: 1
-      packet_target: 
+      packet_target:     
 
+slide_show:
+  show: "no"
 
 packet_legend:
   - type: "TCP p0h3->p3h2"

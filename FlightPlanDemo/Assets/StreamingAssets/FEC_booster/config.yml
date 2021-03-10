@@ -51,6 +51,9 @@ graph:
       curve_width: 1
       packet_target: p1h0
 
+slide_show:
+  show: "no"
+
 
 packet_legend:
   - type: "Parity"

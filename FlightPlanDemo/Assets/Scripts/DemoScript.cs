@@ -13,6 +13,7 @@ public class DemoScript : MonoBehaviour
     [SerializeField] ButtonControl buttonControl = default;
     [SerializeField] GraphInput graphInput = default;
     [SerializeField] GameObject loadingPanel = default;
+    [SerializeField] SlideShow slideShow = default;
 
     public void Awake(){
         // Debug.Log("##################### before = " + Application.targetFrameRate + " : " + QualitySettings.vSyncCount);
@@ -40,6 +41,7 @@ public class DemoScript : MonoBehaviour
             buttonControl.SetConfigObject(configParser.GetDynamicConfigObject());
             billBoard.SetConfigObject(configParser.GetDynamicConfigObject());
             graphInput.SetConfigObject(configParser.GetDynamicConfigObject());
+            slideShow.SetConfigObject(configParser.GetDynamicConfigObject());
 
             yield return StartCoroutine(graphInput.GraphInitStart());
         }

@@ -65,6 +65,8 @@ graph:
       curve_width: 1
       packet_target: SA_2
 
+slide_show:
+  show: "no"
 
 packet_legend:
   - type: "ICMP Request"

@@ -1,0 +1,124 @@
+# input configuration file to the animation
+
+experiment_info:
+  hyperlink: null
+  intro_text: "The experiment demonstrates that how Querying to 'Google' starts a small storm of packet exchanges between the host device and the severs through the routers on its way."
+
+static_tags:
+  - node: h0
+    text: "This is the Host Machine."
+    hyperlink: null
+
+  - node: s0
+    text: "This is the Google Server."
+    hyperlink: null
+
+  - node: c0
+    text: "This is the Router."
+    hyperlink: null
+
+event_tags: []
+
+
+graph:
+  show: "n"
+  x_div: 1000000
+  x_label: "time (sec)"
+  y_label: "# packets received at receiver"
+  title: "Lossy Network Simulation"
+  curve_info:
+    - file_name: "graph_log1.txt"
+      curve_color: "#ffff00"
+      legend_text: "Lossy Network"
+      curve_width: 1
+      packet_target: p1h0
+
+    - file_name: "graph_log2.txt"
+      curve_color: "#00ff40"
+      legend_text: "Non Lossy Network"
+      curve_width: 1
+      packet_target: p1h0
+
+slide_show:
+  show: "yes"
+  schedule_info:
+    - time: 0
+      image_name: "template_4.002.jpeg"
+      helper_image_name: "template_4.003.jpeg"
+
+    - time: 45619
+      image_name: "template_4.004.jpeg"
+      helper_image_name: "template_4.005.jpeg"
+
+    - time: 997021
+      image_name: "template_4.006.jpeg"
+      helper_image_name: "template_4.007.jpeg"
+
+    - time: 1097357
+      image_name: "template_4.008.jpeg"
+      helper_image_name: null
+
+    - time: 1117202
+      image_name: "template_4.009.jpeg"
+      helper_image_name: "template_4.010.jpeg"
+
+    - time: 1787866
+      image_name: "template_4.011.jpeg"
+      helper_image_name: "template_4.012.jpeg"
+
+    - time: 2044244
+      image_name: "template_4.013.jpeg"
+      helper_image_name: null
+
+    - time: 2052590
+      image_name: "template_4.014.jpeg"
+      helper_image_name: "template_4.015.jpeg"
+
+    - time: 2044271
+      image_name: "template_4.016.jpeg"
+      helper_image_name: null
+
+    - time: 2053824
+      image_name: "template_4.017.jpeg"
+      helper_image_name: "template_4.018.jpeg"
+
+    - time: 2044300
+      image_name: "template_4.019.jpeg"
+      helper_image_name: null
+
+    - time: 2063513
+      image_name: "template_4.020.jpeg"
+      helper_image_name: "template_4.021.jpeg"
+
+    - time: 2036260
+      image_name: "template_4.022.jpeg"
+      helper_image_name: null
+
+    - time: 2048313
+      image_name: "template_4.023.jpeg"
+      helper_image_name: "template_4.024.jpeg"
+
+    - time: 2036278
+      image_name: "template_4.025.jpeg"
+      helper_image_name: null
+
+    - time: 2050037
+      image_name: "template_4.026.jpeg"
+      helper_image_name: "template_4.027.jpeg"
+    
+
+
+packet_legend:
+  - type: "HTTPS h0->s0"
+    color: "#0000ff"
+
+  - type: "HTTPS s0->h0"
+    color: "#ffff00"
+
+  - type: "HTTPS+QOS s0->h0"
+    color: "#EC119D"
+
+
+introduction:
+  show: "no"             # choose ("yes", "no")
+ 
