@@ -1960,6 +1960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 1201560780}
   helperImage: {fileID: 1521644628}
+  defaultSprite: {fileID: 21300000, guid: 70f3bed441e6901fdbc098252b0b7d07, type: 3}
   anim: {fileID: 799778270}
 --- !u!4 &201268482
 Transform:
@@ -2406,14 +2407,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Flightplan Demo | Version 1.0
+  m_Text: 'FDP | Version 1.0
 
-    This is the demo of Flightplan (NSDI''21).
-    The demo was created by Heena Nagda, Rakesh Nagda, Nik Sultana and Boon Thau
-    Loo in 2020.
+    This is the demo of FDP (SIGCSE-21). The demo was
+    created by Heena Nagda, Rakesh Nagda, Nik Sultana and Boon Thau Loo in 2021.
 
-    <size=15>For more information on Flightplan, please click the
-    link below:</size>'
+    <size=15>For
+    more information on Flightplan, please click the link below:</size>'
 --- !u!222 &278814700
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8399,7 +8399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.042719822, g: 0.19337824, b: 0.9056604, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -9924,7 +9924,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 70f3bed441e6901fdbc098252b0b7d07, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11997,7 +11997,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 70f3bed441e6901fdbc098252b0b7d07, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13042,7 +13042,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 199.3, y: -278.3}
+  m_AnchoredPosition: {x: 0, y: -278.3}
   m_SizeDelta: {x: 70, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1681521222
@@ -14315,7 +14315,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 122.4, y: -171.9}
+  m_AnchoredPosition: {x: 0, y: -171.9}
   m_SizeDelta: {x: 70, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1811322707
@@ -15981,7 +15981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.042719822, g: 0.19337824, b: 0.9056604, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:

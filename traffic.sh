@@ -1,24 +1,110 @@
 #!/usr/bin/env bash
 
-# Check if topology file and pcap directory are passed as command line arguments
-if [[ -z "$1" ]]||[[ -z "$2" ]]||[[ -z "$3" ]] ||[[ -z "$4" ]]
+REMOVE="n"
+# Check if correct number of parameters are passed as command line arguments
+while [ -n "$1" ]; do # while loop starts
+  case "$1" in
+
+  -create) echo "-create option passed" 
+    shift 
+    if [ "$#" -ne 7 ]; then
+      echo "Usage: ./traffic.sh <StreamingAssets directory path> <name of experiment> <topology file path> <pacp directory path> <Configuration file> <Graph directory path> <Image directory path>"
+      exit
+    fi
+    break ;; # Message for -create option
+
+  -remove) echo "-remove option passed" 
+    REMOVE="y"
+    shift 
+    if [ "$#" -ne 2 ]; then
+      echo "Usage: ./traffic.sh <StreamingAssets directory path> <name of experiment>"
+      exit
+    fi
+    break ;; # Message for -remove option
+
+  *) echo "Option $1 not recognized" 
+    exit ;;
+
+  esac
+done                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
+
+# Access StreamingAssets Directory location
+STREAMING_ASSET=$1
+if [ -d ${STREAMING_ASSET} ] 
 then
-  echo "Usage: ./traffic.sh <topology file path> <pacp directory path> <StreamingAssets directory path> <name of experiment>"
+# If there is a "/" at the end then remove it
+  if [ ${STREAMING_ASSET:length-1} = "/" ]
+  then
+    STREAMING_ASSET=${STREAMING_ASSET/%"/"/""}
+  fi
+  echo "Using StreamingAssets directory = ${STREAMING_ASSET}"
+else
+  echo "${STREAMING_ASSET} directory does not exist"
   exit
 fi
 
+# Fetch Experiment name
+EXPERIMENT_NAME=$2
+echo "Using EXPERIMENT name = ${EXPERIMENT_NAME}"
+
+
+OUTPUT=${STREAMING_ASSET}"/"${EXPERIMENT_NAME}
+EXPERIMENTS=${STREAMING_ASSET}/experiments.txt
+
+
+
+if [ "${REMOVE}" == "y" ] 
+then
+# Creating empty temp file
+  TEMP1=${STREAMING_ASSET}/temp.txt
+  echo "Using TEMP1 = ${TEMP1}"
+  touch ${TEMP1}
+  > ${TEMP1}
+# Removing experiment name from experiments metadata file
+  if [ -f ${EXPERIMENTS} ]
+  then
+    echo "Removing ${EXPERIMENT_NAME} from experiments file"
+    grep -v "${EXPERIMENT_NAME}" ${EXPERIMENTS} > ${TEMP1}; mv ${TEMP1} ${EXPERIMENTS}
+  fi
+# Removing experiment directory from the streaming assets
+  if [ -d ${OUTPUT} ]
+  then
+    rm -r ${OUTPUT}
+  fi
+  exit
+fi
+
+# Create an output directory to keep the output file
+echo "Using TEST directory = ${OUTPUT}"
+# Removing existing output folder and create new one
+if [ -d ${OUTPUT} ] 
+then
+  rm -r ${OUTPUT}
+fi
+mkdir ${OUTPUT}
+
+
 # Access topology file from command line arguments
-TOPO_FILE=$1
+TOPO_FILE=$3
 if [ -f ${TOPO_FILE} ]
 then
   echo "Using TOPOLOGY file = ${TOPO_FILE}"
 else
   echo "${TOPO_FILE} file does not exist"
+  rm -r ${OUTPUT}
   exit
 fi
 
+# Create a file to keep topology 
+TOPO=${OUTPUT}/topology.yml
+echo "Using TOPOLOGY = ${TOPO}"
+touch ${TOPO}
+cat ${TOPO_FILE} > ${TOPO}
+
+
 # Access pcap directory from command line arguments
-PCAP_DIR=$2
+PCAP_DIR=$4
 if [ -d ${PCAP_DIR} ] 
 then
   # If there is a "/" at the end then remove it
@@ -29,51 +115,108 @@ then
   echo "Using PCAP directory = ${PCAP_DIR}"
 else
   echo "${PCAP_DIR} directory does not exist"
+  rm -r ${OUTPUT}
   exit
 fi
 
-# Access StreamingAssets Directory location
-STREAMING_ASSET=$3
-if [ -d ${STREAMING_ASSET} ] 
+
+# Access Configuration file
+CONFIG_FILE=$5
+if [ -f ${CONFIG_FILE} ] 
 then
 # If there is a "/" at the end then remove it
-  if [ ${STREAMING_ASSET:length-1} = "/" ]
+  if [ ${CONFIG_FILE:length-1} = "/" ]
   then
-    STREAMING_ASSET=${STREAMING_ASSET/%"/"/""}
+    CONFIG_FILE=${CONFIG_FILE/%"/"/""}
   fi
-  echo "Using PCAP directory = ${STREAMING_ASSET}"
+  echo "Using CONFIG file = ${CONFIG_FILE}"
 else
-  echo "${STREAMING_ASSET} directory does not exist"
+  echo "${CONFIG_FILE} file does not exist"
+  rm -r ${OUTPUT}
   exit
+fi
+
+# Create a file to keep configure file data 
+CONFIG=${OUTPUT}/config.yml
+touch ${CONFIG}
+cat ${CONFIG_FILE} > ${CONFIG}
+
+# Access Graph log directory
+GRAPH_DIR=$6
+if [ -d ${GRAPH_DIR} ] 
+then
+# If there is a "/" at the end then remove it
+  if [ ${GRAPH_DIR:length-1} = "/" ]
+  then
+    GRAPH_DIR=${GRAPH_DIR/%"/"/""}
+  fi
+  echo "Using GRAPH directory = ${GRAPH_DIR}"
+# Copy all the graph files to experiment directory
+  cp -r "${GRAPH_DIR}"/* "${OUTPUT}"
+  for entry in "${GRAPH_DIR}"/*
+  do
+    echo "Graph file is = $entry"
+  done
+else
+  if [ "${GRAPH_DIR}" == "None" ];
+  then
+    echo "No graphs are used in this experiment"
+  else
+    echo "${GRAPH_DIR} directory does not exist"
+    rm -r ${OUTPUT}
+    exit
+  fi
+fi
+
+# Access Image directory
+IMAGE_DIR=$7
+OUTPUT_IMAGE_DIR=${OUTPUT}/Images
+if [ -d ${IMAGE_DIR} ]
+then
+  rm -r ${OUTPUT_IMAGE_DIR}
+fi
+mkdir ${OUTPUT_IMAGE_DIR}
+
+if [ -d ${IMAGE_DIR} ] 
+then
+# If there is a "/" at the end then remove it
+  if [ ${IMAGE_DIR:length-1} = "/" ]
+  then
+    IMAGE_DIR=${IMAGE_DIR/%"/"/""}
+  fi
+  echo "Using IMAGE directory = ${IMAGE_DIR}"
+# Copy all the Images to the experiment directory
+  cp -r "${IMAGE_DIR}"/* "${OUTPUT_IMAGE_DIR}"
+  for entry in "${IMAGE_DIR}"/*
+  do
+    echo "Image file is = $entry"
+  done
+else
+  if [ "${IMAGE_DIR}" == "None" ];
+  then
+    echo "No images are used in this experiment"
+  else
+    echo "${IMAGE_DIR} directory does not exist"
+    rm -r ${OUTPUT}
+    exit
+  fi
 fi
 
 # Create a file to use as Experiment files info and append the name of new experiment if not exist
-EXPERIMENTS=${STREAMING_ASSET}/experiments.txt
-echo "Using TOPOLOGY file = ${TOPO_FILE}"
-if [ ! -f ${TOPO_FILE} ]
+echo "Using EXPERIMENTS metadata file = ${EXPERIMENTS}"
+if [ ! -f ${EXPERIMENTS} ]
 then
   touch ${EXPERIMENTS}
 fi
-if ! grep -Fxq "$4" ${EXPERIMENTS}
+if ! grep -Fxq "${EXPERIMENT_NAME}" ${EXPERIMENTS}
 then
-  echo $4 >> ${EXPERIMENTS}
+  echo ${EXPERIMENT_NAME} >> ${EXPERIMENTS}
 fi
-
-
-# Create an output directory to keep the output file
-OUTPUT=${STREAMING_ASSET}"/"$4
-echo "Using TEST directory = ${OUTPUT}"
-# Removing existing output folder and create new one
-if [ -d ${OUTPUT} ] 
-then
-  rm -r ${OUTPUT}
-fi
-mkdir ${OUTPUT}
 
 
 # [python script] Reading topology file and find out the list of supporting devices
 function read_topology {
-PYTHON_ARG="$1" python - <<END
+PYTHON_ARG="${TOPO_FILE}" python - <<END
 
 import os
 import sys
@@ -125,12 +268,6 @@ METADATA=${OUTPUT}/metadata.txt
 echo "Using METADATA = ${METADATA}"
 touch ${METADATA}
 
-# Create a file to keep topology 
-TOPO=${OUTPUT}/topology.yml
-echo "Using TOPOLOGY = ${TOPO}"
-touch ${TOPO}
-cat ${TOPO_FILE} > ${TOPO}
-
 
 # Extracting src and dst of packet from pcap file name
 # Extracting time stamps from pcap files
@@ -174,6 +311,9 @@ for pcap_file in "${PCAP_DIR}"/*; do
       if($8 == "88cc"){
         # Broadcast packet - ignore
       }
+      else if($8 == "0806"){
+        # ARP broadcast packet - ignore
+      }
       else if($8 == "0800"){
         printf "%s", head
 
@@ -206,8 +346,16 @@ for pcap_file in "${PCAP_DIR}"/*; do
 
           # TCP header
           else{
-            getline
-            lastIDf = lID""$3
+            if($3 == "01bb"){
+              lastIDf = lID
+            }
+            else if($4 == "01bb"){
+              lastIDf = lID
+            }
+            else{
+              getline
+              lastIDf = lID""$3  
+            }
           }
 
           printf "%s %s %s QOS\n", lastIDf, src, dest  
@@ -250,9 +398,21 @@ for pcap_file in "${PCAP_DIR}"/*; do
 
           # TCP header
           else{
-            getline
-            lastIDf = lID""$3
-            printf "%s %s %s TCP\n", lastIDf, src, dest
+            protoPrint = "TCP"
+            if($3 == "01bb"){
+              protoPrint = "HTTP2"
+              lastIDf = lID
+            }
+            else if($4 == "01bb"){
+              protoPrint = "HTTP2"
+              lastIDf = lID
+            }
+            else{
+              protoPrint = "TCP"
+              getline
+              lastIDf = lID""$3  
+            }
+            printf "%s %s %s %s\n", lastIDf, src, dest, protoPrint
           }
         }
       }

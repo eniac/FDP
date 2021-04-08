@@ -1,7 +1,7 @@
 # input configuration file to the animation
 
 experiment_info:
-  hyperlink: null
+  hyperlink: "https://flightplan.cis.upenn.edu/sigcse21"
   intro_text: "The experiment demonstrates the packet loss in case of lossy link in the network."
 
 static_tags:

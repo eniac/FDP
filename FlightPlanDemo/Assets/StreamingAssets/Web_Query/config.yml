@@ -1,8 +1,8 @@
 # input configuration file to the animation
 
 experiment_info:
-  hyperlink: null
-  intro_text: "The experiment demonstrates that how Querying to 'Google' starts a small storm of packet exchanges between the host device and the severs through the routers on its way."
+  hyperlink: "https://flightplan.cis.upenn.edu/sigcse21"
+  intro_text: "The experiment demonstrates how querying to Google starts a small storm of packet exchanges between the host device and the servers through the routers on its way."
 
 static_tags:
   - node: h0
@@ -54,10 +54,6 @@ slide_show:
       image_name: "template_4.006.jpeg"
       helper_image_name: "template_4.007.jpeg"
 
-    - time: 1097357
-      image_name: "template_4.008.jpeg"
-      helper_image_name: null
-
     - time: 1117202
       image_name: "template_4.009.jpeg"
       helper_image_name: "template_4.010.jpeg"
@@ -66,45 +62,77 @@ slide_show:
       image_name: "template_4.011.jpeg"
       helper_image_name: "template_4.012.jpeg"
 
-    - time: 2044244
-      image_name: "template_4.013.jpeg"
-      helper_image_name: null
-
-    - time: 2052590
-      image_name: "template_4.014.jpeg"
-      helper_image_name: "template_4.015.jpeg"
-
-    - time: 2044271
-      image_name: "template_4.016.jpeg"
-      helper_image_name: null
-
-    - time: 2053824
-      image_name: "template_4.017.jpeg"
-      helper_image_name: "template_4.018.jpeg"
-
-    - time: 2044300
-      image_name: "template_4.019.jpeg"
-      helper_image_name: null
-
-    - time: 2063513
-      image_name: "template_4.020.jpeg"
-      helper_image_name: "template_4.021.jpeg"
-
-    - time: 2036260
-      image_name: "template_4.022.jpeg"
-      helper_image_name: null
-
     - time: 2048313
       image_name: "template_4.023.jpeg"
       helper_image_name: "template_4.024.jpeg"
 
-    - time: 2036278
-      image_name: "template_4.025.jpeg"
-      helper_image_name: null
-
     - time: 2050037
       image_name: "template_4.026.jpeg"
       helper_image_name: "template_4.027.jpeg"
+
+    # - time: 0
+    #   image_name: "template_4.002.jpeg"
+    #   helper_image_name: "template_4.003.jpeg"
+
+    # - time: 45619
+    #   image_name: "template_4.004.jpeg"
+    #   helper_image_name: "template_4.005.jpeg"
+
+    # - time: 997021
+    #   image_name: "template_4.006.jpeg"
+    #   helper_image_name: "template_4.007.jpeg"
+
+    # - time: 1097357
+    #   image_name: "template_4.008.jpeg"
+    #   helper_image_name: null
+
+    # - time: 1117202
+    #   image_name: "template_4.009.jpeg"
+    #   helper_image_name: "template_4.010.jpeg"
+
+    # - time: 1787866
+    #   image_name: "template_4.011.jpeg"
+    #   helper_image_name: "template_4.012.jpeg"
+
+    # - time: 2044244
+    #   image_name: "template_4.013.jpeg"
+    #   helper_image_name: null
+
+    # - time: 2052590
+    #   image_name: "template_4.014.jpeg"
+    #   helper_image_name: "template_4.015.jpeg"
+
+    # - time: 2044271
+    #   image_name: "template_4.016.jpeg"
+    #   helper_image_name: null
+
+    # - time: 2053824
+    #   image_name: "template_4.017.jpeg"
+    #   helper_image_name: "template_4.018.jpeg"
+
+    # - time: 2044300
+    #   image_name: "template_4.019.jpeg"
+    #   helper_image_name: null
+
+    # - time: 2063513
+    #   image_name: "template_4.020.jpeg"
+    #   helper_image_name: "template_4.021.jpeg"
+
+    # - time: 2036260
+    #   image_name: "template_4.022.jpeg"
+    #   helper_image_name: null
+
+    # - time: 2048313
+    #   image_name: "template_4.023.jpeg"
+    #   helper_image_name: "template_4.024.jpeg"
+
+    # - time: 2036278
+    #   image_name: "template_4.025.jpeg"
+    #   helper_image_name: null
+
+    # - time: 2050037
+    #   image_name: "template_4.026.jpeg"
+    #   helper_image_name: "template_4.027.jpeg"
     
 
 

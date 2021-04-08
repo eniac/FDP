@@ -207,7 +207,7 @@ public class BillBoardControl : MonoBehaviour
         GameObject button_prefab = timeSlider.gameObject.transform.Find("Marker").gameObject;
         GameObject go = Instantiate(button_prefab) as GameObject;
         go.transform.parent = timeSlider.gameObject.transform;
-        Debug.Log("YELLOW MARKER = " + position.x + " : " + position.y);
+        // Debug.Log("YELLOW MARKER = " + position.x + " : " + position.y);
         // float posx = position.x - (25f*(position.x/305f)) < 305f ? 305f : position.x - (25f*(position.x/305f));
         // float posy = position.y + 15f;
         float posx = position.x;
@@ -220,7 +220,7 @@ public class BillBoardControl : MonoBehaviour
     void DetectTime(int time){
         // int time = anim.GetInstantiatedPacketTime();
         if(time!=-1 && timeInfo.ContainsKey(time)){
-            Debug.Log("Event Tag time = " + (anim.RCtime()/Global.U_SEC).ToString() + " : " + time + " : " + timeSliderHandle.transform.position);
+            // Debug.Log("Event Tag time = " + (anim.RCtime()/Global.U_SEC).ToString() + " : " + time + " : " + timeSliderHandle.transform.position);
             if(prePlay){
                 CreateButton(timeSliderHandle.transform.position, new Vector2(10f, 5f));
             }
@@ -262,7 +262,7 @@ public class BillBoardControl : MonoBehaviour
         obj.SetActive(false);
         // SetAnimStatusAfterBoard();
         if(animStatusBeforeBoard != Global.AnimStatus.Pause){
-            anim.Resume(animStatusBeforeBoard);
+            anim.Resume(animStatusBeforeBoard, true);
         }
         boardOn = false;
     }

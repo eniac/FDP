@@ -274,11 +274,11 @@ public class AnimControl : MonoBehaviour
 
         // Display packet by source
         Debug.Log("Packet By Source");
-        foreach(var s in packetBySource.Keys){
-            foreach(var k in packetBySource[s].Keys){
-                Debug.Log(s + " : " + k + " : " + packetBySource[s][k].packetID);
-            }
-        }
+        // foreach(var s in packetBySource.Keys){
+        //     foreach(var k in packetBySource[s].Keys){
+        //         Debug.Log(s + " : " + k + " : " + packetBySource[s][k].packetID);
+        //     }
+        // }
         Debug.Log("Packet By Target");
         // foreach(var s in packetByTarget.Keys){
         //     foreach(var k in packetByTarget[s].Keys){
@@ -291,12 +291,12 @@ public class AnimControl : MonoBehaviour
                 Debug.Log(i + " = " + t + " : " + k + " : " + packetByTarget[t][k].packetID);
             }
         }
-        Debug.Log("Packet ID Sequence");
-        foreach(var k in packetIDSequence.Keys){
-            foreach(var t in packetIDSequence[k]){
-                Debug.Log(k + " : " + packetIDSequencePtr[k] + " : " + t);
-            }
-        }
+        // Debug.Log("Packet ID Sequence");
+        // foreach(var k in packetIDSequence.Keys){
+        //     foreach(var t in packetIDSequence[k]){
+        //         Debug.Log(k + " : " + packetIDSequencePtr[k] + " : " + t);
+        //     }
+        // }
         
         packetTime.Clear();
         mcdCache.Clear();
@@ -420,9 +420,11 @@ public class AnimControl : MonoBehaviour
     }
 
     public void Forward(){
+        if(eventTagAppearFlag==true){
+            return;
+        }
         Debug.Log("Forward start = " + Time.timeScale);
         if(animStatus == Global.AnimStatus.Pause && Time.timeScale == 0){
-            // Debug.Log("Scale before Pause = " + timeScaleBeforePause);
             AdjustSpeed(timeScaleBeforePause);
         }
         if(animStatus != Global.AnimStatus.Forward){
@@ -431,6 +433,9 @@ public class AnimControl : MonoBehaviour
         }
     }
     public void Rewind(){
+        if(eventTagAppearFlag==true){
+            return;
+        }
         Debug.Log("Rewind start = " + Time.timeScale);
         if(animStatus == Global.AnimStatus.Pause && Time.timeScale == 0){
             AdjustSpeed(timeScaleBeforePause);
@@ -441,7 +446,13 @@ public class AnimControl : MonoBehaviour
         }
     }
 
-    public void Resume(Global.AnimStatus status){
+    public void Resume(Global.AnimStatus status, bool byEvent=false){
+        if(byEvent == true){
+            eventTagAppearFlag=false;
+        }
+        if(eventTagAppearFlag==true){
+            return;
+        }
         if(GetUpdateStatus() == false){
             StartAnimation();
         }
@@ -528,9 +539,9 @@ public class AnimControl : MonoBehaviour
             // sliderControl.SetTimeSlider(referenceCounter);
         }
         sliderControl.SetTimeSlider(referenceCounter);
-        if(eventTagAppearFlag == true){
-            eventTagAppearFlag = false;
-        }
+        // if(eventTagAppearFlag == true){
+        //     eventTagAppearFlag = false;
+        // }
         graphInput.ReferenceCounterValue(referenceCounter);
     }
 

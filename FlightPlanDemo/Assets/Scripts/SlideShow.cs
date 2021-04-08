@@ -17,6 +17,7 @@ public class SlideShow : MonoBehaviour
 {
     [SerializeField] Image image = default;
     [SerializeField] Image helperImage = default;
+    [SerializeField] Sprite defaultSprite = default;
     [SerializeField] AnimControl anim = default;
 
     JObject dynamicConfigObject = null;
@@ -28,6 +29,8 @@ public class SlideShow : MonoBehaviour
     void Awake(){
         image.gameObject.SetActive(false);
         helperImage.gameObject.SetActive(false);
+        image.sprite = defaultSprite;
+        helperImage.sprite = defaultSprite;
     }
 
     void Start()
@@ -56,27 +59,30 @@ public class SlideShow : MonoBehaviour
             if(time!=-1 && imageInfo.ContainsKey(time)){
                 showImage = true;
                 helperImage.gameObject.SetActive(false);
-                image.gameObject.SetActive(true);
                 coroutine = LoadImage(image, imageInfo, time);
                 StartCoroutine(coroutine);
+                image.gameObject.SetActive(true);
             }
             if(time!=-1 && helperImageInfo.ContainsKey(time)){
                 showImage = true;
-                helperImage.gameObject.SetActive(true);
                 coroutine = LoadImage(helperImage, helperImageInfo, time);
                 StartCoroutine(coroutine);
+                helperImage.gameObject.SetActive(true);
             }
         }
         if(showImage==true){
             animStatusBeforeSlideShow = anim.GetAnimStatus();
+            Debug.Log("Animation Status BEFORE = " + animStatusBeforeSlideShow);
             if(animStatusBeforeSlideShow != Global.AnimStatus.Pause){
                 anim.Pause();
             }
+            anim.EventTagAppear();
         }
     }
 
     // Get file from file system or server
     public IEnumerator LoadImage(Image img, Dictionary<int, string> imgInfo, int time){
+        img.sprite = defaultSprite;
         var filePath = Path.Combine(Application.streamingAssetsPath, Global.images + imgInfo[time]);
         Debug.Log("Image Path in parser = " + filePath);
         byte[] textureBytes;
@@ -128,7 +134,8 @@ public class SlideShow : MonoBehaviour
         helperImage.gameObject.SetActive(false);
         image.gameObject.SetActive(false);
         if(animStatusBeforeSlideShow != Global.AnimStatus.Pause){
-            anim.Resume(animStatusBeforeSlideShow);
+            Debug.Log("Animation Status AFTER = " + animStatusBeforeSlideShow);
+            anim.Resume(animStatusBeforeSlideShow, true);
         }
     }
 
