@@ -24,13 +24,13 @@ Execute the following command to generate the data readable to FDP:
 Where,
 | Parameter | Description | Value Type |
 | ------ | ------ | ------ |
-| <Streaming Asset Directory> | Path of the directory `FDP/StreamingAssets` | String |
-| <Name of Experiment> | Name of Experiment | `_` Saparated string  |
-| <Topology File> | Path of `Topology.yml` file | String |
-| <pcap directory> | Path of the directory where `pcap` files are | String |
-| <Configuration File> | Path of the `Config.yml` file | String |
-| <Graph Directory> | `Graph` directory path  | String/None |
-| <Image Directory> | Path of the directory | String/None |
+| Streaming Asset Directory | Path of the directory `FDP/StreamingAssets` | String |
+| Name of Experiment | Name of Experiment | `_` Saparated string  |
+| Topology File | Path of `Topology.yml` file | String |
+| pcap directory | Path of the directory where `pcap` files are | String |
+| Configuration File | Path of the `Config.yml` file | String |
+| Graph Directory | `Graph` directory path  | String/None |
+| Image Directory | Path of the directory | String/None |
 
 ##### _Removing The Experiment_
 Execute the following command to remove the existing experiment from the FDP experiment list:
@@ -40,8 +40,8 @@ Execute the following command to remove the existing experiment from the FDP exp
 Where,
 | Parameter | Description | Value Type |
 | ------ | ------ | ------ |
-| <Streaming Asset Directory> | Path of the directory `FDP/StreamingAssets` | String |
-| <Name of Experiment> | Name of Experiment | `_` Saparated string  |
+| Streaming Asset Directory | Path of the directory `FDP/StreamingAssets` | String |
+| Name of Experiment | Name of Experiment | `_` Saparated string  |
 
 ## Frontend System
 1. Open the web browser (`Chrome` / `Firefox` / `Safari` / `MS Edge`).
