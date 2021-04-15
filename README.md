@@ -9,12 +9,12 @@ AngularJS-powered HTML5 Markdown editor.
 
 ## Backend System
 1. Download the `FDP` and `traffic.sh` from github and place them on the web server on which you are are going to host the FDP.
-2. Download the `Topology.yml` and `Config.yml` from github containing template for the topology and configuration files respectively.
+2. Download the `topology.yml` and `config.yml` from github containing template for the topology and configuration files respectively.
 3. Create the experiment and generate the `pcap` files for the each node along the path of a packet from source host node to destination host node.
 4. Create graph log files and place them in a directory, if required to show run time graph in the animation.
 5. Place the images in a directory, if required to show them in the animation.
-6. Update the `Topology.yml` file based upon the experiment.
-7. Update the `Config.yml` file to customize the animation. If you are using graphs or images for the animation please provide this information too in the `Config.yml` file.
+6. Update the `topology.yml` file based upon the experiment.
+7. Update the `config.yml` file to customize the animation. If you are using graphs or images for the animation please provide this information too in the `config.yml` file.
 
 ##### _Creating The Experiment_
 Execute the following command to generate the data readable to FDP:
@@ -26,9 +26,9 @@ Where,
 | ------ | ------ | ------ |
 | Streaming Asset Directory | Path of the directory `FDP/StreamingAssets` | String |
 | Name of Experiment | Name of Experiment | `_` Saparated string  |
-| Topology File | Path of `Topology.yml` file | String |
+| Topology File | Path of `topology.yml` file | String |
 | pcap directory | Path of the directory where `pcap` files are | String |
-| Configuration File | Path of the `Config.yml` file | String |
+| Configuration File | Path of the `config.yml` file | String |
 | Graph Directory | `Graph` directory path  | String/None |
 | Image Directory | Path of the directory | String/None |
 

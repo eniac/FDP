@@ -1,0 +1,89 @@
+# input configuration file to the animation
+
+# experiment_info Section
+experiment_info:
+
+  # hyperlink of a web page/ github link, which can best describe this experiment; eg: "https://flightplan.cis.upenn.edu/"
+  hyperlink: null    
+
+  # text to show on the introduction page of the experiment; eg: "my introduction text..."         
+  intro_text: ""              
+
+
+# static_tags Section
+static_tags:
+  # If you don't want to add any static tag, please remove everything in "static_tags" section 
+
+    # Node name on which you want to show a static tag; eg: c0
+  - node: c0
+
+    # Static tag text to display; eg: "this is the description of node c0..."                
+    text: ""            
+
+    # hyperlink: A web page/ github link which best describes this node; eg: "https://flightplan.cis.upenn.edu/"      
+    hyperlink: null           
+
+  - node: p0h0
+    text: ""
+    hyperlink: ""
+
+# event_tags Section 
+event_tags:
+  # If you don't want to add any event tag, please remove everything in "event_tags" section 
+
+    # time of experiment(micro sec) at which you want to show an event tag. eg: 1194; 
+    # In order to findout this time stamp, run the "traffic.sh" as described in readme.
+    # Output of "traffic.sh" file will create one file named "metadata.txt" under StreaminAssets/<experiment name>. 
+    # Pick the time stamp from the first column of that file and update this vlue in the file placed at StreaminAssets/<experiment name>/config.txt.
+  - time: 1194  
+
+    # name of node on which you want to show an event tag; eg: c0             
+    node: c0 
+
+    # description of the node which is defined in "node" section; eg: "this is the description of an event occured at node c0..."                 
+    text: ""                  
+    
+    # hyperlink of a web page/ github link which can best describe this event; eg: "https://flightplan.cis.upenn.edu/"
+    hyperlink: null           
+
+  - time: 2000                
+    node: c0                  
+    text: ""         
+    hyperlink: null
+
+graph:
+  # If you don't wan't to show graph in your animation you may remove (your choice) everything in section "graph" except <show: "n">
+  show: "n"                   # If you want to show graph white "y", otherwise write "n".
+  x_div: 1000000              # If you x axis is time, the value of x_div will be 1000000 , Otherwise write the value 1.
+  x_label: ""                 # X axis lable; eg: "time (sec)"
+  y_label: ""                 # Y axis lable; eg: "# packets received at receiver"
+  title: ""                   # Title of the graph; eg: "ths is the graph title" 
+  curve_info:
+    - file_name: ""           # File name having X, and Y axis data to create curve-1; eg: graph_log1.txt
+      curve_color: ""         # Color of curve-1; eg: "#ffff00"
+      legend_text: ""         # Legend text represent the curve; eg: "thus is curve 1"
+      curve_width: 1          # Width of the curve. Default is 1. May vary between [1,4]
+      packet_target: c0       # The time of X axis in the graph log file is w.r.t. the packets hitting a node to keep the curve progression in sync with the events generated on a node. The comes the name of that node; eg: c0
+
+    - file_name: ""           # File which exist in StreamingAsset directory, and have X, and Y axis data to create curve-2; eg: graph_log2.txt
+      curve_color: ""
+      legend_text: ""
+      curve_width: 1
+      packet_target: c0
+
+slide_show:
+  # If you don't wan't to show pictures in your animation you may remove (your choice) everything in section "slide_show" except <show: "no">
+  show: "no"                # If you want to show graph, write "yes", otherwise write "no".
+  schedule_info:
+    - time: 0               # time of experiment at which you want to show a picture. eg: 0 
+      image_name: ""        # name of image which you want to show in the right side of animation screen, at the above mentioned time; eg: "image002.jpeg"
+      helper_image_name: "" # name of image which you want to show in the left side of animation screen, at the above mentioned time; eg: "helperImage001.jpeg"
+
+packet_legend:
+  # If you don't wan't to show any packet legend in your animation you may remove (your choice) everything in section "packet_legend"
+  # TODO: place table of color palate
+  - type: "TUNNEL p0h3->p3h2"
+    color: "#0000ff"
+
+introduction:
+  show: "no"             # choose ("yes", "no")
