@@ -42,6 +42,7 @@ public class DemoScript : MonoBehaviour
             billBoard.SetConfigObject(configParser.GetDynamicConfigObject());
             graphInput.SetConfigObject(configParser.GetDynamicConfigObject());
             slideShow.SetConfigObject(configParser.GetDynamicConfigObject());
+            anim.SetConfigObject(configParser.GetDynamicConfigObject());
 
             yield return StartCoroutine(graphInput.GraphInitStart());
         }

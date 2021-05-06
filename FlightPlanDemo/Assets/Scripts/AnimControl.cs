@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using System.IO;
 using System.Text;
 using System.Linq;
+using TMPro;
 
 using UnityEngine;
 using UnityEngine.Networking;
+
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+
+
 
 struct PacketInfo{
     public GameObject Object;
@@ -43,6 +50,7 @@ public class AnimControl : MonoBehaviour
     [SerializeField] SlideShow slideShow = default;
     [SerializeField] IntroTagControl introTag = default;
     [SerializeField] GameObject loadingPanel = default;
+    [SerializeField] GameObject aminTimePopUp = default;
 
     public enum PacketInfoIdx{
         Time=0,
@@ -84,6 +92,7 @@ public class AnimControl : MonoBehaviour
     HashSet<int> packetTime = new HashSet<int>();
     bool eventTagAppearFlag = false;
     float animTime=0;
+    JObject dynamicConfigObject;
 
     void Start(){
         DisableUpdate();
@@ -186,6 +195,11 @@ public class AnimControl : MonoBehaviour
         else{
             // elapsedTimeString = File.ReadAllText(filePath);
         }
+    }
+
+    public void SetConfigObject(JObject dynamicConfigObject){
+        // this.configObject = configObject;
+        this.dynamicConfigObject = dynamicConfigObject;
     }
 
     public void AnimationInit(){
@@ -707,6 +721,12 @@ public class AnimControl : MonoBehaviour
         }
         if(doTerminate==true && runningQueue.Count==0){
             Debug.Log("##### END #### " + referenceCounter);
+            string time = (string)dynamicConfigObject["experiment_info"]["animation_time"];
+            if(time==null){
+                aminTimePopUp.transform.Find("Time").GetComponent<Text>().text = ((int)Mathf.Floor(referenceCounter)).ToString();
+                aminTimePopUp.SetActive(true);
+            }
+            
             topo.MakeLinksOpaque();
             topo.MakeNodesOpaque();
             sliderControl.SetTimeSlider(0);

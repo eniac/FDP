@@ -8,7 +8,7 @@ while [ -n "$1" ]; do # while loop starts
   -create) echo "-create option passed" 
     shift 
     if [ "$#" -ne 7 ]; then
-      echo "Usage: ./traffic.sh <StreamingAssets directory path> <name of experiment> <topology file path> <pacp directory path> <Configuration file> <Graph directory path> <Image directory path>"
+      echo "Usage: ./traffic.sh -create <StreamingAssets directory path> <name of experiment> <topology file path> <pacp directory path> <Configuration file> <Graph directory path> <Image directory path>"
       exit
     fi
     break ;; # Message for -create option
@@ -17,7 +17,7 @@ while [ -n "$1" ]; do # while loop starts
     REMOVE="y"
     shift 
     if [ "$#" -ne 2 ]; then
-      echo "Usage: ./traffic.sh <StreamingAssets directory path> <name of experiment>"
+      echo "Usage: ./traffic.sh -remove <StreamingAssets directory path> <name of experiment>"
       exit
     fi
     break ;; # Message for -remove option

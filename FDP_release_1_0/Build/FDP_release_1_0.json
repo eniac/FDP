@@ -1,0 +1,16 @@
+{
+"companyName": "DefaultCompany",
+"productName": "FDP",
+"productVersion": "0.1",
+"dataUrl": "FDP_release_1_0.data.unityweb",
+"wasmCodeUrl": "FDP_release_1_0.wasm.code.unityweb",
+"wasmFrameworkUrl": "FDP_release_1_0.wasm.framework.unityweb",
+"graphicsAPI": ["WebGL 2.0","WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20",
+"cacheControl": {"default": "must-revalidate"},
+"developmentBuild": false,
+"multithreading": false,
+"unityVersion": "2019.3.14f1"
+}

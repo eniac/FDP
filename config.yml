@@ -7,7 +7,10 @@ experiment_info:
   hyperlink: null    
 
   # text to show on the introduction page of the experiment; eg: "my introduction text..."         
-  intro_text: ""              
+  intro_text: ""  
+
+  # total animation time of the experiment. needs to do manually. Detailed instructions are given in "Tutorial.pdf".
+  animation_time: null            
 
 
 # static_tags Section

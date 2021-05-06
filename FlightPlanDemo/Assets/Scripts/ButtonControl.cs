@@ -23,6 +23,8 @@ public class ButtonControl : MonoBehaviour
     [SerializeField] private AnimControl anim = default;
     [SerializeField] private ColorControl colorControl = default;
     [SerializeField] private SlideShow slideShow = default;
+    [SerializeField] GameObject aminTimePopUp = default;
+
     bool slideIn = false;
     bool showLable;
     List<GameObject> hostTextObject;
@@ -348,5 +350,9 @@ public class ButtonControl : MonoBehaviour
         else{
             Application.OpenURL(link);
         }
+    }
+
+    public void AnimationTimePopUpHide(){
+        aminTimePopUp.SetActive(false);
     }
 }

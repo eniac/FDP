@@ -1,0 +1,104 @@
+# This output was auto-generated using generate_alv_network.py -- modify with care.
+# k=2
+# pod_switches_upper=1
+# pod_switches_lower=1
+# pod_num_hosts=1
+# num_hosts=2
+# num_core_switches=1
+hosts:
+    h0 :
+         interfaces:
+             - mac: '02:00:00:d8:c2:6b'
+               ip: 192.168.0.190/24
+               port: 1
+         programs:
+             - cmd: "echo 'Hello'"
+               fg: True
+    s0 :
+         interfaces:
+             - mac: '02:00:00:cf:e6:4f'
+               ip: 142.250.64.98/24
+               port: 1
+         programs:
+             - cmd: "echo 'Hello'"
+               fg: True
+    s1 :
+         interfaces:
+             - mac: '02:00:00:cf:e6:4f'
+               ip: 142.250.64.99/24
+               port: 1
+         programs:
+             - cmd: "echo 'Hello'"
+               fg: True
+    s2 :
+       interfaces:
+           - mac: '02:00:00:cf:e6:4f'
+             ip: 172.217.6.206/24
+             port: 1
+       programs:
+           - cmd: "echo 'Hello'"
+             fg: True
+    s3 :
+         interfaces:
+             - mac: '02:00:00:cf:e6:4f'
+               ip: 172.217.9.226/24
+               port: 1
+         programs:
+             - cmd: "echo 'Hello'"
+               fg: True
+    s4 :
+         interfaces:
+             - mac: '02:00:00:cf:e6:4f'
+               ip: 172.217.10.74/24
+               port: 1
+         programs:
+             - cmd: "echo 'Hello'"
+               fg: True
+    s5 :
+         interfaces:
+             - mac: '02:00:00:cf:e6:4f'
+               ip: 172.217.10.100/24
+               port: 1
+         programs:
+             - cmd: "echo 'Hello'"
+               fg: True
+    s6 :
+         interfaces:
+             - mac: '02:00:00:cf:e6:4f'
+               ip: 172.217.10.131/24
+               port: 1
+         programs:
+             - cmd: "echo 'Hello'"
+               fg: True
+
+
+switches:
+    c0 :
+         cfg: 
+         interfaces:
+             - link: h0
+               mac: '02:00:00:c8:4d:7a'
+               port: 1
+             - link: s0
+               mac: '02:00:00:78:19:6f'
+               port: 2
+             - link: s1
+               mac: '02:00:00:c8:4d:7a'
+               port: 3
+             - link: s2
+               mac: '02:00:00:78:19:6f'
+               port: 4
+             - link: s3
+               mac: '02:00:00:c8:4d:7a'
+               port: 5
+             - link: s4
+               mac: '02:00:00:78:19:6f'
+               port: 6
+             - link: s5
+               mac: '02:00:00:c8:4d:7a'
+               port: 7
+             - link: s6
+               mac: '02:00:00:78:19:6f'
+               port: 8
+         cmds:
+            

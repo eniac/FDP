@@ -229,28 +229,62 @@ public class GraphInput : MonoBehaviour
             }
         }
 
-        // TODO Animation Time for each experiment
-        if(Global.chosanExperimentName == "FEC_booster"){
-            // Animation Time
-            gInfo.animTime = 716f;
-        }
-        else if(Global.chosanExperimentName == "MCD_booster"){
-            gInfo.animTime = 2704f;
-        }
-        else if(Global.chosanExperimentName == "HC_booster"){
-            gInfo.animTime = 726f;
-        }
-        else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
-            gInfo.animTime = 3447f;
-        }
-        else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
-            gInfo.animTime = 3912f;
-        }
-        else if(Global.chosanExperimentName == "Split_Crosspod_into_6"){
-            gInfo.animTime = 4882f;
-        }
-        else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
-            gInfo.animTime = 83f;
+        // // TODO Animation Time for each experiment
+        // if(Global.chosanExperimentName == "FEC_booster"){
+        //     // Animation Time
+        //     gInfo.animTime = 716f;
+        // }
+        // else if(Global.chosanExperimentName == "MCD_booster"){
+        //     gInfo.animTime = 2704f;
+        // }
+        // else if(Global.chosanExperimentName == "HC_booster"){
+        //     gInfo.animTime = 726f;
+        // }
+        // else if(Global.chosanExperimentName == "Crosspod:_FEC,_HC,_and_MCD_boosters"){
+        //     gInfo.animTime = 3447f;
+        // }
+        // else if(Global.chosanExperimentName == "Split_Crosspod_into_3"){
+        //     gInfo.animTime = 3912f;
+        // }
+        // else if(Global.chosanExperimentName == "Split_Crosspod_into_6"){
+        //     gInfo.animTime = 4882f;
+        // }
+        // else if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
+        //     gInfo.animTime = 83f;
+        //     colorControl.SetColorPattern(Global.ColorPattern.None);
+
+        //     gInfo.relative_scale.Clear();
+        //     gInfo.relative_offset.Clear();
+        //     float scale = 642823f/100f;
+        //     gInfo.relative_scale.Add(scale);
+        //     scale = (6074785f-642823f)/100f;
+        //     gInfo.relative_scale.Add(scale);
+        //     gInfo.relative_offset.Add(0f);
+        //     gInfo.relative_offset.Add(642823f);
+        // }
+        // else if(Global.chosanExperimentName == "Failover_mechanism"){
+        //     gInfo.animTime = 121f;
+        // }
+        // else if(Global.chosanExperimentName == "Figure_7"){
+        //     gInfo.animTime = 5555f;
+        // }
+        // else if(Global.chosanExperimentName == "Untunneled_traffic"){
+        //     gInfo.animTime = 316f;
+        // }
+        // else if(Global.chosanExperimentName == "Tunneled_traffic"){
+        //     gInfo.animTime = 168f;
+        // }
+        // else if(Global.chosanExperimentName == "QoS"){
+        //     gInfo.animTime = 1576f;
+        // }
+        // else if(Global.chosanExperimentName == "Lossy_Network"){
+        //     gInfo.animTime = 94f;
+        // }
+        // else if(Global.chosanExperimentName == "Web_Query"){
+        //     gInfo.animTime = 475f;
+        // }
+
+        if(Global.chosanExperimentName == "5_complete_2_FW" || Global.chosanExperimentName == "Introduction"){
             colorControl.SetColorPattern(Global.ColorPattern.None);
 
             gInfo.relative_scale.Clear();
@@ -262,26 +296,11 @@ public class GraphInput : MonoBehaviour
             gInfo.relative_offset.Add(0f);
             gInfo.relative_offset.Add(642823f);
         }
-        else if(Global.chosanExperimentName == "Failover_mechanism"){
-            gInfo.animTime = 121f;
-        }
-        else if(Global.chosanExperimentName == "Figure_7"){
-            gInfo.animTime = 5555f;
-        }
-        else if(Global.chosanExperimentName == "Untunneled_traffic"){
-            gInfo.animTime = 316f;
-        }
-        else if(Global.chosanExperimentName == "Tunneled_traffic"){
-            gInfo.animTime = 168f;
-        }
-        else if(Global.chosanExperimentName == "QoS"){
-            gInfo.animTime = 1576f;
-        }
-        else if(Global.chosanExperimentName == "Lossy_Network"){
-            gInfo.animTime = 94f;
-        }
-        else if(Global.chosanExperimentName == "Web_Query"){
-            gInfo.animTime = 475f;
+
+        string time = (string)dynamicConfigObject["experiment_info"]["animation_time"];
+        gInfo.animTime = 0f;
+        if(time!=null){
+            gInfo.animTime = float.Parse(time);
         }
 
         if(gInfo.nCurves>0){
