@@ -50,4 +50,7 @@ Where,
 4. _There you have a rich interactive 3D network._
 
 ## License
-**Free Software!**
+[Apache 2.0](LICENSE)
+
+## Author
+[Heena Nagda]()www.linkedin.com/in/nagdaheena
