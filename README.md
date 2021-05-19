@@ -1,13 +1,22 @@
 # Flightplan Demo Platform (FDP)
 ## Introduction
-A portable platform that builds on existing tooling to enable end-to-end experimentation and zero-effort in-browser interactive visualization, to benefit the teaching of P4-based SDN and research demonstration.
-For More Information please visit our website: [FDP](https://flightplan.cis.upenn.edu/)
+FDP is a portable demo/teaching platform for computer networking. It builds on existing tooling to enable end-to-end experimentation and zero-effort in-browser interactive visualization. It includes an example for P4-based SDN and research demonstration.
+More information can be found on the [Flightplan website](https://flightplan.cis.upenn.edu/).
 
-## Step by Step Instructions
-1. Step by Step instructions to crate the FDP experiment is given in `Tutorial.pdf` and briefly mentioned below.
-2. Step by Step instructions to work with source code is given in `TutorialUnity.pdf`.
+## Usage Examples
+See an early [demo video](https://drive.google.com/file/d/149YrRqJxQ6aNmO6FqlRTm5p4N_QvQ-U6/view?usp=sharing):
+<br /><a href="https://drive.google.com/file/d/149YrRqJxQ6aNmO6FqlRTm5p4N_QvQ-U6/view" target="_blank"><img src="https://www.seas.upenn.edu/~nsultana/fdp.png" alt="FDP video" height="200"/></a>
+This was presented at [N2Women'20](http://conferences.sigcomm.org/sigcomm/2020/n2women.html) where it was selected for the runner-up award!
 
-## Backend System
+Check out the [demo](https://flightplan.cis.upenn.edu/sigcse21/) we presented at [SIGCSE'21](https://sigcse2021.sigcse.org/schedule/demos/).
+Our [abstract](https://www.seas.upenn.edu/~nsultana/files/SIGCSE-abstract-FDP.pdf) sets the scene for the demo.
+
+
+## Usage Instructions
+1. Instructions to create a FDP-based demo is given in [Tutorial.pdf](Tutorial.pdf) and briefly mentioned below.
+2. Instructions to work with source code is given in [TutorialUnity.pdf](TutorialUnity.pdf).
+
+### Backend System
 1. Download the `FDP_release` and `traffic.sh` from github and place them on the web server on which you are are going to host the FDP.
 2. Download the `topology.yml` and `config.yml` from github containing template for the topology and configuration files respectively.
 3. Create the experiment and generate the `pcap` files for the each node along the path of a packet from source host node to destination host node.
@@ -43,7 +52,7 @@ Where,
 | Streaming Asset Directory | Path of the directory `FDP_release/StreamingAssets` | String |
 | Name of Experiment | Name of Experiment | `_` Saparated string  |
 
-## Frontend System
+### Frontend System
 1. Open the web browser (`Chrome` / `Firefox` / `Safari` / `MS Edge`).
 2. Go to the FDP hosted website.
 3. Choose the experiment from the drop down menu.
