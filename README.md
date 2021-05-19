@@ -5,7 +5,7 @@ More information can be found on the [Flightplan website](https://flightplan.cis
 
 ## Usage Examples
 See an early [demo video](https://drive.google.com/file/d/149YrRqJxQ6aNmO6FqlRTm5p4N_QvQ-U6/view?usp=sharing):
-<br /><a href="https://drive.google.com/file/d/149YrRqJxQ6aNmO6FqlRTm5p4N_QvQ-U6/view" target="_blank"><img src="https://www.seas.upenn.edu/~nsultana/fdp.png" alt="FDP video" height="200"/></a>
+<br /><a href="https://drive.google.com/file/d/149YrRqJxQ6aNmO6FqlRTm5p4N_QvQ-U6/view" target="_blank"><img src="https://www.seas.upenn.edu/~nsultana/fdp.png" alt="FDP video" height="200"/></a><br />
 This was presented at [N2Women'20](http://conferences.sigcomm.org/sigcomm/2020/n2women.html) where it was selected for the runner-up award!
 
 Check out the [demo](https://flightplan.cis.upenn.edu/sigcse21/) we presented at [SIGCSE'21](https://sigcse2021.sigcse.org/schedule/demos/).
