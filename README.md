@@ -1,6 +1,10 @@
 # Flightplan Demo Platform (FDP)
 ## Introduction
-FDP is a portable demo/teaching platform for computer networking. It builds on existing tooling to enable end-to-end experimentation and zero-effort in-browser interactive visualization. It includes an example for [P4](p4.org)-based [SDN](https://en.wikipedia.org/wiki/Software-defined_networking) and research demonstration.
+FDP is a portable demo/teaching platform for computer networking. It builds on
+existing tooling to enable end-to-end experimentation and zero-effort
+in-browser interactive visualization.
+It includes an example teaching demo and a demo for [P4](p4.org)-based
+[SDN](https://en.wikipedia.org/wiki/Software-defined_networking) research.
 More information can be found on the [Flightplan website](https://flightplan.cis.upenn.edu/).
 
 ## Usage Examples
