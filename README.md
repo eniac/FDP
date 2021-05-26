@@ -19,6 +19,8 @@ Our [abstract](https://www.seas.upenn.edu/~nsultana/files/SIGCSE-abstract-FDP.pd
 ## Usage Instructions
 1. Instructions to create a FDP-based demo is given in [Tutorial.pdf](Tutorial.pdf) and briefly mentioned below.
 2. Instructions to work with source code is given in [TutorialUnity.pdf](TutorialUnity.pdf).
+3. [Raw and intermediate data](https://flightplan.cis.upenn.edu/FDP_Examples_Raw_Data.tgz) for the example demos can be used to reproduce their behaviour.
+
 
 ### Backend System
 1. Download the `FDP_release` and `traffic.sh` from github and place them on the web server on which you are are going to host the FDP.
